@@ -183,7 +183,7 @@ public class SearchServlet extends HttpServlet {
                     sb.append("<fam>").append(child.getChildFam()).append("</fam>");
                     sb.append("<name>").append(child.getChildName()).append("</name>");
                     String patrS = child.getChildPatr();
-                    if (patrS == null) {
+                    if ((patrS == null) || (patrS.equals(""))) {
                         patrS = " ";
                     }
                     sb.append("<patr>").append(patrS).append("</patr>");
@@ -219,7 +219,7 @@ public class SearchServlet extends HttpServlet {
                     sb.append("<fam>").append(parent.getParentFam()).append("</fam>");
                     sb.append("<name>").append(parent.getParentName()).append("</name>");
                     String patrS = parent.getParentPatr();
-                    if (patrS == null) {
+                    if ((patrS == null) || (patrS.equals(""))) {
                         patrS = " ";
                     }
                     sb.append("<patr>").append(patrS).append("</patr>");
@@ -249,7 +249,7 @@ public class SearchServlet extends HttpServlet {
                     sb.append("<fam>").append(ped.getPedFam()).append("</fam>");
                     sb.append("<name>").append(ped.getPedName()).append("</name>");
                     String patrS = ped.getPedPatr();
-                    if (patrS == null) {
+                    if ((patrS == null) || (patrS.equals(""))) {
                         patrS = " ";
                     }
                     sb.append("<patr>").append(patrS).append("</patr>");
@@ -290,7 +290,7 @@ public class SearchServlet extends HttpServlet {
                 sb.append("<fam>").append(pd.getParentId().getParentFam()).append("</fam>");
                 sb.append("<name>").append(pd.getParentId().getParentName()).append("</name>");
                 String patrS = pd.getParentId().getParentPatr();
-                if (patrS == null) {
+                if ((patrS == null) || (patrS.equals(""))) {
                     patrS = " ";
                 }
                 sb.append("<patr>").append(patrS).append("</patr>");
@@ -352,7 +352,7 @@ public class SearchServlet extends HttpServlet {
                         sb.append("<fam>").append(child.getChildFam()).append("</fam>");
                         sb.append("<name>").append(child.getChildName()).append("</name>");
                         String patrS = child.getChildPatr();
-                        if (patrS == null) {
+                        if ((patrS == null) || (patrS.equals(""))) {
                             patrS = " ";
                         }
                         sb.append("<patr>").append(patrS).append("</patr>");
@@ -370,7 +370,7 @@ public class SearchServlet extends HttpServlet {
                         sb.append("<fam>").append(parent.getParentFam()).append("</fam>");
                         sb.append("<name>").append(parent.getParentName()).append("</name>");
                         String patrS = parent.getParentPatr();
-                        if (patrS == null) {
+                        if ((patrS == null) || (patrS.equals(""))) {
                             patrS = " ";
                         }
                         sb.append("<patr>").append(patrS).append("</patr>");
@@ -411,7 +411,7 @@ public class SearchServlet extends HttpServlet {
                         sb.append("<fam>").append(child.getChildFam()).append("</fam>");
                         sb.append("<name>").append(child.getChildName()).append("</name>");
                         String patrS = child.getChildPatr();
-                        if (patrS == null) {
+                        if ((patrS == null) || (patrS.equals(""))) {
                             patrS = " ";
                         }
                         sb.append("<patr>").append(patrS).append("</patr>");
@@ -439,7 +439,7 @@ public class SearchServlet extends HttpServlet {
                         sb.append("<fam>").append(child.getChildFam()).append("</fam>");
                         sb.append("<name>").append(child.getChildName()).append("</name>");
                         String patrS = child.getChildPatr();
-                        if (patrS == null) {
+                        if ((patrS == null) || (patrS.equals(""))) {
                             patrS = " ";
                         }
                         sb.append("<patr>").append(patrS).append("</patr>");
@@ -475,7 +475,7 @@ public class SearchServlet extends HttpServlet {
                         sb.append("<fam>").append(parent.getParentFam()).append("</fam>");
                         sb.append("<name>").append(parent.getParentName()).append("</name>");
                         String patrS = parent.getParentPatr();
-                        if (patrS == null) {
+                        if ((patrS == null) || (patrS.equals(""))) {
                             patrS = " ";
                         }
                         sb.append("<patr>").append(patrS).append("</patr>");
@@ -497,7 +497,7 @@ public class SearchServlet extends HttpServlet {
                         sb.append("<fam>").append(parent.getParentFam()).append("</fam>");
                         sb.append("<name>").append(parent.getParentName()).append("</name>");
                         String patrS = parent.getParentPatr();
-                        if (patrS == null) {
+                        if ((patrS == null) || (patrS.equals(""))) {
                             patrS = " ";
                         }
                         sb.append("<patr>").append(patrS).append("</patr>");
@@ -529,7 +529,7 @@ public class SearchServlet extends HttpServlet {
                         sb.append("<fam>").append(ped.getPedFam()).append("</fam>");
                         sb.append("<name>").append(ped.getPedName()).append("</name>");
                         String patrS = ped.getPedPatr();
-                        if (patrS == null) {
+                        if ((patrS == null) || (patrS.equals(""))) {
                             patrS = " ";
                         }
                         sb.append("<patr>").append(patrS).append("</patr>");
@@ -553,7 +553,7 @@ public class SearchServlet extends HttpServlet {
                         sb.append("<fam>").append(ped.getPedFam()).append("</fam>");
                         sb.append("<name>").append(ped.getPedName()).append("</name>");
                         String patrS = ped.getPedPatr();
-                        if (patrS == null) {
+                        if ((patrS == null) || (patrS.equals(""))) {
                             patrS = " ";
                         }
                         sb.append("<patr>").append(patrS).append("</patr>");
@@ -718,7 +718,7 @@ public class SearchServlet extends HttpServlet {
             List<Ipra18N> ipraList = ipra18NFacade.findBySearch(fam, name, patr, sprReg, npr, dprDate, status);
             // сортируем
             Collections.sort(ipraList, new Ipra18NBaseComparator());
-            
+
             // составляем xml для передачи клиенту
             // заголовок таблицы
             sb.append("<ipras>");
@@ -742,7 +742,7 @@ public class SearchServlet extends HttpServlet {
                     sb.append("<fam>").append(ipra.getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ipra.getChildId().getChildName()).append("</name>");
                     String p = " ";
-                    if (ipra.getChildId().getChildPatr() != null) {
+                    if ((ipra.getChildId().getChildPatr() != null) && (!ipra.getChildId().getChildPatr().equals(""))) {
                         p = ipra.getChildId().getChildPatr();
                     }
                     sb.append("<patr>").append(p).append("</patr>");
@@ -840,7 +840,7 @@ public class SearchServlet extends HttpServlet {
                     sb.append("<fam>").append(ipra.getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ipra.getChildId().getChildName()).append("</name>");
                     String p = " ";
-                    if (ipra.getChildId().getChildPatr() != null) {
+                    if ((ipra.getChildId().getChildPatr() != null) && (!ipra.getChildId().getChildPatr().equals(""))) {
                         p = ipra.getChildId().getChildPatr();
                     }
                     sb.append("<patr>").append(p).append("</patr>");

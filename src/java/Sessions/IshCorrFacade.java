@@ -44,4 +44,13 @@ public class IshCorrFacade extends AbstractFacade<IshCorr> {
         return result;
     }
     
+    public List<IshCorr> findByIpra(Ipra18N ipra){
+        String qlString = "SELECT ic FROM IshCorr ic, IpraIshcorr iic "
+                + "WHERE iic.ishcorrId = ic AND iic.ipra18Id = :ipra ";
+        TypedQuery<IshCorr> query = em.createQuery(qlString, IshCorr.class)
+                .setParameter("ipra", ipra);
+        List<IshCorr> result = query.getResultList();
+        return result;
+    }
+    
 }

@@ -43,6 +43,9 @@ public class SprIshType implements Serializable {
     @Size(max = 100)
     @Column(name = "SPRISHTYPE_NAME")
     private String sprishtypeName;
+    @Size(max = 200)
+    @Column(name = "SPRISHTYPE_RU_NAME")
+    private String sprishtypeRuName;
 
     public Integer getSprishtypeId() {
         return sprishtypeId;
@@ -58,6 +61,14 @@ public class SprIshType implements Serializable {
 
     public void setSprishtypeName(String sprishtypeName) {
         this.sprishtypeName = sprishtypeName;
+    }
+    
+    public String getSprishtypeRuName() {
+        return sprishtypeRuName;
+    }
+
+    public void setSprishtypeRuName(String sprishtypeRuName) {
+        this.sprishtypeRuName = sprishtypeRuName;
     }
 
     @Override

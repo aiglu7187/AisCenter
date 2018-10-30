@@ -44,7 +44,17 @@
                     <input id="tab1" type="radio" name="tabs" checked>
                     <label for="tab1" title="Основные данные">Основные данные</label>
                     <input id="tab2" type="radio" name="tabs">                       
-                    <label for="tab2" title="Корреспонденция">Корреспонденция</label>  
+                    <label for="tab2" title="Корреспонденция">Корреспонденция</label> 
+                    <c:if test="${prikaz != null}">
+                        <input id="tab3" type="radio" name="tabs">                       
+                        <label for="tab3" title="Приказ ДО">Приказ ДО</label>
+                    </c:if>
+                    <c:if test="${!perechenList.isEmpty()}">
+                        <input id="tab4" type="radio" name="tabs">                       
+                        <label for="tab4" title="Перечни мероприятий">Перечни мероприятий</label>
+                    </c:if>
+                    <input id="tab5" type="radio" name="tabs">                       
+                    <label for="tab5" title="Отчёты">Отчёты</label>
                     <section id="content-tab1">
                         <div id="divIpra">                            
                             <p class="stp">
@@ -140,8 +150,168 @@
                         </div>
                     </section>
                     <section id="content-tab2">
-                              
+                        <div id="divVh">
+                            <strong>Входящая корреспонденция</strong>
+                            <table class="regularlist">
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            ИД
+                                        </td>
+                                        <td>
+                                            Дата
+                                        </td>
+                                        <td>
+                                            Номер
+                                        </td>
+                                        <td>
+                                            От кого
+                                        </td>
+                                        <td>
+                                            Тема
+                                        </td>
+                                        <td>
+                                            Дата исходящего
+                                        </td>
+                                        <td>
+                                            Номер исходящего
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="vh" items="${vhCorr}">
+                                        <tr>
+                                            <td>
+                                                <c:out value="${vh.getId()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${vh.getFormat2Date()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${vh.getNomer()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${vh.getSender()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${vh.getTheme()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${vh.getFormat2IshDate()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${vh.getIshNomer()}"/>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="divIsh">
+                            <strong>Исходящая корреспонденция</strong>
+                            <table class="regularlist">
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            ИД
+                                        </td>
+                                        <td>
+                                            Дата
+                                        </td>
+                                        <td>
+                                            Номер
+                                        </td>
+                                        <td>
+                                            Кому
+                                        </td>
+                                        <td>
+                                            Тема
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <c:forEach var="ish" items="${ishCorr}">
+                                        <tr>
+                                            <td>
+                                                <c:out value="${ish.getId()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${ish.getFormat2Date()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${ish.getNomer()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${ish.getRecipient()}"/>
+                                            </td>
+                                            <td>
+                                                <c:out value="${ish.getTheme()}"/>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
+                                </tbody>
+                            </table>
+                        </div>
                     </section>
+                    <c:if test="${prikaz != null}">
+                        <section id="content-tab3">
+                            <div id="divPrikaz">
+                                <table class="noborder">
+                                    <tr>
+                                        <td>
+                                            Дата приказа:                                
+                                        </td>
+                                        <td>
+                                            <input type="date" value="${prikaz.getFormatDate()}" style="height: 20px;">                                
+                                        </td>
+                                    </tr>
+                                    <c:if test="${prikaz.getIpra18prikazN() != null}">
+                                        <tr>
+                                            <td>
+                                                Номер:
+                                            </td>
+                                            <td>
+                                                <input type="text" value="${prikaz.getIpra18prikazN()}" style="width: 150px;">
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                </table>
+                            </div>
+                        </section>
+                    </c:if>
+                    <c:if test="${perechenList != null}">
+                        <section id="content-tab4">
+                            <div id="divPerechen">
+                                <c:forEach var="perechen" items="${perechenList}">
+                                    <table class="noborder">                                    
+                                        <tr>
+                                            <c:if test="${perechen.getIshcorrId().getIshcorrN() == null}">
+                                                <td>
+                                                    Дата отправки перечня:                                
+                                                <td>
+                                                    <input type="date" value="${perechen.getIshcorrId().getFormatDate(perechen.getIshcorrId().getIshcorrD())}" style="height: 20px;">                                
+                                                </td>
+
+                                                </td>
+                                            </c:if>
+                                            <c:if test="${perechen.getIshcorrId().getIshcorrN() != null}">
+                                                <td>
+                                                    Отправлен в ОМСУ 
+                                                    <strong>
+                                                        <c:out value="${perechen.getIshcorrId().getFormat2Date(perechen.getIshcorrId().getIshcorrD())}"/>
+                                                    </strong>
+                                                </td>
+                                            </c:if>
+                                        </tr>
+                                    </table>
+                                </c:forEach>
+                            </div>
+                        </section>
+                        <selection id="content-tab5">
+                            <div id="divOtchet">
+                            </div>
+                        </section>
+                    </c:if>
                     <p style="margin-top: 15px; margin-bottom: 15px;">
                         <a class="greybtn" id="saveBtn" name="saveBtn">
                             <img id="saveImg" name="saveImg" src="img/save.png" width="17" style="padding-right: 1px;">

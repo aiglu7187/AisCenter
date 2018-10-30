@@ -154,24 +154,24 @@ public class Ipra18PrikazN implements Serializable {
         return "Entities.Ipra18PrikazN[ ipra18prikazId=" + ipra18prikazId + " ]";
     }
 
-    public String getFormatDate(Date d){
+    public String getFormatDate(){
         SimpleDateFormat format = new SimpleDateFormat();
         format.applyPattern("yyyy-MM-dd");
         String strD = "";
         try{
-            strD  = format.format(d);
+            strD  = format.format(this.ipra18prikazD);
         }
         catch(Exception ex){            
         }
         return strD;
     }
     
-    public String getFormat2Date(Date d){
+    public String getFormat2Date(){
         SimpleDateFormat format = new SimpleDateFormat();
         format.applyPattern("dd.MM.yyyy");
         String strD = "";
         try{
-            strD  = format.format(d);
+            strD  = format.format(this.ipra18prikazD);
         }
         catch(Exception ex){            
         }

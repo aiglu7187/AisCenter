@@ -5,6 +5,7 @@
  */
 package Sessions;
 
+import Entities.Ipra18N;
 import Entities.IpraPerechenN;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -39,5 +40,11 @@ public class IpraPerechenNFacade extends AbstractFacade<IpraPerechenN> {
         return result;
     }
     
+    public List<IpraPerechenN> findByIpra18(Ipra18N ipra){        
+        TypedQuery<IpraPerechenN> query = em.createNamedQuery("IpraPerechenN.findByIpra18Id", IpraPerechenN.class)
+                .setParameter("ipra18Id", ipra);
+        List<IpraPerechenN> result = query.getResultList();
+        return result;
+    }
     
 }

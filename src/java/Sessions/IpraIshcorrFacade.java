@@ -27,6 +27,6 @@ public class IpraIshcorrFacade extends AbstractFacade<IpraIshcorr> {
 
     public IpraIshcorrFacade() {
         super(IpraIshcorr.class);
-    }
+    }  
     
 }

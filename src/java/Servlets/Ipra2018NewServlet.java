@@ -15,10 +15,14 @@ import Entities.IshCorr;
 import Entities.Kalendar;
 import Entities.LoginLog;
 import Entities.Nom;
+import Entities.SprCorr;
 import Entities.SprIshType;
 import Entities.SprMse;
 import Entities.SprRegion;
 import Entities.Users;
+import Entities.VhCorr;
+import Other.Correspond;
+import Other.CorrespondComparator;
 import Other.RegionComparator;
 import Sessions.ChildStatusFacade;
 import Sessions.ChildrenFacade;
@@ -30,13 +34,16 @@ import Sessions.IshCorrFacade;
 import Sessions.KalendarFacade;
 import Sessions.LoginLogFacade;
 import Sessions.NomFacade;
+import Sessions.SprCorrFacade;
 import Sessions.SprIshTypeFacade;
 import Sessions.SprMseFacade;
 import Sessions.SprRegionFacade;
 import Sessions.SprStatFacade;
+import Sessions.VhCorrFacade;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -98,6 +105,10 @@ public class Ipra2018NewServlet extends HttpServlet {
     IshCorrFacade ishCorrFacade = new IshCorrFacade();
     @EJB
     SprIshTypeFacade sprIshTypeFacade = new SprIshTypeFacade();
+    @EJB
+    VhCorrFacade vhCorrFacade = new VhCorrFacade();
+    @EJB
+    SprCorrFacade sprCorrFacade = new SprCorrFacade();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -179,7 +190,8 @@ public class Ipra2018NewServlet extends HttpServlet {
                     sb.append("<fam>").append(ip.getIpra18Id().getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ip.getIpra18Id().getChildId().getChildName()).append("</name>");
                     String p = " ";
-                    if (ip.getIpra18Id().getChildId().getChildPatr() != null) {
+                    if ((ip.getIpra18Id().getChildId().getChildPatr() != null)
+                            && (!ip.getIpra18Id().getChildId().getChildPatr().equals(""))) {
                         p = ip.getIpra18Id().getChildId().getChildPatr();
                     }
                     sb.append("<patr>").append(p).append("</patr>");
@@ -229,7 +241,8 @@ public class Ipra2018NewServlet extends HttpServlet {
                     sb.append("<fam>").append(ip.getIpra18Id().getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ip.getIpra18Id().getChildId().getChildName()).append("</name>");
                     String p = " ";
-                    if (ip.getIpra18Id().getChildId().getChildPatr() != null) {
+                    if ((ip.getIpra18Id().getChildId().getChildPatr() != null)
+                            && (!ip.getIpra18Id().getChildId().getChildPatr().equals(""))) {
                         p = ip.getIpra18Id().getChildId().getChildPatr();
                     }
                     sb.append("<patr>").append(p).append("</patr>");
@@ -284,7 +297,8 @@ public class Ipra2018NewServlet extends HttpServlet {
                         sb.append("<fam>").append(ip.getIpraperechennId().getIpra18Id().getChildId().getChildFam()).append("</fam>");
                         sb.append("<name>").append(ip.getIpraperechennId().getIpra18Id().getChildId().getChildName()).append("</name>");
                         String p = " ";
-                        if (ip.getIpraperechennId().getIpra18Id().getChildId().getChildPatr() != null) {
+                        if ((ip.getIpraperechennId().getIpra18Id().getChildId().getChildPatr() != null)
+                                && (!ip.getIpraperechennId().getIpra18Id().getChildId().getChildPatr().equals(""))) {
                             p = ip.getIpraperechennId().getIpra18Id().getChildId().getChildPatr();
                         }
                         sb.append("<patr>").append(p).append("</patr>");
@@ -337,7 +351,8 @@ public class Ipra2018NewServlet extends HttpServlet {
                     sb.append("<fam>").append(ip.getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ip.getChildId().getChildName()).append("</name>");
                     String p = " ";
-                    if (ip.getChildId().getChildPatr() != null) {
+                    if ((ip.getChildId().getChildPatr() != null)
+                            && (!ip.getChildId().getChildPatr().equals(""))) {
                         p = ip.getChildId().getChildPatr();
                     }
                     sb.append("<patr>").append(p).append("</patr>");
@@ -539,6 +554,64 @@ public class Ipra2018NewServlet extends HttpServlet {
                 List<SprMse> mseList = sprMseFacade.findAllSprMse();
                 // подставляем список районов в соответствующий атрибут сессии
                 session.setAttribute("mseList", mseList);
+
+                // ищем корреспонденцию для данной ИПРА
+                List<IshCorr> ishCorrList = ishCorrFacade.findByIpra(ipra);
+                List<VhCorr> vhCorrList = vhCorrFacade.findByIpra(ipra);
+                // создаём списки корреспонденции в специальной структуре                
+                List<Correspond> ishCorr = new ArrayList<>();   // исходящие
+                for (IshCorr ic : ishCorrList) {
+                    String recepient = sprCorrFacade.findName(ic.getSprcorrId());
+                    Correspond corr = new Correspond(ic.getIshcorrId(), ic.getIshcorrD(),
+                            ic.getIshcorrN(), recepient, ic.getSprishtypeId().getSprishtypeRuName());
+                    ishCorr.add(corr);
+                }
+                List<Correspond> vhCorr = new ArrayList<>();   // входящие
+                for (VhCorr vc : vhCorrList) {
+                    String sender = sprCorrFacade.findName(vc.getSprcorrId());
+                    Correspond corr = new Correspond(vc.getVhcorrId(), vc.getVhcorrD(), vc.getVhcorrN(),
+                            sender, vc.getSprvhtypeId().getSprvhtypeRuName(), vc.getVhcorrIshd(), vc.getVhcorrIshn());
+                    vhCorr.add(corr);
+                }
+                // сортируем
+                Collections.sort(ishCorr, new CorrespondComparator());
+                Collections.sort(vhCorr, new CorrespondComparator());
+                // очищаем атрибуты сессии для корреспонденции
+                try {
+                    session.removeAttribute("ishCorr");
+                } catch (Exception ex) {
+                }
+                try {
+                    session.removeAttribute("vhCorr");
+                } catch (Exception ex) {
+                }
+                // устанавливаем атрибуты сессии заново
+                session.setAttribute("ishCorr", ishCorr);
+                session.setAttribute("vhCorr", vhCorr);
+
+                // проверяем, есть ли приказ (или "заготовка" под него - появляется при внесении запроса на приказ)
+                Ipra18PrikazN prikaz = null;
+                try {
+                    prikaz = ipra18PrikazNFacade.findByIpra(ipra);
+                } catch (Exception ex) {
+                }
+                // очищаем атрибуты сессии для приказа
+                try {
+                    session.removeAttribute("prikaz");
+                } catch (Exception ex) {
+                }
+                // устанавливаем атрибут сессии 
+                session.setAttribute("prikaz", prikaz);
+                
+                // проверяем, есть ли перечни мероприятий или "заготовка"
+                List<IpraPerechenN> perechenList = ipraPerechenNFacade.findByIpra18(ipra);
+                // очищаем атрибуты сессии для перечней
+                try {
+                    session.removeAttribute("perechenList");
+                } catch (Exception ex) {
+                }
+                // устанавливаем атрибут сессии 
+                session.setAttribute("perechenList", perechenList);
 
                 // формируем адрес страницы
                 userPath = "/ipra/nipra18view";

@@ -43,6 +43,9 @@ public class SprVhType implements Serializable {
     @Size(max = 100)
     @Column(name = "SPRVHTYPE_NAME")
     private String sprvhtypeName;
+    @Size(max = 200)
+    @Column(name = "SPRVHTYPE_RU_NAME")
+    private String sprvhtypeRuName;
 
     public Integer getSprvhtypeId() {
         return sprvhtypeId;
@@ -58,6 +61,14 @@ public class SprVhType implements Serializable {
 
     public void setSprvhtypeName(String sprvhtypeName) {
         this.sprvhtypeName = sprvhtypeName;
+    }
+    
+    public String getSprvhtypeRuName() {
+        return sprvhtypeRuName;
+    }
+
+    public void setSprvhtypeRuName(String sprvhtypeRuName) {
+        this.sprvhtypeRuName = sprvhtypeRuName;
     }
 
     @Override

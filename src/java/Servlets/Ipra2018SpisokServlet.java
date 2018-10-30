@@ -362,7 +362,7 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                     sb.append("<fam>").append(ipra.getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ipra.getChildId().getChildName()).append("</name>");
                     String patr = ipra.getChildId().getChildPatr();
-                    if (patr == null) {
+                    if ((patr == null) || (patr.equals(""))) {
                         patr = " ";
                     }
                     sb.append("<patr>").append(patr).append("</patr>");
@@ -542,7 +542,7 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                 } catch (Exception ex) {
                 }
                 session.setAttribute("obr", obr);
-                
+
                 // расчёт ступеней обучения
                 Date dr = ipra.getChildId().getChildDr();
                 Calendar drC = Calendar.getInstance();
@@ -586,7 +586,7 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                 dateSOO2.set(Calendar.DATE, 31);
                 dateSOO2.set(Calendar.MONTH, 4);
                 dateSOO2.set(Calendar.YEAR, year2);
-                
+
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
                 try {
                     session.removeAttribute("datedo");
@@ -597,14 +597,14 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                     session.removeAttribute("var1");
                 } catch (Exception ex) {
                 }
-                session.setAttribute("datevar1", "НОО - " + dateFormat.format(dateNOO1.getTime()) + ", ООО - " + 
-                        dateFormat.format(dateOOO1.getTime()) + ", СОО - " + dateFormat.format(dateSOO1.getTime()));                
+                session.setAttribute("datevar1", "НОО - " + dateFormat.format(dateNOO1.getTime()) + ", ООО - "
+                        + dateFormat.format(dateOOO1.getTime()) + ", СОО - " + dateFormat.format(dateSOO1.getTime()));
                 try {
                     session.removeAttribute("var2");
                 } catch (Exception ex) {
                 }
-                session.setAttribute("datevar2", "НОО - " + dateFormat.format(dateNOO2.getTime()) + ", ООО - " + 
-                        dateFormat.format(dateOOO2.getTime()) + ", СОО - " + dateFormat.format(dateSOO2.getTime()));
+                session.setAttribute("datevar2", "НОО - " + dateFormat.format(dateNOO2.getTime()) + ", ООО - "
+                        + dateFormat.format(dateOOO2.getTime()) + ", СОО - " + dateFormat.format(dateSOO2.getTime()));
 
                 userPath = "/ipra/ipra18view";
                 url = "/WEB-INF/pages" + userPath + ".jsp";
@@ -718,7 +718,7 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                     sb.append("<fam>").append(ipra.getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ipra.getChildId().getChildName()).append("</name>");
                     String patr = ipra.getChildId().getChildPatr();
-                    if (patr == null) {
+                    if ((patr == null) || (patr.equals(""))) {
                         patr = " ";
                     }
                     sb.append("<patr>").append(patr).append("</patr>");

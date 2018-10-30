@@ -536,11 +536,21 @@ public class SavePriyomServlet extends HttpServlet {
                             String reg1PmpkPar = request.getParameter("reg1PmpkPar" + cl);
                             if (pmpkPar1Fam != null) {
                                 Parents parent = new Parents();
-                                parent.setParentFam(pmpkPar1Fam);
-                                parent.setParentName(pmpkPar1Nam);
-                                if (pmpkPar1Patr != null) {
-                                    parent.setParentPatr(pmpkPar1Patr);
+                                try {
+                                    pmpkPar1Fam = pmpkPar1Fam.substring(0, 1).toUpperCase() + pmpkPar1Fam.substring(1);
+                                } catch (Exception ex) {
                                 }
+                                parent.setParentFam(pmpkPar1Fam);
+                                try {
+                                    pmpkPar1Nam = pmpkPar1Nam.substring(0, 1).toUpperCase() + pmpkPar1Nam.substring(1);
+                                } catch (Exception ex) {
+                                }
+                                parent.setParentName(pmpkPar1Nam);
+                                try {
+                                    pmpkPar1Patr = pmpkPar1Patr.substring(0, 1).toUpperCase() + pmpkPar1Patr.substring(1);
+                                } catch (Exception ex) {
+                                }
+                                parent.setParentPatr(pmpkPar1Patr);
                                 Integer reg = 0;
                                 try {
                                     reg = Integer.parseInt(reg1PmpkPar);
@@ -571,11 +581,21 @@ public class SavePriyomServlet extends HttpServlet {
                             String reg2PmpkPar = request.getParameter("reg2PmpkPar" + cl);
                             if (pmpkPar2Fam != null) {
                                 Parents parent = new Parents();
-                                parent.setParentFam(pmpkPar2Fam);
-                                parent.setParentName(pmpkPar2Nam);
-                                if (pmpkPar2Patr != null) {
-                                    parent.setParentPatr(pmpkPar2Patr);
+                                try {
+                                    pmpkPar2Fam = pmpkPar2Fam.substring(0, 1).toUpperCase() + pmpkPar2Fam.substring(1);
+                                } catch (Exception ex) {
                                 }
+                                parent.setParentFam(pmpkPar2Fam);
+                                try {
+                                    pmpkPar2Nam = pmpkPar2Nam.substring(0, 1).toUpperCase() + pmpkPar2Nam.substring(1);
+                                } catch (Exception ex) {
+                                }
+                                parent.setParentName(pmpkPar2Nam);
+                                try {
+                                    pmpkPar2Patr = pmpkPar2Patr.substring(0, 1).toUpperCase() + pmpkPar2Patr.substring(1);
+                                } catch (Exception ex) {
+                                }
+                                parent.setParentPatr(pmpkPar2Patr);
                                 Integer reg = 0;
                                 try {
                                     reg = Integer.parseInt(reg2PmpkPar);
@@ -739,8 +759,20 @@ public class SavePriyomServlet extends HttpServlet {
                     if (findChild.isEmpty()) {
                         child = new Children();
                         child.setChildNom(nom.getNom());
+                        try {
+                            clFam = clFam.substring(0, 1).toUpperCase() + clFam.substring(1);
+                        } catch (Exception ex) {
+                        }
                         child.setChildFam(clFam);
+                        try {
+                            clName = clName.substring(0, 1).toUpperCase() + clName.substring(1);
+                        } catch (Exception ex) {
+                        }
                         child.setChildName(clName);
+                        try {
+                            clPatr = clPatr.substring(0, 1).toUpperCase() + clPatr.substring(1);
+                        } catch (Exception ex) {
+                        }
                         child.setChildPatr(clPatr);
                         child.setChildPol(clPol);
                         child.setChildDr(dr);
@@ -894,11 +926,21 @@ public class SavePriyomServlet extends HttpServlet {
                                 String reg1PmpkPar = request.getParameter("reg1PmpkPar" + newCl);
                                 if (pmpkPar1Fam != null) {
                                     Parents parent = new Parents();
-                                    parent.setParentFam(pmpkPar1Fam);
-                                    parent.setParentName(pmpkPar1Nam);
-                                    if (pmpkPar1Patr != null) {
-                                        parent.setParentPatr(pmpkPar1Patr);
+                                    try {
+                                        pmpkPar1Fam = pmpkPar1Fam.substring(0, 1).toUpperCase() + pmpkPar1Fam.substring(1);
+                                    } catch (Exception ex) {
                                     }
+                                    parent.setParentFam(pmpkPar1Fam);
+                                    try {
+                                        pmpkPar1Nam = pmpkPar1Nam.substring(0, 1).toUpperCase() + pmpkPar1Nam.substring(1);
+                                    } catch (Exception ex) {
+                                    }
+                                    parent.setParentName(pmpkPar1Nam);
+                                    try {
+                                        pmpkPar1Patr = pmpkPar1Patr.substring(0, 1).toUpperCase() + pmpkPar1Patr.substring(1);
+                                    } catch (Exception ex) {
+                                    }
+                                    parent.setParentPatr(pmpkPar1Patr);
                                     Integer reg = 0;
                                     try {
                                         reg = Integer.parseInt(reg1PmpkPar);
@@ -929,11 +971,21 @@ public class SavePriyomServlet extends HttpServlet {
                                 String reg2PmpkPar = request.getParameter("reg2PmpkPar" + newCl);
                                 if (pmpkPar2Fam != null) {
                                     Parents parent = new Parents();
-                                    parent.setParentFam(pmpkPar2Fam);
-                                    parent.setParentName(pmpkPar2Nam);
-                                    if (pmpkPar2Patr != null) {
-                                        parent.setParentPatr(pmpkPar2Patr);
+                                    try {
+                                        pmpkPar2Fam = pmpkPar2Fam.substring(0, 1).toUpperCase() + pmpkPar2Fam.substring(1);
+                                    } catch (Exception ex) {
                                     }
+                                    parent.setParentFam(pmpkPar2Fam);
+                                    try {
+                                        pmpkPar2Nam = pmpkPar2Nam.substring(0, 1).toUpperCase() + pmpkPar2Nam.substring(1);
+                                    } catch (Exception ex) {
+                                    }
+                                    parent.setParentName(pmpkPar2Nam);
+                                    try {
+                                        pmpkPar2Patr = pmpkPar2Patr.substring(0, 1).toUpperCase() + pmpkPar2Patr.substring(1);
+                                    } catch (Exception ex) {
+                                    }
+                                    parent.setParentPatr(pmpkPar2Patr);
                                     Integer reg = 0;
                                     try {
                                         reg = Integer.parseInt(reg2PmpkPar);
@@ -1025,7 +1077,7 @@ public class SavePriyomServlet extends HttpServlet {
                                     childStat.setDateUpd(curDate);
                                     childStatusFacade.create(childStat);
                                 }
-                            }                            
+                            }
                         }
                     }
 
@@ -1036,8 +1088,20 @@ public class SavePriyomServlet extends HttpServlet {
                     String clDol = request.getParameter("clDol" + newCl);
                     Ped ped = new Ped();
                     ped.setPedNom(nom.getNom());
+                    try {
+                        clFam = clFam.substring(0, 1).toUpperCase() + clFam.substring(1);
+                    } catch (Exception ex) {
+                    }
                     ped.setPedFam(clFam);
+                    try {
+                        clName = clName.substring(0, 1).toUpperCase() + clName.substring(1);
+                    } catch (Exception ex) {
+                    }
                     ped.setPedName(clName);
+                    try {
+                        clPatr = clPatr.substring(0, 1).toUpperCase() + clPatr.substring(1);
+                    } catch (Exception ex) {
+                    }
                     ped.setPedPatr(clPatr);
                     ped.setSprorgId(sprOrgFacade.findById(Integer.parseInt(clOrg)));
                     ped.setSprpeddolgId(sprPeddolgFacade.findById(Integer.parseInt(clDol)));
@@ -1063,8 +1127,20 @@ public class SavePriyomServlet extends HttpServlet {
                     nomFacade.create(nom);
                     Parents parent = new Parents();
                     parent.setParentNom(nom.getNom());
+                    try {
+                        clFam = clFam.substring(0, 1).toUpperCase() + clFam.substring(1);
+                    } catch (Exception ex) {
+                    }
                     parent.setParentFam(clFam);
+                    try {
+                        clName = clName.substring(0, 1).toUpperCase() + clName.substring(1);
+                    } catch (Exception ex) {
+                    }
                     parent.setParentName(clName);
+                    try {
+                        clPatr = clPatr.substring(0, 1).toUpperCase() + clPatr.substring(1);
+                    } catch (Exception ex) {
+                    }
                     parent.setParentPatr(clPatr);
                     parent.setSprregId(sprRegionFacade.findById(Integer.parseInt(clReg)));
                     parent.setUserId(user);
@@ -1206,8 +1282,20 @@ public class SavePriyomServlet extends HttpServlet {
                 String subDr = request.getParameter("subDr" + newSub);
                 Children child = new Children();
                 child.setChildNom(nom.getNom());
+                try {
+                    subFam = subFam.substring(0, 1).toUpperCase() + subFam.substring(1);
+                } catch (Exception ex) {
+                }
                 child.setChildFam(subFam);
+                try {
+                    subName = subName.substring(0, 1).toUpperCase() + subName.substring(1);
+                } catch (Exception ex) {
+                }
                 child.setChildName(subName);
+                try {
+                    subPatr = subPatr.substring(0, 1).toUpperCase() + subPatr.substring(1);
+                } catch (Exception ex) {
+                }
                 child.setChildPatr(subPatr);
                 child.setChildPol(subPol);
                 Date dr = null;
@@ -1537,7 +1625,6 @@ public class SavePriyomServlet extends HttpServlet {
                 }
             }
         }
-
         try {
             request.getRequestDispatcher(url).forward(request, response);
         } catch (Exception ex) {

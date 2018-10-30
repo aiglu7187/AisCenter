@@ -339,7 +339,7 @@ public class PriyomActionServlet extends HttpServlet {
                     sb.append("<fam>").append(child.getChildFam()).append("</fam>");
                     sb.append("<name>").append(child.getChildName()).append("</name>");
                     String patrS = child.getChildPatr();
-                    if (patrS == null) {
+                    if ((patrS == null) || (patrS.equals(""))) {
                         patrS = " ";
                     }
                     sb.append("<patr>").append(patrS).append("</patr>");
@@ -381,7 +381,7 @@ public class PriyomActionServlet extends HttpServlet {
                     sb.append("<fam>").append(parent.getParentFam()).append("</fam>");
                     sb.append("<name>").append(parent.getParentName()).append("</name>");
                     String patrS = parent.getParentPatr();
-                    if (patrS == null) {
+                    if ((patrS == null) || (patrS.equals(""))) {
                         patrS = " ";
                     }
                     sb.append("<patr>").append(patrS).append("</patr>");
@@ -417,7 +417,7 @@ public class PriyomActionServlet extends HttpServlet {
                     sb.append("<fam>").append(ped.getPedFam()).append("</fam>");
                     sb.append("<name>").append(ped.getPedName()).append("</name>");
                     String patrS = ped.getPedPatr();
-                    if (patrS == null) {
+                    if ((patrS == null) || (patrS.equals(""))) {
                         patrS = " ";
                     }
                     sb.append("<patr>").append(patrS).append("</patr>");
@@ -489,13 +489,13 @@ public class PriyomActionServlet extends HttpServlet {
             String clIdS = request.getParameter("clid");
             String uslIdS = request.getParameter("usl");
             String dateS = request.getParameter("date");
-            Date date = null;            
+            Date date = null;
             try {
                 date = format.parse(dateS);
             } catch (ParseException ex) {
                 Logger.getLogger(PriyomActionServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             Integer uslId = 0;
             try {
                 uslId = Integer.parseInt(uslIdS);
@@ -555,13 +555,13 @@ public class PriyomActionServlet extends HttpServlet {
             String type = request.getParameter("type");
             List<SprStat> sprStatDop = sprStatFacade.findByStatV(2);
             String dateS = request.getParameter("date");
-            Date date = null;            
+            Date date = null;
             try {
                 date = format.parse(dateS);
             } catch (ParseException ex) {
                 Logger.getLogger(PriyomActionServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }            
-            String uslIdS = request.getParameter("usl");            
+            }
+            String uslIdS = request.getParameter("usl");
             Integer uslId = 0;
             try {
                 uslId = Integer.parseInt(uslIdS);
@@ -620,13 +620,13 @@ public class PriyomActionServlet extends HttpServlet {
             String type = request.getParameter("type");
             List<SprStat> sprStatSoc = sprStatFacade.findByStatV(4);
             String dateS = request.getParameter("date");
-            Date date = null;            
+            Date date = null;
             try {
                 date = format.parse(dateS);
             } catch (ParseException ex) {
                 Logger.getLogger(PriyomActionServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             String uslIdS = request.getParameter("usl");
             Integer uslId = 0;
             try {
@@ -780,13 +780,13 @@ public class PriyomActionServlet extends HttpServlet {
             String dopS = request.getParameter("dop");
             String type = request.getParameter("type");
             String dateS = request.getParameter("date");
-            Date date = null;            
+            Date date = null;
             try {
                 date = format.parse(dateS);
             } catch (ParseException ex) {
                 Logger.getLogger(PriyomActionServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             String uslIdS = request.getParameter("usl");
             Integer uslId = 0;
             try {

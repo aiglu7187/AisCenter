@@ -35,7 +35,8 @@ public class IpraPerechenTpmpkFacade extends AbstractFacade<IpraPerechenTpmpk> {
         String qlString = "SELECT it "
                 + "FROM IpraPerechenN i, IpraPerechenTpmpk it, IshCorr ic, IpraIshcorr iic, SprIshType t "
                 + "WHERE i = it.ipraperechennId AND iic.ishcorrId = ic AND iic.ipra18Id = i.ipra18Id "
-                + "AND ic.sprishtypeId = t AND t.sprishtypeName = :type AND ic.ishcorrN IS NULL ";
+                + "AND ic.sprishtypeId = t AND t.sprishtypeName = :type AND ic.ishcorrN IS NULL "
+                + "ORDER BY ic.ishcorrD ";
         TypedQuery<IpraPerechenTpmpk> query = em.createQuery(qlString, IpraPerechenTpmpk.class)
                 .setParameter("type", "req_tpmpk");
         List<IpraPerechenTpmpk> result = query.getResultList();

@@ -5,6 +5,7 @@
  */
 package Sessions;
 
+import Entities.Ipra18N;
 import Entities.Ipra18PrikazN;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -37,6 +38,13 @@ public class Ipra18PrikazNFacade extends AbstractFacade<Ipra18PrikazN> {
                 + "ORDER BY ip.ipra18prikazD ";
         TypedQuery<Ipra18PrikazN> query = em.createQuery(qlString, Ipra18PrikazN.class);
         List<Ipra18PrikazN> result = query.getResultList();
+        return result;
+    }
+    
+    public Ipra18PrikazN findByIpra(Ipra18N ipra){
+        TypedQuery<Ipra18PrikazN> query = em.createNamedQuery("Ipra18PrikazN.findByIpra18Id", Ipra18PrikazN.class)
+                .setParameter("ipra18Id", ipra);
+        Ipra18PrikazN result = query.getSingleResult();
         return result;
     }
 }

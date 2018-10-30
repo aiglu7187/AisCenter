@@ -162,7 +162,7 @@ public class IpraSpisokServlet extends HttpServlet {
                 sb.append("<fam>").append(child.getChildFam()).append("</fam>");
                 sb.append("<name>").append(child.getChildName()).append("</name>");
                 String patrS = child.getChildPatr();
-                if (patrS == null) {
+                if ((patrS == null) || (patrS.equals(""))) {
                     patrS = " ";
                 }
                 sb.append("<patr>").append(patrS).append("</patr>");
@@ -365,7 +365,7 @@ public class IpraSpisokServlet extends HttpServlet {
                     sb.append("<fam>").append(ipra.getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ipra.getChildId().getChildName()).append("</name>");
                     String patr = ipra.getChildId().getChildPatr();
-                    if (patr == null) {
+                    if ((patr == null) || (patr.equals(""))) {
                         patr = " ";
                     }
                     sb.append("<patr>").append(patr).append("</patr>");
@@ -556,7 +556,7 @@ public class IpraSpisokServlet extends HttpServlet {
                     sb.append("<fam>").append(ipra.getChildId().getChildFam()).append("</fam>");
                     sb.append("<name>").append(ipra.getChildId().getChildName()).append("</name>");
                     String patr = ipra.getChildId().getChildPatr();
-                    if (patr == null) {
+                    if ((patr == null) || (patr.equals(""))) {
                         patr = " ";
                     }
                     sb.append("<patr>").append(patr).append("</patr>");

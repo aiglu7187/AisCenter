@@ -5,10 +5,13 @@
  */
 package Sessions;
 
+import Entities.Ipra18N;
 import Entities.VhCorr;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -27,6 +30,15 @@ public class VhCorrFacade extends AbstractFacade<VhCorr> {
 
     public VhCorrFacade() {
         super(VhCorr.class);
+    }
+    
+    public List<VhCorr> findByIpra(Ipra18N ipra){
+        String qlString = "SELECT vc FROM VhCorr vc, IpraVhcorr ivc "
+                + "WHERE ivc.vhcorrId = vc AND ivc.ipra18Id = :ipra ";
+        TypedQuery<VhCorr> query = em.createQuery(qlString, VhCorr.class)
+                .setParameter("ipra", ipra);
+        List<VhCorr> result = query.getResultList();
+        return result;
     }
     
 }

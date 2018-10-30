@@ -6,6 +6,7 @@
 package Entities;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -165,6 +166,28 @@ public class VhCorr implements Serializable {
     @Override
     public String toString() {
         return "Entities.VhCorr[ vhcorrId=" + vhcorrId + " ]";
+    }
+    
+    public String getFormatDate(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat();
+        format.applyPattern("yyyy-MM-dd");
+        String strDate = "";
+        try {
+            strDate = format.format(date);
+        } catch (Exception ex) {
+        }
+        return strDate;
+    }
+    
+    public String getFormat2Date(Date date) {
+        SimpleDateFormat format = new SimpleDateFormat();
+        format.applyPattern("dd.MM.yyyy");
+        String strDate = "";
+        try {
+            strDate = format.format(date);
+        } catch (Exception ex) {
+        }
+        return strDate;
     }
     
 }
