@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "IpraPerechenTpmpk.findAll", query = "SELECT i FROM IpraPerechenTpmpk i"),
-    @NamedQuery(name = "IpraPerechenTpmpk.findByIshcorrId", query = "SELECT i FROM IpraPerechenTpmpk i WHERE i.ipraperechentpmpkId = :ipraperechentpmpkId")})
+    @NamedQuery(name = "IpraPerechenTpmpk.findByIpraperechentpmpkId", query = "SELECT i FROM IpraPerechenTpmpk i WHERE i.ipraperechentpmpkId = :ipraperechentpmpkId")})
 public class IpraPerechenTpmpk implements Serializable {
 
     private static final long serialVersionUID = 1L;

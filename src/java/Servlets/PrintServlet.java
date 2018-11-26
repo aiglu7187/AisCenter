@@ -2328,7 +2328,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("ipraprikaz")) {
+        } else if (type.equals("ipraprikaz")) { // печать приказа ИПРА
             String ipraIdS = request.getParameter("ipra");
             Ipra18 ipra = null;
             try {
@@ -2354,12 +2354,14 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("ipraotchetcenter")) {
+        } else if (type.equals("ipraotchetcenter")) {   // ИПРА отчет ОЦППМСП
             String ipraIdS = request.getParameter("ipra");
             String old = request.getParameter("old");
             Ipra ipra = null;
             Ipra18 ipra18 = null;
             Ipra18Prikaz prikaz = null;
+            IpraPerechen perechen = null;
+            List<IpraEduCondition> conditions = new ArrayList<>();
 
             if (old.equals("isold")) {
                 try {
@@ -2374,6 +2376,8 @@ public class PrintServlet extends HttpServlet {
                 }
                 if (ipra18 != null) {
                     prikaz = ipra18PrikazFacade.findByIpra(ipra18);
+                    perechen = ipraPerechenFacade.findByIpra18(ipra18);
+                    conditions = ipraEduConditionFacade.findByIpraPerechen(perechen);
                 }
             }
             if ((ipra18 != null) || (ipra != null)) {
@@ -2387,7 +2391,7 @@ public class PrintServlet extends HttpServlet {
                 response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
                 try {
                     if (ipra18 != null) {
-                        Wrd.ipra18OtchetCenter(response.getOutputStream(), ipra18, prikaz);
+                        Wrd.ipra18OtchetCenter(response.getOutputStream(), ipra18, prikaz, conditions);
                     } else if (ipra != null) {
                         Wrd.ipraOtchetCenter(response.getOutputStream(), ipra);
                     }
@@ -2397,7 +2401,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("ipralettertodo")) {
+        } else if (type.equals("ipralettertodo")) { // ИПРА письмо в ДО 
             String ipraIdS = request.getParameter("ipra");
             String old = request.getParameter("old");
             Ipra ipra = null;
@@ -2453,7 +2457,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("ipraotchetdo")) {
+        } else if (type.equals("ipraotchetdo")) {   // ИПРА отчёт ДО
             String ipraIdS = request.getParameter("ipra");
             String old = request.getParameter("old");
             Ipra ipra = null;
@@ -2496,7 +2500,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("ipralettertomse")) {
+        } else if (type.equals("ipralettertomse")) {    // ИПРА письмо в МСЭ
             String ipraIdS = request.getParameter("ipra");
             String old = request.getParameter("old");
             Ipra ipra = null;
@@ -2539,7 +2543,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("ipra18red")) {
+        } else if (type.equals("ipra18red")) {  // ИПРА2018 сроки
             List<Ipra18> findRed = ipra18Facade.findRed();
             List<Ipra18Prikaz> ipraPrikazList = new ArrayList<>();
             for (Ipra18 ipra : findRed) {
@@ -2559,7 +2563,7 @@ public class PrintServlet extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (type.equals("ipra18svod")) {
+        } else if (type.equals("ipra18svod")) { // ИПРА2018 свод
             List<Ipra18> ipraAllCur= ipra18Facade.findAllCur();
             Collections.sort(ipraAllCur, new Ipra18Comparator());
             List<Ipra18Prikaz> ipraPrikazList = new ArrayList<>();
@@ -2580,7 +2584,7 @@ public class PrintServlet extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (type.equals("tpmpkreq")) {
+        } else if (type.equals("tpmpkreq")) {   // ИПРА запрос в ТПМПК
             String idVS = request.getParameter("ipra");
             String[] idV = idVS.split(";");
             List<Ipra18> ipraList = new ArrayList<>();
@@ -2621,7 +2625,7 @@ public class PrintServlet extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (type.equals("ipraperechen")) {
+        } else if (type.equals("ipraperechen")) {   // ИПРА перечень
             String ipraIdS = request.getParameter("ipra");
             Ipra18 ipra = null;
             try {

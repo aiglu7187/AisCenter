@@ -42,4 +42,11 @@ public class IpraPerechenTpmpkFacade extends AbstractFacade<IpraPerechenTpmpk> {
         List<IpraPerechenTpmpk> result = query.getResultList();
         return result;
     }
+    
+    public IpraPerechenTpmpk findById(Integer id){
+        TypedQuery<IpraPerechenTpmpk> query = em.createNamedQuery("IpraPerechenTpmpk.findByIpraperechentpmpkId", IpraPerechenTpmpk.class)
+                .setParameter("ipraperechentpmpkId", id);
+        IpraPerechenTpmpk result = query.getSingleResult();
+        return result;
+    }
 }

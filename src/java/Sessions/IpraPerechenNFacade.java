@@ -47,4 +47,11 @@ public class IpraPerechenNFacade extends AbstractFacade<IpraPerechenN> {
         return result;
     }
     
+    public IpraPerechenN findById(Integer id){        
+        TypedQuery<IpraPerechenN> query = em.createNamedQuery("IpraPerechenN.findByIpraperechennId", IpraPerechenN.class)
+                .setParameter("ipraperechennId", id);
+        IpraPerechenN result = query.getSingleResult();
+        return result;
+    }
+    
 }

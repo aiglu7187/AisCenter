@@ -1096,7 +1096,7 @@ public class Wrd {
         doc.close();
     }
 
-    public static void ipra18OtchetCenter(ServletOutputStream os, Ipra18 ipra, Ipra18Prikaz prikaz)
+    public static void ipra18OtchetCenter(ServletOutputStream os, Ipra18 ipra, Ipra18Prikaz prikaz, List<IpraEduCondition> conditions)
             throws FileNotFoundException, IOException {
         String ipraNom = "";
         try {
@@ -1132,6 +1132,34 @@ public class Wrd {
         String dateFormat2 = ipra.getFormat2Date(date);
         String[] dateV = dateFormat2.split("\\.");
         String y = dateV[2].substring(2);   // год (2 цифры)
+        
+        Map<String[], List<String>> conditionsMap = new HashMap<>();  // условия обучения
+        String isp = "Образовательная организация";
+        Set<String[]> keySet = new HashSet<>();
+        for (IpraEduCondition c : conditions) {
+            String[] keys = {c.getIpraeducondtypeId().getIpraeducondtypeName(), isp, "До " + c.getFormat2Date()};
+            keySet.add(keys);
+        }
+
+        for (String[] key : keySet) {
+            conditionsMap.put(key, new ArrayList<>());
+        }
+        for (Map.Entry<String[], List<String>> entry : conditionsMap.entrySet()) {
+            String[] key = entry.getKey();
+            List<String> value = entry.getValue();
+            if (!key[0].contains("Образовательная программа")) {
+                value.add(key[0] + ":");
+            }
+            for (IpraEduCondition c : conditions) {
+                String[] condKey = {c.getIpraeducondtypeId().getIpraeducondtypeName(), isp, "До " + c.getFormat2Date()};
+                if (Arrays.equals(key, condKey)) {
+                    String[] contextV = c.getIpraeducondContext().split("\\n");
+                    for (String con : contextV) {
+                        value.add(con);
+                    }
+                }
+            }
+        }
 
         String path = "templates//Отчет ОЦППМСП.docx";
         File file = null;
@@ -1202,6 +1230,7 @@ public class Wrd {
                     insertAtBookmark(cell.getParagraphs(), "region", region, 14, font, "");
                     insertAtBookmark(cell.getParagraphs(), "town", town, 14, font, "");
                     insertAtBookmark(cell.getParagraphs(), "y", y, 14, font, "");
+                    rowIter = insertTableAtBookmark(cell.getParagraphs(), table, rowIter, "conditions", conditionsMap, 14, font, "");
                 }
             }
         }

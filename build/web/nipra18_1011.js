@@ -7,7 +7,7 @@
 function init() {
     // вешаем на документ запрет выделения текста элементов интерфейса
     preventSelection(document);
-    
+
     // устанавливаем действия на поля с датами отчётов (расчёт дат)
     var otchOmsu = document.getElementById("ipraOtchomsu");
     otchOmsu.onclick = otchOmsuDate;
@@ -25,10 +25,16 @@ function init() {
     // устанавливаем действие на выбор МСЭ
     var selMse = document.getElementById("selMse");
     selMse.onchange = mseSelect;
-    
+
     // устанавливаем реакцию на попытку ввести номер входящего письма
-/*    var ipraVhN = document.getElementById("ipraVhN");
-    ipraVhN.onclick = letterReg;*/
+    /*    var ipraVhN = document.getElementById("ipraVhN");
+     ipraVhN.onclick = letterReg;*/
+
+    // устанавливаем действие на выбор статуса
+    var status = document.getElementById("selStatus");
+    if (status != null) {
+        status.onchange = chStatus;
+    }
 }
 
 function preventSelection(element) {    // запрет выделения текста, кроме input и textarea
@@ -113,8 +119,11 @@ function call(request) {   // получаем результат
             parseMessages(request.responseXML);
         } else if (request.status == 500) {
             alert("Ошибка сервера " + request.statusText + "\nДанные не были сохранены. Обратитесь к администратору");
-            /*    document.getElementById("saveBtn").disabled = 0;
-             var savePerechenBtn = document.getElementById("savePerechenBtn");
+            var saveBtn = document.getElementById("saveBtn");
+            saveBtn.classList.remove("dsbldbtn");
+            saveBtn.className = "greybtn";
+            saveBtn.onclick = clickSaveBtn;
+            /* var savePerechenBtn = document.getElementById("savePerechenBtn");
              if (savePerechenBtn != null) {
              savePerechenBtn.disabled = 0;
              }
@@ -129,8 +138,11 @@ function call(request) {   // получаем результат
         } else if (request.status == 204) {
         } else {
             alert("Ошибка подключения к серверу\nДанные не были сохранены");
-            /*    document.getElementById("saveBtn").disabled = 0;
-             var savePerechenBtn = document.getElementById("savePerechenBtn");
+            var saveBtn = document.getElementById("saveBtn");
+            saveBtn.classList.remove("dsbldbtn");
+            saveBtn.className = "greybtn";
+            saveBtn.onclick = clickSaveBtn;
+            /* var savePerechenBtn = document.getElementById("savePerechenBtn");
              if (savePerechenBtn != null) {
              savePerechenBtn.disabled = 0;
              }
@@ -645,13 +657,10 @@ function validateIpra() {   // валидация данных формы
                 result = false;
             }
         } else if (id == "ipraVhToDOD") {   // дата входящего письма с ИПРА в ДО из МСЭ
-            if (val == "") {
+            if (val.length > 10) {
                 inp[loop].className = "wrong";
                 result = false;
-            } else if (val.length > 10) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else {
+            } else if (val != "") {
                 var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
                 if (date.getTime() < dateLimit.getTime()) {
                     inp[loop].className = "wrong";
@@ -880,9 +889,9 @@ function mseSelect() {  // выбор МСЭ - фиксирование ИД в 
 function appendResult(result) {     // обработка результата
     if (result == 0) { // ошибка 
         alert("Данные не были сохранены. Проверьте корректность\nПри повторении ошибки обратитесь к администратору");
-        var saveBtn = document.getElementById("saveBtn");   
+        var saveBtn = document.getElementById("saveBtn");
         saveBtn.classList.remove("dsbldbtn");   // возвращаем кнопку в активное состояние
-        saveBtn.className = "greybtn";        
+        saveBtn.className = "greybtn";
         saveBtn.onclick = clickSaveBtn;
         /*    document.getElementById("savePerechenBtn").disabled = 0;
          document.getElementById("printPrikazBtn").disabled = 0;
@@ -907,21 +916,28 @@ function appendResult(result) {     // обработка результата
     }
 }
 
-function doNothing(){
+function doNothing() {
     return false;
 }
 
-function letterReg(){   // открытие диалога регистрации письма
+function letterReg() {   // открытие диалога регистрации письма
     var letterRegDlg = document.getElementById("letterRegDlg");
-    var letterDate = document.getElementById("letterDate");    
-    if (this.id == "ipraVhN"){  // если диалог вызван с поля входящего письма из ДО с ИПРА
+    var letterDate = document.getElementById("letterDate");
+    if (this.id == "ipraVhN") {  // если диалог вызван с поля входящего письма из ДО с ИПРА
         var ipraVhD = document.getElementById("ipraVhD");
         letterDate.value = ipraVhD.value;   // устанавливаем дату (с формы, если она там внесена)
         var url1 = "ipra2018new?action=sender&id=ipra"; // отправляем запрос на список отправителей
-        requ (url1, "GET", null);
+        requ(url1, "GET", null);
         var url2 = "ipra2018new?action=getnom&id=vh";   // отправляем запрос на номер письма
-        requ (url2, "GET", null);
-                // тема письма
-    }      
-    letterRegDlg.showModal();    
+        requ(url2, "GET", null);
+        // тема письма
+    }
+    letterRegDlg.showModal();
+}
+
+function chStatus() {   // выбор статуса (в работе/завершена)
+    var st = document.getElementById("status");
+    if (st != null) {
+        st.value = this.value;
+    }
 }

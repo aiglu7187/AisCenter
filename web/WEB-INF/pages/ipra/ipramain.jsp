@@ -91,7 +91,7 @@
             <h3>Новая версия ИПРА 2018</h3>
             <table class="puptab">
                 <tr>
-                    <td onclick="window.open('ipra2018new?action=openlist', '_blank')">
+                    <td onclick="window.open('ipra2018new?action=openlist&tab=1', '_blank')">
                         Список ИПРА
                     </td>             
                 </tr>            

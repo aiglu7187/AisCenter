@@ -30,22 +30,22 @@ function init() {   // функция инициализации - првязы�
 
     // привязываем действие на щелчок мыши кнопке "Добавить ИПРА"
     var addBtn = document.getElementById("addBtn1");
-    addBtn.onclick = function (){
+    addBtn.onclick = function () {
         window.open('ipra2018new?action=add', '_blank');
     };
 
     // формируем список для вкладки "Нет приказа"
     var url = "ipra2018new?action=noprikaz";
-    requ(url, "GET");
+    requ(url, "GET", null);
     // формируем список для вкладки "Нет перечня мероприятий"
     var url = "ipra2018new?action=noperechen";
-    requ(url, "GET");
+    requ(url, "GET", null);
     // формируем список для вкладки "Для запросов в ТПМПК"
     var url = "ipra2018new?action=tpmpk";
-    requ(url, "GET");
+    requ(url, "GET", null);
     // формируем список для вкладки "Ближайшие отчёты"
     var url = "ipra2018new?action=upcomingotchet";
-    requ(url, "GET");
+    requ(url, "GET", null);
 }
 
 function preventSelection(element) {    // запрет выделения текста, кроме input и textarea
@@ -132,7 +132,7 @@ function search() { // функция поиска
         var url = "search?type=ipra&fam=" + fam + "&name=" + name + "&patr=" + patr
                 + "&reg=" + reg + "&dpr=" + dPrVal + "&npr=" + nPr;
         // отправляем запрос
-        requ(url, "GET");
+        requ(url, "GET", null);
         // блокируем кнопки
         var searchBtn = document.getElementById("searchBtn1");
         var clearSearchBtn = document.getElementById("clearSearchBtn1");
@@ -166,7 +166,7 @@ function searchArch() { // функция поиска
         var url = "search?type=ipraarch&fam=" + fam + "&name=" + name + "&patr=" + patr
                 + "&reg=" + reg;
         // отправляем запрос
-        requ(url, "GET");
+        requ(url, "GET", null);
         // блокируем кнопки
         var searchBtn = document.getElementById("searchBtn6");
         var clearSearchBtn = document.getElementById("clearSearchBtn6");
@@ -187,12 +187,15 @@ function clearSearchArch() {    // очищаем поля поиска
     searchBtn.onclick();
 }
 
-function requ(url, method) { // формирование запроса
+function requ(url, method, body) { // формирование запроса
     var requ = null;
     requ = initRequest();
     requ.open(method, url, true);
     requ.onreadystatechange = callback;
-    requ.send(null);
+    if (body != null) {
+        requ.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    }
+    requ.send(body);
 }
 
 function initRequest() {
@@ -242,6 +245,9 @@ function parseMessages(responseXML) {   // преобразование полу
         var ipranoperechen = responseXML.getElementsByTagName("ipranoperechen")[0];
         var ipratpmpk = responseXML.getElementsByTagName("ipratpmpk")[0];
         var ipraotchet = responseXML.getElementsByTagName("ipraotchet")[0];
+        var tpmpkreqs = responseXML.getElementsByTagName("tpmpkreqs")[0];
+        var spromsu = responseXML.getElementsByTagName("spromsu")[0];
+        var iprasdlg = responseXML.getElementsByTagName("iprasdlg")[0];
         if (ipras != null) {    // основной список ИПРА
             var thead = document.getElementById("tabHead1");    // заголовок таблицы (объект в браузере)
             var tbody = document.getElementById("tabBody1");    // тело таблицы (объект в браузере)
@@ -331,7 +337,7 @@ function parseMessages(responseXML) {   // преобразование полу
                 if (ipratpmpk.childNodes.length > 1) {
                     for (loop = 1; loop < ipratpmpk.childNodes.length; loop++) {
                         var ipra = ipratpmpk.childNodes[loop];
-                        appendBody(tbody, ipra, selectIpra);    // отрисовываем строки в теле таблицы                       
+                        appendBody(tbody, ipra, check);    // отрисовываем строки в теле таблицы                       
                     }
                 }
             }
@@ -352,6 +358,48 @@ function parseMessages(responseXML) {   // преобразование полу
                 }
             }
             ipraotchet = null;
+        } else if (tpmpkreqs != null) { // сформированные запросы к ТПМПК
+            clearReqDlg("Запросы в ТПМПК:", 4);
+            if (tpmpkreqs.childNodes.length > 0) {
+                for (loop = 0; loop < tpmpkreqs.childNodes.length; loop++) {
+                    var tpmpkreq = tpmpkreqs.childNodes[loop];
+                    var n1 = tpmpkreq.getElementsByTagName("n")[0];
+                    var iptids = tpmpkreq.getElementsByTagName("iptids")[0];
+                    var tpmpkname = tpmpkreq.getElementsByTagName("tpmpkname")[0];
+                    var reqdate = tpmpkreq.getElementsByTagName("reqdate")[0];
+                    var childrencount = tpmpkreq.getElementsByTagName("childrencount")[0];
+                    appendTpmpkReq(n1.childNodes[0].nodeValue, iptids.childNodes[0].nodeValue, tpmpkname.childNodes[0].nodeValue,
+                            reqdate.childNodes[0].nodeValue, childrencount.childNodes[0].nodeValue);
+                }
+            }
+            appendReqDlgBtn("cancel", cancelReqDlg);
+        } else if (spromsu != null) {    // справочник ОМСУ
+            clearSelOmsu();
+            if (spromsu.childNodes.length > 0) {
+                for (loop = 0; loop < spromsu.childNodes.length; loop++) {
+                    var omsu = spromsu.childNodes[loop];
+                    var id = omsu.getElementsByTagName("id")[0];
+                    var name = omsu.getElementsByTagName("name")[0];
+                    appendSelOmsu(id.childNodes[0].nodeValue, name.childNodes[0].nodeValue);
+                }
+            }
+        } else if (iprasdlg != null) {    // основной список ИПРА
+            var thead = document.getElementById("dlgTabHead");    // заголовок таблицы (объект в браузере)
+            var tbody = document.getElementById("dlgTabBody");    // тело таблицы (объект в браузере)
+            clearTable(thead, tbody);
+            if (iprasdlg.childNodes.length > 0) {
+                var head = iprasdlg.childNodes[0];
+                appendHead(thead, head);    // отрисовываем заголовок
+                n = 1;
+                if (iprasdlg.childNodes.length > 1) {
+                    for (loop = 1; loop < iprasdlg.childNodes.length; loop++) {
+                        var ipra = iprasdlg.childNodes[loop];
+                        appendBody(tbody, ipra, selectDlgIpra);    // отрисовываем строки в теле таблицы
+                        n++;
+                    }
+                }
+            }
+            iprasdlg = null;
         }
     }
 }
@@ -486,5 +534,516 @@ function checkAll() {   // функция для галочки в заголо�
 }
 
 function formReq() { // реакция на кнопку "Сформировать запрос"
+    var dialog = document.getElementById("reqDlg");
+    dialog.showModal();
+    var checkedTr = document.getElementsByClassName("checked");
+    var url = "ipra2018new?action=formreqtotpmpk&id=";
+    for (loop = 0; loop < checkedTr.length; loop++) {
+        var tds = checkedTr[loop].getElementsByTagName("td");
+        url += tds[0].childNodes[0].nodeValue.trim() + ";";
+    }
+    requ(url, "GET", null);
+}
 
+function doNothing() {  // функция ничегонеделания
+    return false;
+}
+
+function clearReqDlg(str, tab) {    // очистка диалога запросов
+    var dlg = document.getElementById("reqDlg");
+    dlg.innerHTML = "";
+    var strong = document.createElement("strong");
+    strong.appendChild(document.createTextNode(str));
+    dlg.appendChild(strong);
+    dlg.appendChild(document.createElement("br"));
+    // сохраняем номер вкладки, с которой открыт диалог
+    var hid = document.createElement("input");
+    hid.type = "hidden";
+    hid.id = "tabN";
+    hid.value = tab;
+    dlg.appendChild(hid);
+}
+
+function appendTpmpkReq(n1, ids, tpmpkname, reqdate, childrencount) {   // добавление информации о сформированном запросе
+    var dialog = document.getElementById("reqDlg");
+    var div = document.createElement("div");
+    var iptids = document.createElement("input");
+    iptids.type = "hidden";
+    iptids.id = "iptids" + n1;
+    iptids.name = "iptids" + n1;
+    iptids.value = ids;
+    div.appendChild(iptids);
+    var string = "";
+    if ((childrencount == 1) || (childrencount >= 5)) {
+        string = "человек";
+    } else if ((childrencount > 1) && (childrencount < 5)) {
+        string = "человека";
+    }
+    div.appendChild(document.createTextNode(reqdate + " " + tpmpkname + " (" + childrencount + " " + string + ")  "));
+    // кнопка печати запроса
+    var printBtn = document.createElement("input");
+    printBtn.type = "button";
+    printBtn.id = "printBtn" + n1;
+    printBtn.value = "Выгрузить запрос";
+    printBtn.onclick = printTpmpkReq;
+    div.appendChild(printBtn);
+    dialog.appendChild(div);
+}
+
+function appendReqDlgBtn(type, func) { // добавление в диалог запросов кнопки     
+    var div = document.getElementById("divDialogBtn");
+    if (div == null) {  // если ещё нет мест для кнопок - создаём
+        var dlg = document.getElementById("reqDlg");
+        div = document.createElement("div");
+        div.id = "divDialogBtn";
+        div.style = "margin-top: 15px; margin-bottom: 15px;";
+        var tbl = document.createElement("table");
+        tbl.id = "btnTbl";
+        tbl.className = "no";
+        var tr = document.createElement("tr");
+        var td1 = document.createElement("td");
+        td1.style = "text-align: left";
+        var td2 = document.createElement("td");
+        var td3 = document.createElement("td");
+        td3.style = "text-align: right";
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tbl.appendChild(tr);
+        div.appendChild(tbl);
+        dlg.appendChild(div);
+    }
+    var tbl = document.getElementById("btnTbl");
+    // создаём кнопку
+    var btn = document.createElement("a");
+    btn.className = "greybtn";
+    btn.onclick = func;
+    var img = document.createElement("img");
+    var td;
+    if (type == "cancel") { // "Отмена"
+        btn.id = "cancelBtn";
+        btn.name = "cancelBtn";
+        img.id = "cancelImg";
+        img.name = "cancelImg";
+        img.src = "img/delete.png";
+        img.width = "17";
+        img.style = "padding-right: 1px;";
+        btn.appendChild(img);
+        btn.appendChild(document.createTextNode("Отмена"));
+        td = tbl.childNodes[0].childNodes[2];
+    } else if (type == "save") {    // "Сохранить"
+        btn.id = "saveBtn";
+        btn.name = "saveBtn";
+        img.id = "saveImg";
+        img.name = "saveImg";
+        img.src = "img/save.png";
+        img.width = "17";
+        img.style = "padding-right: 1px;";
+        btn.appendChild(img);
+        btn.appendChild(document.createTextNode("Сохранить"));
+        td = tbl.childNodes[0].childNodes[0];
+    }
+    // вставляем кнопку на место
+    td.appendChild(btn);
+}
+
+function cancelReqDlg() {    // закрытие диалога запросов
+    var dialog = document.getElementById("reqDlg");
+    dialog.close();
+    var tab = document.getElementById("tabN");
+    var tabN = 1;
+    if (tab != null) {
+        if (tab.value != "") {
+            tabN = tab.value;
+        }
+    }
+    // обновление открытой страницы
+    window.location = "ipra2018new?action=openlist&tab=" + tabN;
+}
+
+function printTpmpkReq() {  // выгрузить запрос в ТПМПК
+    var n = this.id.substring(8);
+    var iptids = document.getElementById("iptids" + n);
+    if (iptids != null) {
+        var url = "print?type=tpmpkreq&ipt=" + iptids.value;
+        window.open(url, '_blank');
+    }
+}
+
+function addReqDo() {   // открыть диалог запроса из ОМСУ в ДО
+    var dlg = document.getElementById("reqDlg");
+    dlg.showModal();
+    clearReqDlg("Добавить запрос на приказ из ОМСУ в ДО", 2);
+    dlg.appendChild(document.createElement("br"));
+    dlg.appendChild(document.createTextNode("ОМСУ: "));
+    // список ОМСУ
+    var selOmsu = document.createElement("select");
+    selOmsu.id = "selOmsu";
+    selOmsu.style = "height: 20px;";
+    dlg.appendChild(selOmsu);
+    // запрос к серверу на список ОМСУ
+    var url = "search?type=omsu";
+    requ(url, "GET", null);
+    dlg.appendChild(document.createElement("br"));
+    var tbl = document.createElement("table");
+    tbl.className = "noborder";
+    var tr1 = document.createElement("tr");
+    var td11 = document.createElement("td");
+    td11.appendChild(document.createTextNode("Исходящий номер "));
+    var td12 = document.createElement("td");
+    var inpIshN = document.createElement("input");
+    inpIshN.type = "text";
+    inpIshN.id = "ishN";
+    inpIshN.style = "width: 150px;";
+    td12.appendChild(inpIshN);
+    var td13 = document.createElement("td");
+    td13.appendChild(document.createTextNode(" от "));
+    var inpIshD = document.createElement("input");
+    inpIshD.type = "date";
+    inpIshD.id = "ishD";
+    inpIshD.style = "width: 150px; height: 20px;";
+    td13.appendChild(inpIshD);
+    tr1.appendChild(td11);
+    tr1.appendChild(td12);
+    tr1.appendChild(td13);
+    tbl.appendChild(tr1);
+    var tr2 = document.createElement("tr");
+    var td21 = document.createElement("td");
+    td21.appendChild(document.createTextNode("Входящий номер "));
+    var td22 = document.createElement("td");
+    var inpVhN = document.createElement("input");
+    inpVhN.type = "text";
+    inpVhN.id = "vhN";
+    inpVhN.style = "width: 150px;";
+    td22.appendChild(inpVhN);
+    var td23 = document.createElement("td");
+    td23.appendChild(document.createTextNode(" от "));
+    var inpVhD = document.createElement("input");
+    inpVhD.type = "date";
+    inpVhD.id = "vhD";
+    inpVhD.style = "width: 150px; height: 20px;";
+    td23.appendChild(inpVhD);
+    tr2.appendChild(td21);
+    tr2.appendChild(td22);
+    tr2.appendChild(td23);
+    tbl.appendChild(tr2);
+    dlg.appendChild(tbl);
+    var div = document.createElement("div");
+    div.id = "divIpras";
+    div.appendChild(document.createTextNode("ИПРА ребёнка-инвалида: "));
+    div.style = "margin-top: 15px; margin-bottom: 15px;"
+    var btn = document.createElement("a");
+    btn.className = "greybtn";
+    btn.id = "searchBtn";
+    btn.name = "searchBtn";
+    btn.onclick = openDlg;
+    var img = document.createElement("img");
+    img.id = "addImg";
+    img.name = "addImg";
+    img.src = "img/plus.png";
+    img.width = "16";
+    img.style = "margin-right: 3px;";
+    btn.appendChild(img);
+    btn.appendChild(document.createTextNode("Добавить"));
+    div.appendChild(btn);
+    div.appendChild(document.createElement("br"));
+    div.appendChild(document.createElement("br"));
+    dlg.appendChild(div);
+    appendReqDlgBtn("save", saveReqDo);
+    appendReqDlgBtn("cancel", cancelReqDlg);
+}
+
+function clearSelOmsu() {
+    var selOmsu = document.getElementById("selOmsu");
+    if (selOmsu != null) {
+        selOmsu.innerHTML = "";
+    }
+}
+
+function appendSelOmsu(id, name) {
+    var selOmsu = document.getElementById("selOmsu");
+    if (selOmsu != null) {
+        var opt = document.createElement("option");
+        opt.value = id;
+        opt.appendChild(document.createTextNode(name));
+        selOmsu.appendChild(opt);
+    }
+}
+
+function addReqCenter() {   // открыть диалог запроса ОМСУ в Центр
+    var dlg = document.getElementById("reqDlg");
+    dlg.showModal();
+    clearReqDlg("Добавить запрос на разработку перечня мероприятий из ОМСУ в ОЦППМСП", 2);
+    dlg.appendChild(document.createElement("br"));
+    dlg.appendChild(document.createTextNode("ОМСУ: "));
+    // список ОМСУ
+    var selOmsu = document.createElement("select");
+    selOmsu.id = "selOmsu";
+    selOmsu.style = "height: 20px;";
+    dlg.appendChild(selOmsu);
+    // запрос к серверу на список ОМСУ
+    var url = "search?type=omsu";
+    requ(url, "GET", null);
+    dlg.appendChild(document.createElement("br"));
+    var tbl = document.createElement("table");
+    tbl.className = "noborder";
+    var tr1 = document.createElement("tr");
+    var td11 = document.createElement("td");
+    td11.appendChild(document.createTextNode("Исходящий номер "));
+    var td12 = document.createElement("td");
+    var inpIshN = document.createElement("input");
+    inpIshN.type = "text";
+    inpIshN.id = "ishN";
+    inpIshN.style = "width: 150px;";
+    td12.appendChild(inpIshN);
+    var td13 = document.createElement("td");
+    td13.appendChild(document.createTextNode(" от "));
+    var inpIshD = document.createElement("input");
+    inpIshD.type = "date";
+    inpIshD.id = "ishD";
+    inpIshD.style = "width: 150px; height: 20px;";
+    td13.appendChild(inpIshD);
+    tr1.appendChild(td11);
+    tr1.appendChild(td12);
+    tr1.appendChild(td13);
+    tbl.appendChild(tr1);
+    var tr2 = document.createElement("tr");
+    var td21 = document.createElement("td");
+    td21.appendChild(document.createTextNode("Дата входящего "));
+    var td22 = document.createElement("td");
+    var inpVhD = document.createElement("input");
+    inpVhD.type = "date";
+    inpVhD.id = "vhD";
+    inpVhD.style = "width: 150px; height: 20px;";
+    td22.appendChild(inpVhD);
+    var td23 = document.createElement("td");
+    tr2.appendChild(td21);
+    tr2.appendChild(td22);
+    tr2.appendChild(td23);
+    tbl.appendChild(tr2);
+    dlg.appendChild(tbl);
+    var div = document.createElement("div");
+    div.id = "divIpras";
+    div.appendChild(document.createTextNode("ИПРА ребёнка-инвалида: "));
+    div.style = "margin-top: 15px; margin-bottom: 15px;"
+    var btn = document.createElement("a");
+    btn.className = "greybtn";
+    btn.id = "searchBtn";
+    btn.name = "searchBtn";
+    btn.onclick = openDlg;
+    var img = document.createElement("img");
+    img.id = "addImg";
+    img.name = "addImg";
+    img.src = "img/plus.png";
+    img.width = "16";
+    img.style = "margin-right: 3px;";
+    btn.appendChild(img);
+    btn.appendChild(document.createTextNode("Добавить"));
+    div.appendChild(btn);
+    div.appendChild(document.createElement("br"));
+    div.appendChild(document.createElement("br"));
+    dlg.appendChild(div);
+    appendReqDlgBtn("save", saveReqCenter);
+    appendReqDlgBtn("cancel", cancelReqDlg);
+}
+
+function searchChild() {    // поиск ребёнка
+    var fam = document.getElementById("fam").value;
+    var name = document.getElementById("nam").value;
+    var patr = document.getElementById("patr").value;
+    var url = "search?type=ipradlg&fam=" + fam + "&name=" + name + "&patr=" + patr;
+    requ(url, "GET", null);
+}
+
+function saveReqDo() {    // сохранить запрос из ОМСУ в ДО
+    if (validReqDo()) {
+        // составляем тело запроса на сохранение
+        var body = "action=savereqdo";
+        var selOmsu = document.getElementById("selOmsu");
+        body += "&omsu=" + selOmsu.value;
+        var ishN = document.getElementById("ishN");
+        body += "&ishn=" + ishN.value;
+        var ishD = document.getElementById("ishD");
+        body += "&ishd=" + ishD.value;
+        var vhN = document.getElementById("vhN");
+        body += "&vhn=" + vhN.value;
+        var vhD = document.getElementById("vhD");
+        body += "&vhd=" + vhD.value;
+        body += "&ipraids=";
+        var divs = document.getElementsByTagName("div");
+        for (loop = 0; loop < divs.length; loop++) {
+            if (divs[loop].id.substring(0, 11) == "divSelected") {
+                body += divs[loop].id.substring(11) + ";";
+            }
+        }
+        // отправляем
+        requ("ipra2018new", "POST", body);
+    }
+}
+
+function validReqDo() { // проверка заполнения полей в запросе к ДО
+    var result = true;
+    // выбираем все поля
+    var inp = document.getElementsByTagName("input");
+    var sel = document.getElementsByTagName("select");
+    var div = document.getElementsByTagName("div");
+    // очищаем следы предыдущей проверки
+    for (loop = 0; loop < inp.length; loop++) {
+        if (inp[loop].classList.contains("wrong")) {
+            inp[loop].classList.remove("wrong");
+        }
+    }
+    for (loop = 0; loop < sel.length; loop++) {
+        if (sel[loop].classList.contains("wrong")) {
+            sel[loop].classList.remove("wrong");
+        }
+    }
+    for (loop = 0; loop < div.length; loop++) {
+        if (div[loop].classList.contains("wrong")) {
+            div[loop].classList.remove("wrong");
+        }
+    }
+    // проверяем, чтобы все необходимые поля были заполнены
+    var ishN = document.getElementById("ishN");
+    if (ishN.value == "") {
+        result = false;
+        ishN.className = "wrong";
+    }
+    var ishD = document.getElementById("ishD");
+    if ((ishD.value == "") || (ishD.value.length > 10)) {
+        result = false;
+        ishD.className = "wrong";
+    } 
+    var vhN = document.getElementById("vhN");
+    if (vhN.value == "") {
+        result = false;
+        vhN.className = "wrong";
+    }
+    var vhD = document.getElementById("vhD");
+    if ((vhD.value == "") || (vhD.value.length > 10)) {
+        result = false;
+        vhD.className = "wrong";
+    } 
+    
+    var divs = document.getElementsByTagName("div");
+    var flag = false;
+    for (loop = 0; loop < divs.length; loop++) {
+        if (divs[loop].id.substring(0, 11) == "divSelected") {
+            flag = true;
+        }
+    }
+    if (!flag){
+        result = false;
+        document.getElementById("divIpras").className = "wrong";
+    }
+    return result;
+}
+
+function openDlg() {
+    var searchDlg = document.getElementById("searchDlg");
+    if (searchDlg != null) {
+        searchDlg.showModal();
+        searchChild();
+    }
+}
+
+function cancelSearchDlg() {
+    var searchDlg = document.getElementById("searchDlg");
+    if (searchDlg != null) {
+        searchDlg.close();
+        document.getElementById("fam").value = "";
+        document.getElementById("nam").value = "";
+        document.getElementById("patr").value = "";
+        document.getElementById("dlgTabBody").innerHTML = "";
+    }
+}
+
+function saveReqCenter() {  // сохранить запрос из ОМСУ в ОЦППМСП
+    if (validReqCenter()) {
+        // составляем тело запроса на сохранение
+        var body = "action=savereqcenter";
+        var selOmsu = document.getElementById("selOmsu");
+        body += "&omsu=" + selOmsu.value;
+        var ishN = document.getElementById("ishN");
+        body += "&ishn=" + ishN.value;
+        var ishD = document.getElementById("ishD");
+        body += "&ishd=" + ishD.value;        
+        var vhD = document.getElementById("vhD");
+        body += "&vhd=" + vhD.value;
+        body += "&ipraids=";
+        var divs = document.getElementsByTagName("div");
+        for (loop = 0; loop < divs.length; loop++) {
+            if (divs[loop].id.substring(0, 11) == "divSelected") {
+                body += divs[loop].id.substring(11) + ";";
+            }
+        }
+        // отправляем
+        requ("ipra2018new", "POST", body);
+    }
+}
+
+function validReqCenter() { // проверка заполнения полей в запросе к ДО
+    var result = true;
+    // выбираем все поля
+    var inp = document.getElementsByTagName("input");
+    var sel = document.getElementsByTagName("select");
+    var div = document.getElementsByTagName("div");
+    // очищаем следы предыдущей проверки
+    for (loop = 0; loop < inp.length; loop++) {
+        if (inp[loop].classList.contains("wrong")) {
+            inp[loop].classList.remove("wrong");
+        }
+    }
+    for (loop = 0; loop < sel.length; loop++) {
+        if (sel[loop].classList.contains("wrong")) {
+            sel[loop].classList.remove("wrong");
+        }
+    }
+    for (loop = 0; loop < div.length; loop++) {
+        if (div[loop].classList.contains("wrong")) {
+            div[loop].classList.remove("wrong");
+        }
+    }
+    // проверяем, чтобы все необходимые поля были заполнены
+    var ishN = document.getElementById("ishN");
+    if (ishN.value == "") {
+        result = false;
+        ishN.className = "wrong";
+    }
+    var ishD = document.getElementById("ishD");
+    if ((ishD.value == "") || (ishD.value.length > 10)) {
+        result = false;
+        ishD.className = "wrong";
+    } 
+    var vhD = document.getElementById("vhD");
+    if ((vhD.value == "") || (vhD.value.length > 10)) {
+        result = false;
+        vhD.className = "wrong";
+    } 
+    
+    var divs = document.getElementsByTagName("div");
+    var flag = false;
+    for (loop = 0; loop < divs.length; loop++) {
+        if (divs[loop].id.substring(0, 11) == "divSelected") {
+            flag = true;
+        }
+    }
+    if (!flag){
+        result = false;
+        document.getElementById("divIpras").className = "wrong";
+    }
+    return result;
+}
+
+function selectDlgIpra() {
+    var searchDlg = document.getElementById("searchDlg");
+    searchDlg.close();
+    var divIpras = document.getElementById("divIpras");
+    if (divIpras != null) {
+        var divI = document.createElement("div");
+        divI.id = "divSelected" + this.childNodes[0].childNodes[0].nodeValue;
+        divI.appendChild(document.createTextNode("№" + this.childNodes[6].childNodes[0].nodeValue + " " + this.childNodes[1].childNodes[0].nodeValue + " " +
+                this.childNodes[2].childNodes[0].nodeValue + " " + this.childNodes[3].childNodes[0].nodeValue));
+        divIpras.appendChild(divI);
+    }
 }

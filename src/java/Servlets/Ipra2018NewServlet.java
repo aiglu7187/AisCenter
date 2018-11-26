@@ -9,12 +9,15 @@ import Entities.ChildStatus;
 import Entities.Children;
 import Entities.Ipra18N;
 import Entities.Ipra18PrikazN;
+import Entities.IpraEduConditionN;
 import Entities.IpraPerechenN;
 import Entities.IpraPerechenTpmpk;
+import Entities.IpraeducondType;
 import Entities.IshCorr;
 import Entities.Kalendar;
 import Entities.LoginLog;
 import Entities.Nom;
+import Entities.Pmpk;
 import Entities.SprCorr;
 import Entities.SprIshType;
 import Entities.SprMse;
@@ -23,17 +26,21 @@ import Entities.Users;
 import Entities.VhCorr;
 import Other.Correspond;
 import Other.CorrespondComparator;
+import Other.IpraTpmpkRequestNew;
 import Other.RegionComparator;
 import Sessions.ChildStatusFacade;
 import Sessions.ChildrenFacade;
 import Sessions.Ipra18NFacade;
 import Sessions.Ipra18PrikazNFacade;
+import Sessions.IpraEduConditionNFacade;
 import Sessions.IpraPerechenNFacade;
 import Sessions.IpraPerechenTpmpkFacade;
+import Sessions.IpraeducondTypeFacade;
 import Sessions.IshCorrFacade;
 import Sessions.KalendarFacade;
 import Sessions.LoginLogFacade;
 import Sessions.NomFacade;
+import Sessions.PmpkFacade;
 import Sessions.SprCorrFacade;
 import Sessions.SprIshTypeFacade;
 import Sessions.SprMseFacade;
@@ -109,6 +116,12 @@ public class Ipra2018NewServlet extends HttpServlet {
     VhCorrFacade vhCorrFacade = new VhCorrFacade();
     @EJB
     SprCorrFacade sprCorrFacade = new SprCorrFacade();
+    @EJB
+    IpraeducondTypeFacade ipraeducondTypeFacade = new IpraeducondTypeFacade();
+    @EJB
+    IpraEduConditionNFacade ipraEduConditionNFacade = new IpraEduConditionNFacade();
+    @EJB
+    PmpkFacade pmpkFacade = new PmpkFacade();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -154,11 +167,25 @@ public class Ipra2018NewServlet extends HttpServlet {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
             }
+            // удаляем аттрибут с номером вкладки (для замены)
+            try {
+                session.removeAttribute("tab");
+            } catch (Exception ex) {
+            }
             // список районов для поиска
             List<SprRegion> regions = sprRegionFacade.findNoCenter();
             Collections.sort(regions, new RegionComparator());
             // подставляем список районов в соответствующий атрибут сессии
             session.setAttribute("regions", regions);
+            // смотрим номер вкладки в запросе
+            String tabS = request.getParameter("tab");
+            Integer tab = 0;
+            try {
+                tab = Integer.parseInt(tabS);
+            } catch (Exception ex) {
+            }
+            // пишем в атрибут номер вкладки, которую нужно открыть
+            session.setAttribute("tab", tab);
             // формируем адрес страницы
             userPath = "/ipra/nipra18list";
             url = "/WEB-INF/pages" + userPath + ".jsp";
@@ -292,7 +319,7 @@ public class Ipra2018NewServlet extends HttpServlet {
                     List<IshCorr> ishCorr = ishCorrFacade.findByTypeNoNomer(type, ip.getIpraperechennId().getIpra18Id());
                     for (IshCorr ic : ishCorr) {
                         sb.append("<ipra>");
-                        sb.append("<id>").append(ip.getIpraperechennId().getIpra18Id().getIpra18Id()).append("</id>");
+                        sb.append("<id>").append(ip.getIpraperechentpmpkId()).append("</id>");
                         sb.append("<check>").append("check").append(ip.getIpraperechennId().getIpra18Id().getIpra18Id()).append("</check>");
                         sb.append("<fam>").append(ip.getIpraperechennId().getIpra18Id().getChildId().getChildFam()).append("</fam>");
                         sb.append("<name>").append(ip.getIpraperechennId().getIpra18Id().getChildId().getChildName()).append("</name>");
@@ -602,7 +629,6 @@ public class Ipra2018NewServlet extends HttpServlet {
                 }
                 // устанавливаем атрибут сессии 
                 session.setAttribute("prikaz", prikaz);
-                
                 // проверяем, есть ли перечни мероприятий или "заготовка"
                 List<IpraPerechenN> perechenList = ipraPerechenNFacade.findByIpra18(ipra);
                 // очищаем атрибуты сессии для перечней
@@ -612,6 +638,116 @@ public class Ipra2018NewServlet extends HttpServlet {
                 }
                 // устанавливаем атрибут сессии 
                 session.setAttribute("perechenList", perechenList);
+                // типы мероприятий
+                List<IpraeducondType> types = ipraeducondTypeFacade.findAll();
+                try {
+                    session.removeAttribute("types");
+                } catch (Exception ex) {
+                }
+                session.setAttribute("types", types);
+
+                // ищем условия обучения (для всех перечней)
+                List<IpraEduConditionN> conditions = new ArrayList<>();
+                for (IpraPerechenN perechen : perechenList) {
+                    conditions.addAll(ipraEduConditionNFacade.findByIpraPerechen(perechen));
+                }
+                try {
+                    session.removeAttribute("conditions");
+                } catch (Exception ex) {
+                }
+                session.setAttribute("conditions", conditions);
+
+                // пробуем найти рекомендации ПМПК
+                List<Pmpk> pmpkList = pmpkFacade.findPmpkByChild(ipra.getChildId());
+                String obr = "";
+                if (!pmpkList.isEmpty()) {
+                    Date prDate = pmpkList.get(0).getPrclId().getPriyomId().getPriyomDate();
+                    if (pmpkList.get(0).getSprobrId() != null) {
+                        obr = pmpkList.get(0).getSprobrId().getSprobrFullname();
+                    }
+                    if (pmpkList.get(0).getSprobrvarId() != null) {
+                        obr += " (" + pmpkList.get(0).getSprobrvarId().getSprobrvarName() + ")";
+                    }
+                    for (Pmpk pmpk : pmpkList) {
+                        if (prDate.before(pmpk.getPrclId().getPriyomId().getPriyomDate())) {
+                            prDate = pmpk.getPrclId().getPriyomId().getPriyomDate();
+                            if (pmpk.getSprobrId() != null) {
+                                obr = pmpk.getSprobrId().getSprobrFullname();
+                            }
+                            if (pmpk.getSprobrvarId() != null) {
+                                obr += " (" + pmpk.getSprobrvarId().getSprobrvarName() + ")";
+                            }
+                        }
+                    }
+                }
+                try {
+                    session.removeAttribute("obr");
+                } catch (Exception ex) {
+                }
+                session.setAttribute("obr", obr);
+
+                // расчёт ступеней обучения
+                Date dr = ipra.getChildId().getChildDr();
+                Calendar drC = Calendar.getInstance();
+                drC.setTime(dr);
+                // дошкольное образование
+                int year = drC.get(Calendar.YEAR) + 7;
+                Calendar dateDO = Calendar.getInstance();
+                dateDO.set(Calendar.DATE, 31);
+                dateDO.set(Calendar.MONTH, 4);
+                dateDO.set(Calendar.YEAR, year);
+                // начальное образование (2 варианта в зависимости от программы) 
+                int year1 = year + 4;
+                Calendar dateNOO1 = Calendar.getInstance();
+                dateNOO1.set(Calendar.DATE, 31);
+                dateNOO1.set(Calendar.MONTH, 4);
+                dateNOO1.set(Calendar.YEAR, year1);
+                int year2 = year + 5;
+                Calendar dateNOO2 = Calendar.getInstance();
+                dateNOO2.set(Calendar.DATE, 31);
+                dateNOO2.set(Calendar.MONTH, 4);
+                dateNOO2.set(Calendar.YEAR, year2);
+                // основное образование (2 варианта в зависимости от НОО)
+                year1 += 5;
+                Calendar dateOOO1 = Calendar.getInstance();
+                dateOOO1.set(Calendar.DATE, 31);
+                dateOOO1.set(Calendar.MONTH, 4);
+                dateOOO1.set(Calendar.YEAR, year1);
+                year2 += 5;
+                Calendar dateOOO2 = Calendar.getInstance();
+                dateOOO2.set(Calendar.DATE, 31);
+                dateOOO2.set(Calendar.MONTH, 4);
+                dateOOO2.set(Calendar.YEAR, year2);
+                // среднее образование
+                year1 += 2;
+                Calendar dateSOO1 = Calendar.getInstance();
+                dateSOO1.set(Calendar.DATE, 31);
+                dateSOO1.set(Calendar.MONTH, 4);
+                dateSOO1.set(Calendar.YEAR, year1);
+                year2 += 2;
+                Calendar dateSOO2 = Calendar.getInstance();
+                dateSOO2.set(Calendar.DATE, 31);
+                dateSOO2.set(Calendar.MONTH, 4);
+                dateSOO2.set(Calendar.YEAR, year2);
+
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+                try {
+                    session.removeAttribute("datedo");
+                } catch (Exception ex) {
+                }
+                session.setAttribute("datedo", dateFormat.format(dateDO.getTime()));
+                try {
+                    session.removeAttribute("var1");
+                } catch (Exception ex) {
+                }
+                session.setAttribute("datevar1", "НОО - " + dateFormat.format(dateNOO1.getTime()) + ", ООО - "
+                        + dateFormat.format(dateOOO1.getTime()) + ", СОО - " + dateFormat.format(dateSOO1.getTime()));
+                try {
+                    session.removeAttribute("var2");
+                } catch (Exception ex) {
+                }
+                session.setAttribute("datevar2", "НОО - " + dateFormat.format(dateNOO2.getTime()) + ", ООО - "
+                        + dateFormat.format(dateOOO2.getTime()) + ", СОО - " + dateFormat.format(dateSOO2.getTime()));
 
                 // формируем адрес страницы
                 userPath = "/ipra/nipra18view";
@@ -622,6 +758,68 @@ public class Ipra2018NewServlet extends HttpServlet {
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
+            }
+        } else if (action.equals("formreqtotpmpk")) {
+            String idVS = request.getParameter("id");
+            String[] idV = idVS.split(";");
+            List<IpraPerechenTpmpk> perechenTpmpkList = new ArrayList<>();
+            for (String id : idV) {
+                try {
+                    IpraPerechenTpmpk perechenTpmpk = ipraPerechenTpmpkFacade.findById(Integer.parseInt(id));
+                    perechenTpmpkList.add(perechenTpmpk);
+                } catch (Exception ex) {
+                }
+            }
+            List<IpraTpmpkRequestNew> requests = new ArrayList<>();
+            for (IpraPerechenTpmpk pt : perechenTpmpkList) {
+                boolean flag = false;
+                for (IpraTpmpkRequestNew req : requests) {
+                    if (req.getSprOtherPmpk().equals(pt.getSprotherpmpkId())) {
+                        if (req.getReqDate().equals(pt.getIpraperechennId().getIshcorrId().getIshcorrD())) {
+                            flag = true;
+                            List<IpraPerechenTpmpk> newIpraPerechenTpmpkList = req.getIpraPerechenTpmpkList();
+                            newIpraPerechenTpmpkList.add(pt);
+                            req.setIpraPerechenTpmpkList(newIpraPerechenTpmpkList);
+                        }
+                    }
+
+                }
+                if (!flag) {
+                    IpraTpmpkRequestNew newReq = new IpraTpmpkRequestNew();
+                    newReq.setSprOtherPmpk(pt.getSprotherpmpkId());
+                    newReq.setReqDate(pt.getIpraperechennId().getIshcorrId().getIshcorrD());
+                    List<IpraPerechenTpmpk> newIpraPerechenTpmpkList = new ArrayList<>();
+                    newIpraPerechenTpmpkList.add(pt);
+                    newReq.setIpraPerechenTpmpkList(newIpraPerechenTpmpkList);
+                    requests.add(newReq);
+                }
+            }
+            if (!requests.isEmpty()) {
+                SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy");
+                sb.append("<tpmpkreqs>");
+                int i = 0;
+                for (IpraTpmpkRequestNew req : requests) {
+                    String formatDate = format.format(req.getReqDate());
+                    sb.append("<tpmpkreq>");
+                    i++;
+                    sb.append("<n>").append(i).append("</n>");
+                    List<IpraPerechenTpmpk> ipraPerechenTpmpkList = req.getIpraPerechenTpmpkList();
+                    String iptids = "";
+                    for (IpraPerechenTpmpk it : ipraPerechenTpmpkList) {
+                        iptids += it.getIpraperechentpmpkId() + ";";
+                    }
+                    sb.append("<iptids>").append(iptids).append("</iptids>");
+                    sb.append("<tpmpkname>").append(req.getSprOtherPmpk().getSprotherpmpkShname()).append("</tpmpkname>");
+                    sb.append("<reqdate>").append(formatDate).append("</reqdate>");
+                    sb.append("<childrencount>").append(req.getIpraPerechenTpmpkList().size()).append("</childrencount>");
+                    sb.append("</tpmpkreq>");
+                }
+                sb.append("</tpmpkreqs>");
+                response.setContentType("text/xml; charset=windows-1251");
+                response.setHeader("Cache-Control", "no-cache");
+                response.getWriter().write(sb.toString());
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         }
     }
@@ -663,7 +861,7 @@ public class Ipra2018NewServlet extends HttpServlet {
 
         // запрашиваемое действие
         String action = params.get("action")[0];
-        if (action.equals("save")) {     // сохранение
+        if (action.equals("save")) {     // сохранение ИПРА
             Ipra18N ipra = null;
             String ipraIdS = null;
             try {
@@ -757,7 +955,6 @@ public class Ipra2018NewServlet extends HttpServlet {
             Date ipraDateexp = null;
             try {
                 ipraDateexp = format.parse(ipraDateexpS);
-
             } catch (ParseException ex) {
                 Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -769,12 +966,15 @@ public class Ipra2018NewServlet extends HttpServlet {
             Date ipraDateok = null;
             try {
                 ipraDateok = format.parse(ipraDateokS);
-
             } catch (ParseException ex) {
                 Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
+            Date oldDateOk = null;
             if (ipraDateok != null) {
-                ipra.setIpra18Dateok(ipraDateok);
+                if (!ipraDateok.equals(ipra.getIpra18Dateok())) {
+                    oldDateOk = ipra.getIpra18Dateok();
+                    ipra.setIpra18Dateok(ipraDateok);
+                }
             }
             // бюро МСЭ    
             String mseIdS = params.get("mseId")[0];
@@ -798,10 +998,12 @@ public class Ipra2018NewServlet extends HttpServlet {
             } catch (Exception ex) {
             }
             Date ipraVhToDOD = null;
-            try {
-                ipraVhToDOD = format.parse(ipraVhToDODS);
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018NewServlet.class.getName()).log(Level.SEVERE, null, ex);
+            if (ipraVhToDODS != null) {
+                try {
+                    ipraVhToDOD = format.parse(ipraVhToDODS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018NewServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             ipra.setIpra18VhtodoD(ipraVhToDOD);
 
@@ -849,13 +1051,135 @@ public class Ipra2018NewServlet extends HttpServlet {
                 ipra.setIpra18Otchdo(otchDo);
             }
 
+            // дата приказа ДО
+            String prikazDS = null;
+            try {
+                prikazDS = params.get("prikazD")[0];
+            } catch (Exception ex) {
+            }
+            Date prikazD = null;
+            if (prikazDS != null) {
+                try {
+                    prikazD = format.parse(prikazDS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018NewServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            // номер приказа ДО
+            String prikazN = null;
+            try {
+                prikazN = params.get("prikazN")[0];
+            } catch (Exception ex) {
+            }
+            // пробуем найти приказ
+            Ipra18PrikazN prikaz = null;
+            try {
+                prikaz = ipra18PrikazNFacade.findByIpra(ipra);
+            } catch (Exception ex) {
+            }
+            if (prikaz != null) {    // если он существует
+                if (prikazD != null) {   // дата от клиента пришла корректная
+                    prikaz.setIpra18prikazD(prikazD);
+                }
+                if (prikazN != null) {   // номер пришёл от клиента
+                    prikaz.setIpra18prikazN(prikazN);
+                }
+                ipra18PrikazNFacade.edit(prikaz);
+            }
+
+            // перечни мероприятий
+            List<String> perechenIdS = new ArrayList<>();   // список ИД перечней
+            // ищем в переданных клиентом параметров ИД перечней
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                String par = entry.getKey();
+                String[] val = entry.getValue();
+                if (par.startsWith("perechenId_")) {
+                    perechenIdS.add(val[0]);
+                }
+            }
+            for (String perechenId : perechenIdS) {
+                IpraPerechenN perechen = null;
+                try {   // ищем перечень по ИД
+                    perechen = ipraPerechenNFacade.findById(Integer.parseInt(perechenId));
+                } catch (Exception ex) {
+                }
+                if (perechen != null) {
+                    // проставляем дату изменения и пользователя
+                    perechen.setDateUpd(curDate);
+                    perechen.setUserId(user);
+                    List<String> condList = new ArrayList<>();
+                    List<String> datecondList = new ArrayList<>();
+                    for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                        String par = entry.getKey();
+                        String[] val = entry.getValue();
+                        if (par.startsWith("cond") && (par.endsWith("_" + perechenId))) {
+                            condList.add(par);
+                        } else if (par.startsWith("datecond") && (par.endsWith("_" + perechenId))) {
+                            datecondList.add(par);
+                        }
+                    }
+                    // предварительно удалить все условия обучения и мероприятия
+                    List<IpraEduConditionN> conditionList = ipraEduConditionNFacade.findByIpraPerechen(perechen);
+                    for (IpraEduConditionN cond : conditionList) {
+                        ipraEduConditionNFacade.remove(cond);
+                    }
+
+                    for (String cond : condList) {
+                        String n = cond.substring(4);
+                        String condVal = "";
+                        try {
+                            condVal = params.get(cond)[0];
+                        } catch (Exception ex) {
+                        }
+                        if (!condVal.equals("")) {
+                            for (String datecond : datecondList) {
+                                if (datecond.equals("datecond" + n)) {
+                                    String datecondVal = "";
+                                    try {
+                                        datecondVal = params.get(datecond)[0];
+                                    } catch (Exception ex) {
+                                    }
+                                    if (!datecondVal.equals("")) {
+                                        Date date = null;
+                                        try {
+                                            date = format.parse(datecondVal);
+                                        } catch (ParseException ex) {
+                                            Logger.getLogger(Ipra2018NewServlet.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                        if (date != null) {
+                                            String typeIdS = cond.substring(4, cond.indexOf("_"));
+                                            IpraeducondType ipraeducondType = null;
+                                            try {
+                                                ipraeducondType = ipraeducondTypeFacade.findById(Integer.parseInt(typeIdS));
+                                            } catch (Exception ex) {
+                                            }
+                                            if (ipraeducondType != null) {
+                                                IpraEduConditionN ipraEduCondition = new IpraEduConditionN();
+                                                ipraEduCondition.setIpraeducondContext(condVal);
+                                                ipraEduCondition.setIpraeducondDate(date);
+                                                ipraEduCondition.setIpraeducondtypeId(ipraeducondType);
+                                                ipraEduCondition.setIpraperechennId(perechen);
+                                                ipraEduConditionNFacade.create(ipraEduCondition);
+                                                ipraPerechenNFacade.edit(perechen);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             // статус (1 - в работе, 0 - архив)
             String statusS = "";
             Integer status = 1;
             try {
                 statusS = params.get("status")[0];
-                status = Integer.parseInt(statusS);
             } catch (Exception ex) {
+            }
+            if (statusS != null) {
+                status = Integer.parseInt(statusS);
             }
             ipra.setIpra18Status(status);
 
@@ -870,35 +1194,45 @@ public class Ipra2018NewServlet extends HttpServlet {
                 } else {
                     ipra18NFacade.edit(ipra);
                 }
-
-                // проставляем статус ДИ и ТР детям
                 List<ChildStatus> chstList = childStatusFacade.findByChildAct(child);
-                Boolean isDI = false;
-                Boolean isTR = false;
-                // проверяем, есть ли среди действующих статусов ДИ и ТР
-                for (ChildStatus chst : chstList) {
-                    if (chst.getSprstatId().getSprstatInv() == 1) { // есть ДИ
-                        isDI = true;
-                        chst.setChildstatusDateK(ipra.getIpra18Dateok());   // устанавливаем срок в соответствии с ИПРА
-                        childStatusFacade.edit(chst);
-                    } else if (chst.getSprstatId().equals(sprStatFacade.findById(2))) { // есть ТР
-                        isTR = true;
+                if (isNew) {
+                    // проставляем статус ДИ и ТР детям                    
+                    Boolean isDI = false;
+                    Boolean isTR = false;
+                    // проверяем, есть ли среди действующих статусов ДИ и ТР
+                    for (ChildStatus chst : chstList) {
+                        if ((chst.getSprstatId().getSprstatInv() == 1)
+                                && (chst.getChildstatusDateK() == null)) { // есть ДИ без даты окончания
+                            isDI = true;
+                            chst.setChildstatusDateK(ipra.getIpra18Dateok());   // устанавливаем срок в соответствии с ИПРА
+                            childStatusFacade.edit(chst);
+                        } else if (chst.getSprstatId().equals(sprStatFacade.findById(2))) { // есть ТР
+                            isTR = true;
+                        }
                     }
-                }
-                if (!isDI) {    // если нет ДИ, вставляем со сроками в соответствии с ИПРА
-                    ChildStatus childStatus = new ChildStatus();
-                    childStatus.setChildId(child);
-                    childStatus.setSprstatId(sprStatFacade.findById(6));
-                    childStatus.setChildstatusDateN(ipra.getIpra18Dateexp());
-                    childStatus.setChildstatusDateK(ipra.getIpra18Dateok());
-                    childStatusFacade.create(childStatus);
-                }
-                if (!isTR) {    // если нет ТР, вставляем в таблицу-связку ребёнок-статус
-                    ChildStatus childStatus = new ChildStatus();
-                    childStatus.setChildId(child);
-                    childStatus.setSprstatId(sprStatFacade.findById(2));
-                    childStatus.setChildstatusDateN(ipra.getIpra18Dateexp());
-                    childStatusFacade.create(childStatus);
+                    if (!isDI) {    // если нет ДИ, вставляем со сроками в соответствии с ИПРА
+                        ChildStatus childStatus = new ChildStatus();
+                        childStatus.setChildId(child);
+                        childStatus.setSprstatId(sprStatFacade.findById(6));
+                        childStatus.setChildstatusDateN(ipra.getIpra18Dateexp());
+                        childStatus.setChildstatusDateK(ipra.getIpra18Dateok());
+                        childStatusFacade.create(childStatus);
+                    }
+                    if (!isTR) {    // если нет ТР, вставляем в таблицу-связку ребёнок-статус
+                        ChildStatus childStatus = new ChildStatus();
+                        childStatus.setChildId(child);
+                        childStatus.setSprstatId(sprStatFacade.findById(2));
+                        childStatus.setChildstatusDateN(ipra.getIpra18Dateexp());
+                        childStatusFacade.create(childStatus);
+                    }
+                } else if (oldDateOk != null) {  // если поменялся срок ИПРА - меняем дату окончания соответствующего статуса ДИ
+                    for (ChildStatus chst : chstList) {
+                        if ((chst.getSprstatId().getSprstatInv() == 1)
+                                && (chst.getChildstatusDateK().equals(oldDateOk))) {
+                            chst.setChildstatusDateK(ipra.getIpra18Dateok());   // устанавливаем новый срок в соответствии с ИПРА
+                            childStatusFacade.edit(chst);
+                        }
+                    }
                 }
                 sb.append("<result>").append(ipra.getIpra18Id()).append("</result>");   // если всё хорошо передаём ИД ИПРА
             } catch (Exception ex) {
@@ -912,6 +1246,10 @@ public class Ipra2018NewServlet extends HttpServlet {
             } else {    // если нет - передаём статус "нет контента"
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
+        } else if (action.equals("savereqdo")){
+            
+        } else if (action.equals("savereqcenter")){
+            
         }
     }
 

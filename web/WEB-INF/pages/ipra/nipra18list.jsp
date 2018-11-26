@@ -17,17 +17,47 @@
     <body>
         <c:if test="${user.getRoleId().getRoleName().equals('ipra') || user.getRoleId().getRoleName().equals('administrator')}">
             <div class="tabs">
-                <input id="tab1" type="radio" name="tabs" checked>
+                <c:if test="${(tab == 0)||(tab == 1)}">
+                    <input id="tab1" type="radio" name="tabs" checked>
+                </c:if>
+                <c:if test="${(tab != 0)&&(tab != 1)}">
+                    <input id="tab1" type="radio" name="tabs">
+                </c:if>
                 <label for="tab1" title="Список ИПРА">Список ИПРА</label>
-                <input id="tab2" type="radio" name="tabs">
-                <label for="tab2" title="Нет приказа">Нет приказа</label>
-                <input id="tab3" type="radio" name="tabs">
-                <label for="tab3" title="Нет перечня мероприятий">Нет перечня мероприятий</label>
-                <input id="tab4" type="radio" name="tabs">
+                <c:if test="${(tab == 2)}">
+                    <input id="tab2" type="radio" name="tabs" checked>
+                </c:if>
+                <c:if test="${(tab != 2)}">
+                    <input id="tab2" type="radio" name="tabs">
+                </c:if>
+                <label for="tab2" title="Запросы на приказ">Запросы на приказ</label>
+                <c:if test="${(tab == 3)}">
+                    <input id="tab3" type="radio" name="tabs" checked>
+                </c:if>
+                <c:if test="${(tab != 3)}">
+                    <input id="tab3" type="radio" name="tabs">
+                </c:if>
+                <label for="tab3" title="Запросы на перечень мероприятий">Запросы на перечень мероприятий</label>
+                <c:if test="${(tab == 4)}">
+                    <input id="tab4" type="radio" name="tabs" checked>
+                </c:if>
+                <c:if test="${(tab != 4)}">
+                    <input id="tab4" type="radio" name="tabs">
+                </c:if>
                 <label for="tab4" title="Для запросов в ТПМПК">Для запросов в ТПМПК</label>
-                <input id="tab5" type="radio" name="tabs">
+                <c:if test="${(tab == 5)}">
+                    <input id="tab5" type="radio" name="tabs" checked>
+                </c:if>
+                <c:if test="${(tab != 5)}">
+                    <input id="tab5" type="radio" name="tabs">
+                </c:if>
                 <label for="tab5" title="Ближайшие отчёты">Ближайшие отчёты</label>
-                <input id="tab6" type="radio" name="tabs">
+                <c:if test="${(tab == 6)}">
+                    <input id="tab6" type="radio" name="tabs" checked>
+                </c:if>
+                <c:if test="${(tab != 6)}">
+                    <input id="tab6" type="radio" name="tabs">
+                </c:if>
                 <label for="tab6" title="Архив">Архив</label>
                 <section id="content-tab1">
                     <div id="div1">
@@ -77,6 +107,13 @@
                 </section>
                 <section id="content-tab2">
                     <div id="div2">
+                        <div id="divBtn2">
+                            <p style="margin-top: 15px; margin-bottom: 15px">
+                                <a class="greybtn" id="addreqDoBtn2" name="addreqDoBtn" onclick="addReqDo()">                                    
+                                    Добавить запрос из ОМСУ в ДО
+                                </a>
+                            </p>
+                        </div>
                         <div id="divList2">
                             <table id="listTable2" class="regularlist">
                                 <thead id="tabHead2"></thead>
@@ -87,6 +124,13 @@
                 </section>
                 <section id="content-tab3">
                     <div id="div3">
+                        <div id="divBtn3">
+                            <p style="margin-top: 15px; margin-bottom: 15px">
+                                <a class="greybtn" id="addreqCenterBtn3" name="addreqCenterBtn" onclick="addReqCenter()">                                    
+                                    Добавить запрос из ОМСУ в ОЦППМСП
+                                </a>
+                            </p>
+                        </div>
                         <div id="divList3">
                             <table id="listTable3" class="regularlist">
                                 <thead id="tabHead3"></thead>
@@ -158,7 +202,36 @@
                 </section>
             </div>
         </c:if>
-    </body>    
+    </body>
+    <dialog class="smallDlg" id="reqDlg">            
+    </dialog>    
+    <dialog class="searchDlg" id="searchDlg">  
+        <div id="search">
+            <br>
+            Фамилия: <input type="text" name="fam" id="fam" onkeyup="searchChild()" maxlength="100">
+            Имя: <input type="text" name="nam" id="nam" onkeyup="searchChild()" maxlength="100">
+            Отчество: <input type="text" name="patr" id="patr" onkeyup="searchChild()" maxlength="100">                
+        </div>
+        <div style="margin-top: 10px; margin-bottom: 15px;">
+            <table class="no">
+                <tr>
+                    <td style="text-align: right;">
+                        <a class = "greybtn" onclick = "cancelSearchDlg()" id = "cancelSeachDlgBtn" name = "cancelSeachDlgBtn">
+                            <img id = "cancelSeachDlgImg" name = "cancelSeachDlgImg" src = "img/delete.png" width = "17"
+                                 style = "padding-right: 1px;">
+                            Отмена
+                        </a>
+                    </td>                
+                </tr>
+            </table>   
+        </div>
+        <table class="regularlist" id="dlgTable">   
+            <thead id="dlgTabHead">
+            </thead>
+            <tbody id="dlgTabBody">
+            </tbody>
+        </table>
+    </dialog> 
     <script type="text/javascript">
         init();
     </script>

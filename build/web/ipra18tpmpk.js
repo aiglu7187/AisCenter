@@ -58,7 +58,7 @@ function formreq() {
     var dialog = document.getElementById("formreqDialog");
     dialog.showModal();
     var checkedTr = document.getElementsByClassName("checked");
-    var url = "ipra2018spisok?action=formreqtotpmpk&id="
+    var url = "ipra2018spisok?action=formreqtotpmpk&id=";
     for (loop = 0; loop < checkedTr.length; loop++) {
         var tds = checkedTr[loop].getElementsByTagName("td");
         url += tds[0].childNodes[0].nodeValue.trim() + ";";
@@ -111,7 +111,7 @@ function parseMessages(responseXML) {   // преобразование полу
         if (result != null) {
             appendResult(result.childNodes[0].nodeValue);
         }
-        if (tpmpkreqs != null) {  // если список районов
+        if (tpmpkreqs != null) {  
             clearDialog();
             if (tpmpkreqs.childNodes.length > 0) {
                 for (loop = 0; loop < tpmpkreqs.childNodes.length; loop++) {

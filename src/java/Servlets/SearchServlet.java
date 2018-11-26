@@ -16,10 +16,12 @@ import Entities.Pmpk;
 import Entities.Sotrud;
 import Entities.SotrudDolgn;
 import Entities.SprDolgn;
+import Entities.SprOmsu;
 import Entities.SprParentType;
 import Entities.SprRegion;
 import Entities.Users;
 import Other.Ipra18NBaseComparator;
+import Other.Ipra18NFIOComparator;
 import Other.UsersComparator;
 import Sessions.ChildrenFacade;
 import Sessions.FamilyFacade;
@@ -32,6 +34,7 @@ import Sessions.PmpkFacade;
 import Sessions.SotrudDolgnFacade;
 import Sessions.SotrudFacade;
 import Sessions.SprDolgnFacade;
+import Sessions.SprOmsuFacade;
 import Sessions.SprParentTypeFacade;
 import Sessions.SprRegionFacade;
 import Sessions.UsersFacade;
@@ -102,6 +105,8 @@ public class SearchServlet extends HttpServlet {
     SprRegionFacade sprRegionFacade = new SprRegionFacade();
     @EJB
     Ipra18NFacade ipra18NFacade = new Ipra18NFacade();
+    @EJB
+    SprOmsuFacade sprOmsuFacade = new SprOmsuFacade();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -897,6 +902,81 @@ public class SearchServlet extends HttpServlet {
                 sb.append("</regions>");
                 itsOk = true;
             }
+        } else if (type.equals("omsu")){    // поиск по справочнику ОМСУ
+            List<SprOmsu> omsuList = sprOmsuFacade.findAllSprOmsu();
+            if (!omsuList.isEmpty()){
+                sb.append("<spromsu>");
+                for (SprOmsu omsu : omsuList) {
+                    sb.append("<omsu>");
+                    sb.append("<id>").append(omsu.getSpromsuId()).append("</id>");
+                    sb.append("<name>").append(omsu.getSpromsuName()).append("</name>");
+                    sb.append("</omsu>");
+                }
+                sb.append("</spromsu>");
+                itsOk = true;
+            }
+        } else if (type.equals("ipradlg")){  // поиск по ИПРА для выбора в диалоговом окне
+            // параметры поискового запроса
+            String fam = request.getParameter("fam");   // фамилия
+            String name = request.getParameter("name"); // имя
+            String patr = request.getParameter("patr"); // отчество
+            // если поле не null - обрезаем пробелы, если null - присваиваем пустую строку (для корректного поиска)
+            if (fam != null) {
+                fam = fam.trim();
+            } else {
+                fam = "";
+            }
+            if (name != null) {
+                name = name.trim();
+            } else {
+                name = "";
+            }
+            if (patr != null) {
+                patr = patr.trim();
+            } else {
+                patr = "";
+            }            
+            // статус ИПРА 1 - в работе, 0 - в архиве
+            Integer status = 1;
+
+            // ищем ИПРА по заданным параметрам            
+            List<Ipra18N> ipraList = ipra18NFacade.findBySearch(fam, name, patr, null, null, null, status);
+            // сортируем
+            Collections.sort(ipraList, new Ipra18NFIOComparator());
+
+            // составляем xml для передачи клиенту
+            // заголовок таблицы
+            sb.append("<iprasdlg>");
+            sb.append("<ipra>");
+            sb.append("<id>").append("ИД").append("</id>");
+            sb.append("<fam>").append("Фамилия").append("</fam>");
+            sb.append("<name>").append("Имя").append("</name>");
+            sb.append("<patr>").append("Отчество").append("</patr>");
+            sb.append("<dr>").append("Дата рождения").append("</dr>");
+            sb.append("<reg>").append("Район").append("</reg>");
+            sb.append("<nipra>").append("№ ИПРА").append("</nipra>");
+            sb.append("</ipra>");
+            // содерждимое таблицы
+            if (!ipraList.isEmpty()) {
+                for (Ipra18N ipra : ipraList) {
+                    sb.append("<ipra>");
+                    sb.append("<id>").append(ipra.getIpra18Id()).append("</id>");
+                    sb.append("<fam>").append(ipra.getChildId().getChildFam()).append("</fam>");
+                    sb.append("<name>").append(ipra.getChildId().getChildName()).append("</name>");
+                    String p = " ";
+                    if ((ipra.getChildId().getChildPatr() != null) && (!ipra.getChildId().getChildPatr().equals(""))) {
+                        p = ipra.getChildId().getChildPatr();
+                    }
+                    sb.append("<patr>").append(p).append("</patr>");
+                    Date dr = ipra.getChildId().getChildDr();
+                    sb.append("<dr>").append(regularDateFormat.format(dr)).append("</dr>");
+                    sb.append("<reg>").append(ipra.getChildId().getSprregId().getSprregName()).append("</reg>");
+                    sb.append("<nipra>").append(ipra.getIpra18N()).append("</nipra>");                    
+                    sb.append("</ipra>");
+                }
+            }
+            sb.append("</iprasdlg>");
+            itsOk = true;
         }
         // если всё нормально - передаём клиенту
         if (itsOk) {

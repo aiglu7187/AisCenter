@@ -3,13 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Sessions/IpraPerechenNFacade.java</file>
-            <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Servlets/MoveIpraServlet.java</file>
+            <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Servlets/Ipra2018SpisokServlet.java</file>
+            <file>file:/C:/Aiglu/Projects/AisCenter/web/ipra18tpmpk.js</file>
+            <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Other/IpraTpmpkRequestNew.java</file>
+            <file>file:/C:/Aiglu/Projects/AisCenter/web/nipra18list0927.js</file>
             <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Entities/IpraPerechenN.java</file>
+            <file>file:/C:/Aiglu/Projects/AisCenter/web/WEB-INF/pages/ipra/nipra18view.jsp</file>
             <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Servlets/Ipra2018NewServlet.java</file>
-            <file>file:/C:/Aiglu/Projects/AisCenter/web/WEB-INF/pages/ipra/nipra18list.jsp</file>
+            <file>file:/C:/Aiglu/Projects/AisCenter/web/nipra18_1011.js</file>
             <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Sessions/IpraPerechenTpmpkFacade.java</file>
-            <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Entities/IshCorr.java</file>
             <file>file:/C:/Aiglu/Projects/AisCenter/src/java/Entities/IpraPerechenTpmpk.java</file>
         </group>
     </open-files>

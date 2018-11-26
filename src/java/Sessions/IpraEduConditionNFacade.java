@@ -6,9 +6,12 @@
 package Sessions;
 
 import Entities.IpraEduConditionN;
+import Entities.IpraPerechenN;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -29,4 +32,10 @@ public class IpraEduConditionNFacade extends AbstractFacade<IpraEduConditionN> {
         super(IpraEduConditionN.class);
     }
     
+    public List<IpraEduConditionN> findByIpraPerechen(IpraPerechenN ipraperechennId){
+        TypedQuery<IpraEduConditionN> query = em.createNamedQuery("IpraEduConditionN.findByIpraperechennId", IpraEduConditionN.class)
+                .setParameter("ipraperechennId", ipraperechennId);
+        List<IpraEduConditionN> result = query.getResultList();
+        return result;
+    }
 }

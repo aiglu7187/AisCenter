@@ -19,6 +19,17 @@
             <form id="ipraForm">
                 <input type="hidden" id="ipraId" name="ipraId" value="${ipra.getIpra18Id()}"> 
                 <h3>Индивидуальная программа реабилитации и абилитации</h3>
+                <input type="hidden" id="status" name="status" value="${ipra.getIpra18Status()}">
+                <select id="selStatus">
+                    <c:if test="${ipra.getIpra18Status() == 1}">
+                        <option selected value="1" >в работе</option>
+                        <option value="0">завершена</option>
+                    </c:if>
+                    <c:if test="${ipra.getIpra18Status() == 0}">
+                        <option value="1">в работе</option>
+                        <option selected value="0">завершена</option>
+                    </c:if>
+                </select>
                 <div id="divChild">
                     <strong>Ребёнок-инвалид:</strong><br>
                     <p style="margin-top: 15px; margin-bottom: 15px;">
@@ -256,13 +267,17 @@
                     <c:if test="${prikaz != null}">
                         <section id="content-tab3">
                             <div id="divPrikaz">
+                                Запрос <c:out value="${prikaz.getIpraomsuId().getSpromsuId().getSpromsuNameRod()}"/>  
+                                    <br>входящий в ДО № <c:out value="${prikaz.getIpraomsuId().getIpraomsuVhN()}"/> от <c:out value="${ipra.getFormat2Date(prikaz.getIpraomsuId().getIpraomsuVhD())}"/>
+                                <br>
+                                <br>
                                 <table class="noborder">
                                     <tr>
                                         <td>
                                             Дата приказа:                                
                                         </td>
                                         <td>
-                                            <input type="date" value="${prikaz.getFormatDate()}" style="height: 20px;">                                
+                                            <input type="date" id="prikazD" name="prikazD" value="${prikaz.getFormatDate()}" style="height: 20px;">                                
                                         </td>
                                     </tr>
                                     <c:if test="${prikaz.getIpra18prikazN() != null}">
@@ -271,7 +286,7 @@
                                                 Номер:
                                             </td>
                                             <td>
-                                                <input type="text" value="${prikaz.getIpra18prikazN()}" style="width: 150px;">
+                                                <input type="text" id="prikazN" name="prikazN" value="${prikaz.getIpra18prikazN()}" style="width: 150px;">
                                             </td>
                                         </tr>
                                     </c:if>
@@ -282,48 +297,104 @@
                     <c:if test="${perechenList != null}">
                         <section id="content-tab4">
                             <div id="divPerechen">
+                                <i>Сроки обучения (приблизительно): </i>
+                                <br>
+                                ДО - <c:out value="${datedo}" />
+                                <br>
+                                для НОО 4 года: <c:out value="${datevar1}" />
+                                <br>
+                                для НОО 5 лет: <c:out value="${datevar2}" />
+                                <br>
+                                <br>
                                 <c:forEach var="perechen" items="${perechenList}">
-                                    <table class="noborder">                                    
-                                        <tr>
-                                            <c:if test="${perechen.getIshcorrId().getIshcorrN() == null}">
-                                                <td>
-                                                    Дата отправки перечня:                                
-                                                <td>
-                                                    <input type="date" value="${perechen.getIshcorrId().getFormatDate(perechen.getIshcorrId().getIshcorrD())}" style="height: 20px;">                                
-                                                </td>
-
-                                                </td>
+                                    <c:if test="${perechen.getIshcorrId().getIshcorrN() == null}">
+                                        Дата отправки перечня:                                                                                
+                                        <input type="date" value="${perechen.getIshcorrId().getFormatDate(perechen.getIshcorrId().getIshcorrD())}" style="height: 20px;">                                
+                                    </c:if>
+                                    <c:if test="${perechen.getIshcorrId().getIshcorrN() != null}">
+                                        Отправлен в ОМСУ 
+                                        <strong>
+                                            <c:out value="${perechen.getIshcorrId().getFormat2Date(perechen.getIshcorrId().getIshcorrD())}"/>
+                                        </strong>
+                                        , исходящее письмо № <c:out value="${perechen.getIshcorrId().getIshcorrN()}"/>
+                                    </c:if>     
+                                    <c:set var="j" value="${perechen.getIpraperechennId()}"/>
+                                    <input type="hidden" id="perechenId_${j}" name="perechenId_${j}" value="${perechen.getIpraperechennId()}">
+                                    <br>
+                                    <c:forEach var="type" items="${types}">                                        
+                                        <strong>
+                                            <c:out value="${type.getIpraeducondtypeName()}:" />
+                                        </strong>
+                                        <br>
+                                        <c:set var="i" value="1"/>
+                                        <table class="perechen" id="pertype${type.getIpraeducondtypeId()}_${j}"> 
+                                            <c:set var="f" value="0"/>
+                                            <c:forEach var="condition" items="${conditions}"> 
+                                                <c:if test="${condition.getIpraperechennId().equals(perechen)}">
+                                                    <c:if test="${condition.getIpraeducondtypeId().equals(type)}">
+                                                        <tr id="rowcond${type.getIpraeducondtypeId()}_${i}_${j}">                                                    
+                                                            <td style="width:80%">
+                                                                <textarea class="intable" id="cond${type.getIpraeducondtypeId()}_${i}_${j}" 
+                                                                          name="cond${type.getIpraeducondtypeId()}_${i}_${j}" 
+                                                                          rows="3"><c:out value="${condition.getIpraeducondContext()}" /></textarea>
+                                                                <c:set var="f" value="1"/>                                                            
+                                                            </td>
+                                                            <td>
+                                                                До: <input type="date" id="datecond${type.getIpraeducondtypeId()}_${i}_${j}"
+                                                                           name="datecond${type.getIpraeducondtypeId()}_${i}_${j}" value="${condition.getFormatDate()}">
+                                                                <img class="btn" id="delCond${type.getIpraeducondtypeId()}_${i}_${j}" src="img/delete.png" width="16" alt="Удалить" title="Удалить">
+                                                            </td>
+                                                            <c:set var="i" value="${i+1}"/>
+                                                        </tr>  
+                                                    </c:if>
+                                                </c:if>
+                                            </c:forEach>
+                                            <c:if test="${f == 0}">
+                                                <tr id="rowcond${type.getIpraeducondtypeId()}_${i}_${j}">                                                    
+                                                    <td style="width:80%">
+                                                        <c:if test="${type.getIpraeducondtypeOp() == 1}">
+                                                            <textarea class="intable" id="cond${type.getIpraeducondtypeId()}_${i}_${j}" 
+                                                                      name="cond${type.getIpraeducondtypeId()}_${i}_${j}" 
+                                                                      rows="3"><c:out value="${obr}" /></textarea>
+                                                        </c:if>
+                                                        <c:if test="${type.getIpraeducondtypeOp() != 1}">
+                                                            <textarea class="intable" id="cond${type.getIpraeducondtypeId()}_${i}_${j}" 
+                                                                      name="cond${type.getIpraeducondtypeId()}_${i}_${j}" 
+                                                                      rows="3"></textarea>
+                                                        </c:if>
+                                                    </td>
+                                                    <td>
+                                                        До: <input type="date" id="datecond${type.getIpraeducondtypeId()}_${i}_${j}"
+                                                                   name="datecond${type.getIpraeducondtypeId()}_${i}_${j}" value="">
+                                                        <img class="btn" id="delCond${type.getIpraeducondtypeId()}_${i}_${j}" src="img/delete.png" width="16" alt="Удалить" title="Удалить">
+                                                    </td>                                                        
+                                                </tr>                                                     
                                             </c:if>
-                                            <c:if test="${perechen.getIshcorrId().getIshcorrN() != null}">
-                                                <td>
-                                                    Отправлен в ОМСУ 
-                                                    <strong>
-                                                        <c:out value="${perechen.getIshcorrId().getFormat2Date(perechen.getIshcorrId().getIshcorrD())}"/>
-                                                    </strong>
-                                                </td>
-                                            </c:if>
-                                        </tr>
-                                    </table>
+                                            <c:set var="i" value="${i+1}"/>                                              
+                                        </table>
+                                        <img class="btn" id="plusCond${type.getIpraeducondtypeId()}" src="img/plus.png" width="16" alt="Добавить" title="Добавить">
+                                        <br>
+                                    </c:forEach>                                    
                                 </c:forEach>
                             </div>
                         </section>
                         <selection id="content-tab5">
                             <div id="divOtchet">
                             </div>
-                        </section>
-                    </c:if>
-                    <p style="margin-top: 15px; margin-bottom: 15px;">
-                        <a class="greybtn" id="saveBtn" name="saveBtn">
-                            <img id="saveImg" name="saveImg" src="img/save.png" width="17" style="padding-right: 1px;">
-                            Сохранить
-                        </a>  
-                        <c:if test="${user.getRoleId().getRoleName().equals('administrator')}">
-                            <a class="greybtn" id="deleteBtn" name="deleteBtn" style="margin-left: 30px">
-                                <img id="deleteImg" name="deleteImg" src="img/delete.png" width="17" style="padding-right: 1px;" >
-                                Удалить
-                            </a>    
-                        </c:if>                                           
-                    </p>
+                            </section>
+                        </c:if>
+                        <p style="margin-top: 15px; margin-bottom: 15px;">
+                            <a class="greybtn" id="saveBtn" name="saveBtn">
+                                <img id="saveImg" name="saveImg" src="img/save.png" width="17" style="padding-right: 1px;">
+                                Сохранить
+                            </a>  
+                            <c:if test="${user.getRoleId().getRoleName().equals('administrator')}">
+                                <a class="greybtn" id="deleteBtn" name="deleteBtn" style="margin-left: 30px">
+                                    <img id="deleteImg" name="deleteImg" src="img/delete.png" width="17" style="padding-right: 1px;" >
+                                    Удалить
+                                </a>    
+                            </c:if>                                           
+                        </p>
                 </div>    
             </form>
         </body>
@@ -372,7 +443,7 @@
                     Новый
                 </a>
             </div>
-        </dialog>
+        </dialog>        
         <script type="text/javascript">
             init();
         </script>
