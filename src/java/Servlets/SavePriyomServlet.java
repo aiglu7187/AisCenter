@@ -385,6 +385,7 @@ public class SavePriyomServlet extends HttpServlet {
                 String clId = request.getParameter("clId" + cl);
                 String clKat = request.getParameter("clKat" + cl);
                 String clUdovl = request.getParameter("monit" + cl);
+                String clFirstOvz = request.getParameter("firstOvz" + cl);
                 String clOu = request.getParameter("ou" + cl);
                 String clNP = request.getParameter("nomPr" + cl);
                 String clOpId = request.getParameter("opId" + cl);
@@ -421,6 +422,13 @@ public class SavePriyomServlet extends HttpServlet {
                     if (clOu != null) {
                         Pmpk pmpk = new Pmpk();
                         pmpk.setPrclId(priyomClient);
+                        if (clFirstOvz != null) {
+                            if (clFirstOvz.equals("on")) {
+                                pmpk.setPmpkFirstOvz(1);
+                            }
+                        } else {
+                            pmpk.setPmpkFirstOvz(0);
+                        }
                         pmpk.setPmpkNp(clNP);
                         try {
                             pmpk.setPmpkOu(Integer.parseInt(clOu));
@@ -786,6 +794,7 @@ public class SavePriyomServlet extends HttpServlet {
 
                     String clOu = request.getParameter("ou" + newCl);
                     String clNP = request.getParameter("nomPr" + newCl);
+                    String clFirstOvz = request.getParameter("firstOvz" + newCl);
                     String clOpId = request.getParameter("opId" + newCl);
                     String clVarId = request.getParameter("varId" + newCl);
                     String clTpmpk = request.getParameter("tpmpk" + newCl);
@@ -810,6 +819,13 @@ public class SavePriyomServlet extends HttpServlet {
                         if (clOu != null) {
                             Pmpk pmpk = new Pmpk();
                             pmpk.setPrclId(priyomClient);
+                            if (clFirstOvz != null) {
+                                if (clFirstOvz.equals("on")) {
+                                    pmpk.setPmpkFirstOvz(1);
+                                }
+                            } else {
+                                pmpk.setPmpkFirstOvz(0);
+                            }
                             pmpk.setPmpkNp(clNP);
                             try {
                                 pmpk.setPmpkOu(Integer.parseInt(clOu));

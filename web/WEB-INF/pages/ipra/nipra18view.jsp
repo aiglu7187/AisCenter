@@ -42,7 +42,7 @@
                         <input type="hidden" id="childId" name="childId" value="${ipra.getChildId().getChildId()}">
                         <label><c:out value="${ipra.getChildId().getChildNom()}" /></label>
                         <br>
-                        <label class = "clickable" onclick = "window.open('client?kat=children&id='${ipra.getChildId().getChildId()}, '_blank');">
+                        <label class = "clickable" onclick = "window.open('client?kat=children&id=${ipra.getChildId().getChildId()}', '_blank');">
                             <c:out value="${ipra.getChildId().getFIO()} ${ipra.getChildId().getFormat2Dr()}" />
                         </label>
                         <br>
@@ -125,12 +125,27 @@
                             </p>        
                             <p class="stp">
                                 <strong>Входящее письмо в ДО</strong>
-                                <br>
-                                номер: <input type="text" id="ipraVhToDON" name="ipraVhToDON" maxlength="50" style="width: 150px;" value="${ipra.getIpra18VhtodoN()}"> 
-                                дата: <input type="date" id="ipraVhToDOD" name="ipraVhToDOD" style="height: 20px;" value="${ipra.getFormatDate(ipra.getIpra18VhtodoD())}">
                             </p>
+                            <table>
+                                <tr>
+                                    <td>
+                                        номер <input type="text" id="ipraVhToDON" name="ipraVhToDON" maxlength="50" style="width: 150px;" value="${ipra.getIpra18VhtodoN()}"> 
+                                        от <input type="date" id="ipraVhToDOD" name="ipraVhToDOD" style="height: 20px;" value="${ipra.getFormatDate(ipra.getIpra18VhtodoD())}">
+                                    </td>
+                                </tr>
+                            </table>
+                            <c:if test="${ipraOmsuDis.size() > 0}">
+                                <p class="stp">
+                                    <c:forEach var="dis" items="${ipraOmsuDis}">
+                                        Отказ <c:out value="${dis.getSpromsuId().getSpromsuNameRod()}" />
+                                        <br>входящий в ДО № <c:out value="${dis.getIpraomsuVhN()}"/> от <c:out value="${ipra.getFormat2Date(dis.getIpraomsuVhD())}"/>
+                                        <br>
+                                    </c:forEach>
+                                </p>
+                            </c:if>                             
                             <p class="stp">
                                 <strong>Даты отчётов</strong>
+                            </p>
                             <table class="noborder">
                                 <tr>
                                     <td>
@@ -157,7 +172,7 @@
                                     </td>
                                 </tr>
                             </table>
-                            </p>
+
                         </div>
                     </section>
                     <section id="content-tab2">
@@ -266,9 +281,9 @@
                     </section>
                     <c:if test="${prikaz != null}">
                         <section id="content-tab3">
-                            <div id="divPrikaz">
+                            <div id="divPrikaz">                               
                                 Запрос <c:out value="${prikaz.getIpraomsuId().getSpromsuId().getSpromsuNameRod()}"/>  
-                                    <br>входящий в ДО № <c:out value="${prikaz.getIpraomsuId().getIpraomsuVhN()}"/> от <c:out value="${ipra.getFormat2Date(prikaz.getIpraomsuId().getIpraomsuVhD())}"/>
+                                <br>входящий в ДО № <c:out value="${prikaz.getIpraomsuId().getIpraomsuVhN()}"/> от <c:out value="${ipra.getFormat2Date(prikaz.getIpraomsuId().getIpraomsuVhD())}"/>
                                 <br>
                                 <br>
                                 <table class="noborder">

@@ -110,7 +110,11 @@
                         <div id="divBtn2">
                             <p style="margin-top: 15px; margin-bottom: 15px">
                                 <a class="greybtn" id="addreqDoBtn2" name="addreqDoBtn" onclick="addReqDo()">                                    
-                                    Добавить запрос из ОМСУ в ДО
+                                    Добавить запрос/отказ из ОМСУ в ДО
+                                </a>
+                                <a class="greybtn" id="addPrikazBtn2" name="addPrikazBtn" onclick="addPrikaz()"
+                                   style="margin-left: 30px;">                                    
+                                    Добавить письмо с приказом из ДО
                                 </a>
                             </p>
                         </div>
@@ -127,7 +131,7 @@
                         <div id="divBtn3">
                             <p style="margin-top: 15px; margin-bottom: 15px">
                                 <a class="greybtn" id="addreqCenterBtn3" name="addreqCenterBtn" onclick="addReqCenter()">                                    
-                                    Добавить запрос из ОМСУ в ОЦППМСП
+                                    Добавить запрос/отказ из ОМСУ в ОЦППМСП
                                 </a>
                             </p>
                         </div>

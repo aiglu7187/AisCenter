@@ -12,10 +12,11 @@ import java.util.Comparator;
  * @author Aiglu
  */
 public class CorrespondComparator implements Comparator {
-    public int compare(Object obj1, Object obj2){
+
+    public int compare(Object obj1, Object obj2) {
         Correspond c1 = (Correspond) obj1;
         Correspond c2 = (Correspond) obj2;
-        int result = c1.getDate().compareTo(c2.getDate());
-        return (result != 0) ? (int)(result/Math.abs(result)) : 0;
+        return (c1.getDate() == null) ? ((c2.getDate() == null) ? 0 : (Integer.MIN_VALUE))
+                : ((c2.getDate() == null) ? (Integer.MAX_VALUE) : c1.getDate().compareTo(c2.getDate()));
     }
 }

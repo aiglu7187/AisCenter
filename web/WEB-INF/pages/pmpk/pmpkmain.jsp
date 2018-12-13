@@ -59,6 +59,9 @@
                             Реестр детей ТПМПК
                         </td>
                     </c:if>
+                    <td onclick="window.open('otchet?id=pmpkfirstovz', '_blank')">
+                        Реестр детей, у которых впервые выявлены ОВЗ
+                    </td>
                     <td onclick="window.open('otchet?id=pmpkrek', '_blank')">
                         Реестр детей с рекомендациями
                     </td>

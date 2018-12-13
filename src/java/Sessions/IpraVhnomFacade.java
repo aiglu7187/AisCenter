@@ -9,6 +9,7 @@ import Entities.IpraVhnom;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -29,4 +30,10 @@ public class IpraVhnomFacade extends AbstractFacade<IpraVhnom> {
         super(IpraVhnom.class);
     }
     
+    public IpraVhnom getIpraVhnom(){
+        String qlString = "SELECT i FROM IpraVhnom i ";
+        TypedQuery<IpraVhnom> query = em.createQuery(qlString, IpraVhnom.class);
+        IpraVhnom result = query.getSingleResult();
+        return result;
+    }
 }

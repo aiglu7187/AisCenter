@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="ipra18spisok0822.js" charset="utf-8"></script>
+        <script type="text/javascript" src="ipra18spisok1207.js" charset="utf-8"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="css/styles0622.css" rel="stylesheet" type="text/css">
         <title>Список ИПРА 2018</title>
@@ -50,7 +50,8 @@
                 <input type="button" id="addIpra" value="Добавить ИПРА" onclick="javascript: window.open('ipra2018spisok?action=add', '_blank')">
                 <br>
                 <input type="button" id="printRed" value="Печать списка с ближайшими сроками" onclick="printRed()">
-                <input type="button" id="printRed" value="Печать сводного реестра" onclick="printSvod()">
+                <input type="button" id="printSvod" value="Печать сводного реестра" onclick="printSvod()">
+                <input type="button" id="printNoInfo" value="Печать реестра ИПРА без запроса/отказа" onclick="openPrintNoInfo()">
             </div>
             <input type="hidden" id="sort" value="do1">
             <div id="ipraSpisok">                

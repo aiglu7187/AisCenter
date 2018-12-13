@@ -10,44 +10,53 @@ package Count;
  * @author Aiglu
  */
 public class CountClient {
-    
+
     private String osnUsl;
     private String usl;
     private Integer count;
     private String katClient;
-        
-    public CountClient(){              
-    }   
-    
-    public String getOsnUsl(){
+    private Boolean isCenter;
+
+    public CountClient() {
+    }
+
+    public String getOsnUsl() {
         return osnUsl;
     }
-    
-    public void setOsnUsl(String osnUsl){
+
+    public void setOsnUsl(String osnUsl) {
         this.osnUsl = osnUsl;
     }
-    
-    public String getUsl(){
+
+    public String getUsl() {
         return usl;
     }
-    
-    public void setUsl(String usl){
+
+    public void setUsl(String usl) {
         this.usl = usl;
     }
-    
-    public Integer getCount(){
+
+    public Integer getCount() {
         return count;
     }
-    
-    public void setCount(Integer count){
+
+    public void setCount(Integer count) {
         this.count = count;
     }
 
-    public String getKatClient(){
+    public String getKatClient() {
         return katClient;
     }
-    
-    public void setKatClient(String katClient){
+
+    public void setKatClient(String katClient) {
         this.katClient = katClient;
+    }
+
+    public Boolean getIsCenter() {
+        return isCenter;
+    }
+
+    public void setIsCenter(Boolean isCenter) {
+        this.isCenter = isCenter;
     }
 }

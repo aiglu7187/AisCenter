@@ -1009,6 +1009,25 @@ public class Ipra2018SpisokServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
+        } else if (action.equals("opennoinfo")){
+            userPath = "/ipra/ipra18noinfo";
+            url = "/WEB-INF/pages" + userPath + ".jsp";
+            try {
+                session.removeAttribute("regions");
+            } catch (Exception ex) {
+            }
+
+            List<SprRegion> regions = sprRegionFacade.findNoCenter();
+            Collections.sort(regions, new RegionComparator());
+
+            session.setAttribute("regions", regions);
+
+            try {
+                request.getRequestDispatcher(url).forward(request, response);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            
         }
     }
 

@@ -172,6 +172,32 @@ public class Ipra18Facade extends AbstractFacade<Ipra18> {
         return result;
     }
     
+    public List<Ipra18> findNoInfoReg(Date dateN, Date dateK, SprRegion reg) {
+        String qlString = "SELECT i FROM Ipra18Prikaz ip, Children c, Ipra18 i "
+                + "WHERE (ip.ipra18prikazReqD IS NULL OR i.ipra18VhdoD IS NULL) "
+                + "AND ip.ipra18Id = i AND i.childId = c "
+                + "AND i.ipra18IshmseD >= :date1 AND i.ipra18IshmseD <= :date2 "
+                + "AND c.sprregId = :reg "
+                + "ORDER BY c.childFam, c.childName, c.childPatr ";        
+        TypedQuery<Ipra18> query = em.createQuery(qlString, Ipra18.class)
+                .setParameter("date1", dateN)
+                .setParameter("date2", dateK)
+                .setParameter("reg", reg);
+        List<Ipra18> result = query.getResultList();
+        return result;
+    }
     
+    public List<Ipra18> findNoInfo(Date dateN, Date dateK) {
+        String qlString = "SELECT i FROM Ipra18Prikaz ip, Children c, Ipra18 i "
+                + "WHERE (ip.ipra18prikazReqD IS NULL OR i.ipra18VhdoD IS NULL) "
+                + "AND ip.ipra18Id = i AND i.childId = c "
+                + "AND i.ipra18IshmseD >= :date1 AND i.ipra18IshmseD <= :date2 "
+                + "ORDER BY c.childFam, c.childName, c.childPatr ";        
+        TypedQuery<Ipra18> query = em.createQuery(qlString, Ipra18.class)
+                .setParameter("date1", dateN)
+                .setParameter("date2", dateK);
+        List<Ipra18> result = query.getResultList();
+        return result;
+    }
     
 }

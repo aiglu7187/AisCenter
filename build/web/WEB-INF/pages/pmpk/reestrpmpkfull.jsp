@@ -10,7 +10,7 @@
 
 <html>
     <head>
-        <script type="text/javascript" src="otchet0323.js" charset="utf-8"></script>
+        <script type="text/javascript" src="otchet1207.js" charset="utf-8"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="css/styles0622.css" rel="stylesheet" type="text/css">
         <title>Реестр ПМПК полный</title>

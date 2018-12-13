@@ -31,7 +31,6 @@ import Entities.Ipra;
 import Entities.Ipra18;
 import Entities.Ipra18Prikaz;
 import Entities.IpraEduCondition;
-import Entities.IpraIshnom;
 import Entities.IpraPerechen;
 import Entities.LoginLog;
 import Entities.Parents;
@@ -262,7 +261,7 @@ public class PrintServlet extends HttpServlet {
         String date1 = request.getParameter("date1");
         String date2 = request.getParameter("date2");
 
-        if (type.equals("sotrud")) {
+        if (type.equals("sotrud")) {    // отчёт сотрудника
             sotruddolgnIdS = request.getParameter("id");
 
             Integer sotrdolgnId = null;
@@ -438,7 +437,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("sotrudBig")) {
+        } else if (type.equals("sotrudBig")) {  // расширенный отчёт сотрудника
             sotruddolgnIdS = request.getParameter("id");
 
             Integer sotrdolgnId = null;
@@ -557,7 +556,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("gz")) {
+        } else if (type.equals("gz")) { // госзадание
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -717,8 +716,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } // Реестр детей с ОВЗ и ОП, прошедших ПМПК
-        else if (type.equals("rpmpk")) {
+        } else if (type.equals("rpmpk")) { // Реестр детей с ОВЗ и ОП, прошедших ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -768,8 +766,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } // статистика ПМПК
-        else if (type.equals("statpmpk")) {
+        } else if (type.equals("statpmpk")) { // статистика ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1425,8 +1422,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } // отчёт по статусам
-        else if (type.equals("status")) {
+        } else if (type.equals("status")) { // отчёт по статусам
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1486,8 +1482,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } // отчёт по проблемам
-        else if (type.equals("problem")) {
+        } else if (type.equals("problem")) {  // отчёт по проблемам
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1568,7 +1563,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("pmpkstatus")) {
+        } else if (type.equals("pmpkstatus")) { // статусы ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1617,7 +1612,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("pmpkipr")) {
+        } else if (type.equals("pmpkipr")) {    // ПМПК для ИПРА
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1666,7 +1661,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("pmpkgia")) {
+        } else if (type.equals("pmpkgia")) {    // ПМПК для ГИА
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1715,7 +1710,56 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("pmpkter")) {
+        } else if (type.equals("pmpkfirstovz")) {   // ПМПК впервые ОВЗ
+            Date d1 = null;
+            Date d2 = null;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            if (date1 != null) {
+                try {
+                    d1 = dateFormat.parse(date1);
+                    d2 = dateFormat.parse(date2);
+                } catch (ParseException ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            String regIdS = request.getParameter("reg");
+            Integer regId = 0;
+            SprRegion region = null;
+            try {
+                regId = Integer.parseInt(regIdS);
+            } catch (Exception ex) {
+            }
+
+            List<PMPKR> reestr = new ArrayList<>();
+
+            if (regId == 0) {
+                reestr = priyomFacade.pmpkFirstOvz(d1, d2);
+            } else {
+                region = sprRegionFacade.findById(regId);
+                reestr = priyomFacade.pmpkFirstOvzReg(d1, d2, region);
+            }
+
+            if ((d1 != null) && (d2 != null)) {
+                SimpleDateFormat curDateFormat = new SimpleDateFormat();
+                curDateFormat.applyPattern("ddMMyyyy");
+                long curTime = System.currentTimeMillis();
+                Date curDate = new Date(curTime);
+                String otchetDate = curDateFormat.format(curDate);
+                String fileName = otchetDate + "_PMPK_first_OVZ_" + date1 + "-" + date2 + ".xls";
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
+                try {
+                    Xls.printPMPKFirstOvz(response.getOutputStream(), d1, d2, reestr);
+                } catch (Exception ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+        } else if (type.equals("pmpkter")) {    // ПМПК ТПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1764,7 +1808,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("pmpkrek")) {
+        } else if (type.equals("pmpkrek")) {    // рекомндации ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1813,7 +1857,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("statpmpkstatus")) {
+        } else if (type.equals("statpmpkstatus")) { // статистика статусы ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1847,7 +1891,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("statpmpkrek")) {
+        } else if (type.equals("statpmpkrek")) {    // статистика рекомендации ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1881,7 +1925,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("statpmpkpar")) {
+        } else if (type.equals("statpmpkpar")) {    // статистика ПМПК разные
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1915,7 +1959,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("monitpmpk")) {
+        } else if (type.equals("monitpmpk")) {  // мониторинг выполнения рекомендаций ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1970,7 +2014,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("iprared")) {
+        } else if (type.equals("iprared")) {    // ИПРА сроки Б месяца
             List<Ipra> findRed = ipraFacade.findRed();
             SimpleDateFormat curDateFormat = new SimpleDateFormat();
             curDateFormat.applyPattern("ddMMyyyy");
@@ -1985,7 +2029,7 @@ public class PrintServlet extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (type.equals("ovzfgos")) {
+        } else if (type.equals("ovzfgos")) {    // выгрузка ОВЗ по ФГОС из ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -2035,7 +2079,7 @@ public class PrintServlet extends HttpServlet {
             } catch (Exception ex) {
                 Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (type.equals("ovzarch")) {
+        } else if (type.equals("ovzarch")) {    // реестр детей с ОВЗ
             Date d1 = null;
             Date d2 = null;
             Date d3 = null;
@@ -2163,7 +2207,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (type.equals("reestrusl")) {
+        } else if (type.equals("reestrusl")) {  // реестр по услугам
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -2242,8 +2286,7 @@ public class PrintServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        }// Полный реестр детей, прошедших ПМПК
-        else if (type.equals("rpmpkfull")) {
+        } else if (type.equals("rpmpkfull")) {  // Полный реестр детей, прошедших ПМПК
             Date d1 = null;
             Date d2 = null;
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -2564,7 +2607,7 @@ public class PrintServlet extends HttpServlet {
                 Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (type.equals("ipra18svod")) { // ИПРА2018 свод
-            List<Ipra18> ipraAllCur= ipra18Facade.findAllCur();
+            List<Ipra18> ipraAllCur = ipra18Facade.findAllCur();
             Collections.sort(ipraAllCur, new Ipra18Comparator());
             List<Ipra18Prikaz> ipraPrikazList = new ArrayList<>();
             for (Ipra18 ipra : ipraAllCur) {
@@ -2658,6 +2701,394 @@ public class PrintServlet extends HttpServlet {
                 } catch (Exception ex) {
                     Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+
+        } else if (type.equals("ipra18noinfo")) {    // ИПРА2018 реестр ИПРА без запроса/отказа
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date dateN = null;
+            try {
+                dateN = dateFormat.parse(date1);
+            } catch (ParseException ex) {
+                Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            Date dateK = null;
+            try {
+                dateK = dateFormat.parse(date2);
+            } catch (ParseException ex) {
+                Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            String reg = request.getParameter("reg");
+            Integer regId = 0;
+            try {
+                regId = Integer.parseInt(reg);
+            } catch (Exception ex) {
+            }
+            SprRegion region = null;
+            if (regId > 0) {
+                region = sprRegionFacade.findById(regId);
+            }
+            List<Ipra18> ipra18NoInfoList = new ArrayList<>();
+            if ((dateN != null) && (dateK != null)) {
+                if (region != null) {
+                    ipra18NoInfoList = ipra18Facade.findNoInfoReg(dateN, dateK, region);
+                } else {
+                    ipra18NoInfoList = ipra18Facade.findNoInfo(dateN, dateK);
+                }
+            }
+
+            if (ipra18NoInfoList.size() > 0) {
+                SimpleDateFormat curDateFormat = new SimpleDateFormat();
+                curDateFormat.applyPattern("ddMMyyyy");
+                long curTime = System.currentTimeMillis();
+                Date curDate = new Date(curTime);
+                String printDate = curDateFormat.format(curDate);
+                String fileName = "Ipra18NoInfo-" + printDate + ".xls";
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
+                try {
+                    Xls.printIpra18NoInfo(response.getOutputStream(), ipra18NoInfoList, dateN, dateK);
+                } catch (Exception ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        } else if (type.equals("consultage")) {
+
+        } else if (type.equals("consultagereestr")) {
+            Date d1 = null;
+            Date d2 = null;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            if (date1 != null) {
+                try {
+                    d1 = dateFormat.parse(date1);
+                    d2 = dateFormat.parse(date2);
+                } catch (ParseException ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            long curTime = System.currentTimeMillis();
+            Date curDate = new Date(curTime);
+
+            String ageNS = request.getParameter("agen");
+            String ageKS = request.getParameter("agek");
+            Integer ageN = 0;
+            Integer ageK = 0;
+            try {
+                ageN = Integer.parseInt(ageNS);
+                ageK = Integer.parseInt(ageKS);
+            } catch (Exception ex) {
+            }
+/////!!!
+            List<StandartCount> uslAges = childrenFacade.uslAges(d1, d2, ageN, ageK);
+
+            if ((d1 != null) && (d2 != null)) {
+                SimpleDateFormat curDateFormat = new SimpleDateFormat();
+                curDateFormat.applyPattern("ddMMyyyy");
+                String otchetDate = curDateFormat.format(curDate);
+                String fileName = otchetDate + "_consult_vozrast" + date1 + "-" + date2 + ".xls";
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
+                try {
+                    Xls.printAge(response.getOutputStream(), uslAges, d1, d2, ageN, ageK);
+                } catch (Exception ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+        } else if (type.equals("statuslkat")) {  // статистика по услугам и категориям
+            Date d1 = null;
+            Date d2 = null;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            if (date1 != null) {
+                try {
+                    d1 = dateFormat.parse(date1);
+                    d2 = dateFormat.parse(date2);
+                } catch (ParseException ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            List<CountClient> countCl = priyomFacade.countClientUslKat(d1, d2);
+        //    List<CountPriyom> countPr = priyomFacade.countPriyomUslKat(d1, d2);
+            List<CountClient> countOsnCl = priyomFacade.countOsnClientUslKat(d1, d2);
+            List<CountPriyom> countPrCl = priyomFacade.countPrClUslKat(d1, d2);
+
+            List<Gz> gz = new ArrayList<>();
+
+            List<SprUsl> sprusl = sprUslFacade.findAllUsl();
+            for (SprUsl usl : sprusl) { 
+                Gz gzUsl = new Gz();
+                gzUsl.setOsnUsl(usl.getSprosnuslId().getSprosnuslName());
+                gzUsl.setUsl(usl.getSpruslName());
+                gzUsl.setCenter(Boolean.FALSE);
+                Integer countCh = 0;
+                Integer countPar = 0;
+                Integer countPed = 0;
+                for (CountClient cl : countCl) {
+                    if ((cl.getUsl().equals(usl.getSpruslName()))
+                            && (cl.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (cl.getKatClient().equals("children")) {
+                            countCh += cl.getCount();
+                        } else if (cl.getKatClient().equals("parents")) {
+                            countPar += cl.getCount();
+                        } else if (cl.getKatClient().equals("ped")) {
+                            countPed += cl.getCount();
+                        }
+                    }
+                }
+                gzUsl.setClientCh(countCh);
+                gzUsl.setClientPar(countPar);
+                gzUsl.setClientPed(countPed);
+            /*    countCh = 0;
+                countPar = 0;
+                countPed = 0;
+                for (CountPriyom pr : countPr) {
+                    if ((pr.getUsl().equals(usl.getSpruslName()))
+                            && (pr.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (pr.getKatClient().equals("children")) {
+                            countCh += pr.getCount();
+                        } else if (pr.getKatClient().equals("parents")) {
+                            countPar += pr.getCount();
+                        } else if (pr.getKatClient().equals("ped")) {
+                            countPed += pr.getCount();
+                        }
+                    }
+                }
+                gzUsl.setPriyomCh(countCh);
+                gzUsl.setPriyomPar(countPar);
+                gzUsl.setPriyomPed(countPed);*/
+                countCh = 0;
+                countPar = 0;
+                countPed = 0;
+                for (CountPriyom pr : countPrCl) {
+                    if ((pr.getUsl().equals(usl.getSpruslName()))
+                            && (pr.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (pr.getKatClient().equals("children")) {
+                            countCh += pr.getCount();
+                        } else if (pr.getKatClient().equals("parents")) {
+                            countPar += pr.getCount();
+                        } else if (pr.getKatClient().equals("ped")) {
+                            countPed += pr.getCount();
+                        }
+                    }
+                }
+                gzUsl.setPrclCh(countCh);
+                gzUsl.setPrclPar(countPar);
+                gzUsl.setPrclPed(countPed);
+                gz.add(gzUsl);
+            }
+            // в ОЦППМСП
+            for (SprUsl usl : sprusl) { 
+                Gz gzUsl = new Gz();
+                gzUsl.setOsnUsl(usl.getSprosnuslId().getSprosnuslName());
+                gzUsl.setUsl(usl.getSpruslName());
+                gzUsl.setCenter(Boolean.TRUE);
+                Integer countCh = 0;
+                Integer countPar = 0;
+                Integer countPed = 0;
+                for (CountClient cl : countCl) {
+                    if ((cl.getUsl().equals(usl.getSpruslName()))
+                            && (cl.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (cl.getKatClient().equals("children")) {
+                            countCh += cl.getCount();
+                        } else if (cl.getKatClient().equals("parents")) {
+                            countPar += cl.getCount();
+                        } else if (cl.getKatClient().equals("ped")) {
+                            countPed += cl.getCount();
+                        }
+                    }
+                }
+                gzUsl.setClientCh(countCh);
+                gzUsl.setClientPar(countPar);
+                gzUsl.setClientPed(countPed);
+            /*    countCh = 0;
+                countPar = 0;
+                countPed = 0;
+                for (CountPriyom pr : countPr) {
+                    if ((pr.getUsl().equals(usl.getSpruslName()))
+                            && (pr.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (pr.getKatClient().equals("children")) {
+                            countCh += pr.getCount();
+                        } else if (pr.getKatClient().equals("parents")) {
+                            countPar += pr.getCount();
+                        } else if (pr.getKatClient().equals("ped")) {
+                            countPed += pr.getCount();
+                        }
+                    }
+                }
+                gzUsl.setPriyomCh(countCh);
+                gzUsl.setPriyomPar(countPar);
+                gzUsl.setPriyomPed(countPed);*/
+                countCh = 0;
+                countPar = 0;
+                countPed = 0;
+                for (CountPriyom pr : countPrCl) {
+                    if ((pr.getUsl().equals(usl.getSpruslName()))
+                            && (pr.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (pr.getKatClient().equals("children")) {
+                            countCh += pr.getCount();
+                        } else if (pr.getKatClient().equals("parents")) {
+                            countPar += pr.getCount();
+                        } else if (pr.getKatClient().equals("ped")) {
+                            countPed += pr.getCount();
+                        }
+                    }
+                }
+                gzUsl.setPrclCh(countCh);
+                gzUsl.setPrclPar(countPar);
+                gzUsl.setPrclPed(countPed);
+                gz.add(gzUsl);
+            }
+            
+// по основным услугам
+            List<SprOsnusl> sprOsnusl = sprOsnuslFacade.findAll();
+            for (SprOsnusl osn : sprOsnusl) {
+                Gz gzUsl = new Gz();
+                gzUsl.setOsnUsl(osn.getSprosnuslName());
+                gzUsl.setUsl("итого");
+                gzUsl.setCenter(Boolean.FALSE);
+                Integer countCh = 0;
+                Integer countPar = 0;
+                Integer countPed = 0;
+                for (CountClient cl : countOsnCl) {
+                    if ((cl.getOsnUsl().equals(osn.getSprosnuslName()))
+                            && (cl.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (cl.getKatClient().equals("children")) {
+                            countCh += cl.getCount();
+                        } else if (cl.getKatClient().equals("parents")) {
+                            countPar += cl.getCount();
+                        } else if (cl.getKatClient().equals("ped")) {
+                            countPed += cl.getCount();
+                        }
+                    }
+                }
+                gzUsl.setClientCh(countCh);
+                gzUsl.setClientPar(countPar);
+                gzUsl.setClientPed(countPed);
+                /*countCh = 0;
+                countPar = 0;
+                countPed = 0;
+                for (CountPriyom pr : countPr) {
+                    if ((pr.getUsl().equals(osn.getSprosnuslName()))
+                            && (pr.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (pr.getKatClient().equals("children")) {
+                            countCh += pr.getCount();
+                        } else if (pr.getKatClient().equals("parents")) {
+                            countPar += pr.getCount();
+                        } else if (pr.getKatClient().equals("ped")) {
+                            countPed += pr.getCount();
+                        }
+                    }
+                }
+                gzUsl.setPriyomCh(countCh);
+                gzUsl.setPriyomPar(countPar);
+                gzUsl.setPriyomPed(countPed);*/
+                countCh = 0;
+                countPar = 0;
+                countPed = 0;
+                for (CountPriyom pr : countPrCl) {
+                    if ((pr.getOsnUsl().equals(osn.getSprosnuslName()))
+                            && (pr.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (pr.getKatClient().equals("children")) {
+                            countCh += pr.getCount();
+                        } else if (pr.getKatClient().equals("parents")) {
+                            countPar += pr.getCount();
+                        } else if (pr.getKatClient().equals("ped")) {
+                            countPed += pr.getCount();
+                        }
+                    }
+                }
+                gzUsl.setPrclCh(countCh);
+                gzUsl.setPrclPar(countPar);
+                gzUsl.setPrclPed(countPed);
+                gz.add(gzUsl);
+            }
+
+            // в ОЦППМСП
+            for (SprOsnusl osn : sprOsnusl) { 
+                Gz gzUsl = new Gz();
+                gzUsl.setOsnUsl(osn.getSprosnuslName());
+                gzUsl.setUsl("итого");
+                gzUsl.setCenter(Boolean.TRUE);
+                Integer countCh = 0;
+                Integer countPar = 0;
+                Integer countPed = 0;
+                for (CountClient cl : countOsnCl) {
+                    if ((cl.getOsnUsl().equals(osn.getSprosnuslName()))
+                            && (cl.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (cl.getKatClient().equals("children")) {
+                            countCh += cl.getCount();
+                        } else if (cl.getKatClient().equals("parents")) {
+                            countPar += cl.getCount();
+                        } else if (cl.getKatClient().equals("ped")) {
+                            countPed += cl.getCount();
+                        }
+                    }
+                }
+                gzUsl.setClientCh(countCh);
+                gzUsl.setClientPar(countPar);
+                gzUsl.setClientPed(countPed);
+                /*countCh = 0;
+                countPar = 0;
+                countPed = 0;
+                for (CountPriyom pr : countPr) {
+                    if ((pr.getUsl().equals(osn.getSprosnuslName()))
+                            && (pr.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (pr.getKatClient().equals("children")) {
+                            countCh += pr.getCount();
+                        } else if (pr.getKatClient().equals("parents")) {
+                            countPar += pr.getCount();
+                        } else if (pr.getKatClient().equals("ped")) {
+                            countPed += pr.getCount();
+                        }
+                    }
+                }
+                gzUsl.setPriyomCh(countCh);
+                gzUsl.setPriyomPar(countPar);
+                gzUsl.setPriyomPed(countPed);*/
+                countCh = 0;
+                countPar = 0;
+                countPed = 0;
+                for (CountPriyom pr : countPrCl) {
+                    if ((pr.getOsnUsl().equals(osn.getSprosnuslName()))
+                            && (pr.getIsCenter().equals(gzUsl.getCenter()))) {
+                        if (pr.getKatClient().equals("children")) {
+                            countCh += pr.getCount();
+                        } else if (pr.getKatClient().equals("parents")) {
+                            countPar += pr.getCount();
+                        } else if (pr.getKatClient().equals("ped")) {
+                            countPed += pr.getCount();
+                        }
+                    }
+                }
+                gzUsl.setPrclCh(countCh);
+                gzUsl.setPrclPar(countPar);
+                gzUsl.setPrclPed(countPed);
+                gz.add(gzUsl);
+            }
+
+            if ((d1 != null) && (d2 != null)) {
+                SimpleDateFormat curDateFormat = new SimpleDateFormat();
+                curDateFormat.applyPattern("ddMMyyyy");
+                long curTime = System.currentTimeMillis();
+                Date curDate = new Date(curTime);
+                String otchetDate = curDateFormat.format(curDate);
+                String fileName = otchetDate + "_stat_uslkat" + date1 + "-" + date2 + ".xls";
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
+                try {
+                    Xls.printOtchetUslKat(response.getOutputStream(), d1, d2, gz);
+                } catch (Exception ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
@@ -2865,7 +3296,7 @@ public class PrintServlet extends HttpServlet {
         return bigOtch;
     }
 
-/*    private synchronized String getNextNomer() {       
+    /*    private synchronized String getNextNomer() {       
         IpraIshnom ipraIshnom = ipraIshnomFacade.getIpraIshnom();
         ipraIshnom.setIpraishnomNom(ipraIshnom.getIpraishnomNom() + 1);
         ipraIshnomFacade.edit(ipraIshnom);

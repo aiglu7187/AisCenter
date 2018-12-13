@@ -14,11 +14,11 @@ import Entities.Children;
 import Entities.Parents;
 import Entities.Ped;
 import Entities.Priyom;
-import Entities.Sotrud;
 import Entities.SotrudDolgn;
 import Entities.SprOsnusl;
 import Entities.SprRegion;
 import Entities.SprUsl;
+import Reestr.ConsultReestr;
 import Reestr.PMPKR;
 import Reestr.PMPKStatus;
 import Reestr.PMPKTer;
@@ -40,19 +40,19 @@ import javax.persistence.TypedQuery;
  */
 @Stateless
 public class PriyomFacade extends AbstractFacade<Priyom> {
-
+    
     @PersistenceContext(unitName = "AisCenterPU")
     private EntityManager em;
-
+    
     @Override
     protected EntityManager getEntityManager() {
         return em;
     }
-
+    
     public PriyomFacade() {
         super(Priyom.class);
     }
-
+    
     public List<Priyom> isPriyom(Date datePr, SprUsl sprUsl) {
         String qlString = "SELECT p FROM Priyom p, SprUsl u WHERE p.priyomDate = :datePr AND "
                 + "u = p.spruslId AND u = :sprUsl ";
@@ -62,7 +62,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         List<Priyom> result = query.getResultList();
         return result;
     }
-
+    
     public List<Priyom> findPriyom(Date datePr1, Date datePr2, SprUsl sprUsl, SprRegion sprReg) {
         TypedQuery<Priyom> query;
         if ((datePr1 == null) && (datePr2 == null)) {
@@ -104,18 +104,18 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                     .setParameter("spruslId", sprUsl)
                     .setParameter("sprregId", sprReg);
         }
-
+        
         List<Priyom> result = query.getResultList();
         return result;
     }
-
+    
     public Priyom findById(Integer id) {
         TypedQuery<Priyom> query = em.createNamedQuery("Priyom.findByPriyomId", Priyom.class)
                 .setParameter("priyomId", id);
         Priyom result = query.getSingleResult();
         return result;
     }
-
+    
     public List<CountPriyom> countPriyomSotrudC(SotrudDolgn sotrudDolgn, Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(p.priyomId) "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, PriyomSotrud s, SprRegion r "
@@ -141,7 +141,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountPriyom> countPriyomSotrud(SotrudDolgn sotrudDolgn, Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(p.priyomId) "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, PriyomSotrud s, SprRegion r  "
@@ -167,7 +167,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountClient> countClientSotrudC(SotrudDolgn sotrudDolgn, Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(DISTINCT c.clientId), c.prclKatcl "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, PriyomSotrud s, SprRegion r, PriyomClient c "
@@ -195,7 +195,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountClient> countClientSotrud(SotrudDolgn sotrudDolgn, Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(DISTINCT c.clientId), c.prclKatcl "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, PriyomSotrud s, SprRegion r, PriyomClient c "
@@ -223,7 +223,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountKatPriyom> countKatPriyom(SotrudDolgn sotrudDolgn, Date dateN, Date dateK) {
         String qlString = "SELECT COUNT(p.priyomId), c.prclKatcl "
                 + "FROM Priyom p, PriyomSotrud s, PriyomClient c "
@@ -247,7 +247,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<Children> findChildrenPriyom(SprOsnusl osnusl, SprUsl usl, SprRegion reg, SprRegion regcl, Date datePr1, Date datePr2) {
         String ql = "SELECT DISTINCT c FROM Priyom p, PriyomClient pc, Children c, SprUsl u "
                 + "WHERE pc.priyomId = p AND pc.prclKatcl = :prclKatcl AND pc.clientId = c.childId "
@@ -264,9 +264,9 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         if ((datePr1 != null) && (datePr2 != null)) {
             ql += "AND p.priyomDate >= :date1 AND p.priyomDate <= :date2 ";
         }
-
+        
         ql += "ORDER BY c.childFam, c.childName, c.childPatr ";
-
+        
         TypedQuery<Children> query = em.createQuery(ql, Children.class)
                 .setParameter("prclKatcl", "children")
                 .setParameter("osnusl", osnusl);
@@ -283,11 +283,11 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             query.setParameter("date1", datePr1);
             query.setParameter("date2", datePr2);
         }
-
+        
         List<Children> result = query.getResultList();
         return result;
     }
-
+    
     public List<Parents> findParentsPriyom(SprOsnusl osnusl, SprUsl usl, SprRegion reg, SprRegion regcl, Date datePr1, Date datePr2) {
         String ql = "SELECT DISTINCT c FROM Priyom p, PriyomClient pc, Parents c, SprUsl u "
                 + "WHERE pc.priyomId = p AND pc.prclKatcl = :prclKatcl AND pc.clientId = c.parentId "
@@ -304,9 +304,9 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         if ((datePr1 != null) && (datePr2 != null)) {
             ql += "AND p.priyomDate >= :date1 AND p.priyomDate <= :date2 ";
         }
-
+        
         ql += "ORDER BY c.parentFam, c.parentName, c.parentPatr ";
-
+        
         TypedQuery<Parents> query = em.createQuery(ql, Parents.class)
                 .setParameter("prclKatcl", "parents")
                 .setParameter("osnusl", osnusl);
@@ -323,11 +323,11 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             query.setParameter("date1", datePr1);
             query.setParameter("date2", datePr2);
         }
-
+        
         List<Parents> result = query.getResultList();
         return result;
     }
-
+    
     public List<Ped> findPedPriyom(SprOsnusl osnusl, SprUsl usl, SprRegion reg, SprRegion regcl, Date datePr1, Date datePr2) {
         String ql = "SELECT DISTINCT c FROM Priyom p, PriyomClient pc, Ped c, SprUsl u "
                 + "WHERE pc.priyomId = p AND pc.prclKatcl = :prclKatcl AND pc.clientId = c.pedId "
@@ -344,9 +344,9 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         if ((datePr1 != null) && (datePr2 != null)) {
             ql += "AND p.priyomDate >= :date1 AND p.priyomDate <= :date2 ";
         }
-
+        
         ql += "ORDER BY c.pedFam, c.pedName, c.pedPatr";
-
+        
         TypedQuery<Ped> query = em.createQuery(ql, Ped.class)
                 .setParameter("prclKatcl", "ped")
                 .setParameter("osnusl", osnusl);
@@ -363,11 +363,11 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             query.setParameter("date1", datePr1);
             query.setParameter("date2", datePr2);
         }
-
+        
         List<Ped> result = query.getResultList();
         return result;
     }
-
+    
     public List<CountPriyom> countPriyomC(Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(p.priyomId) "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r "
@@ -391,7 +391,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountPriyom> countPriyom(Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(p.priyomId) "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r  "
@@ -415,7 +415,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountClient> countClientC(Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(DISTINCT c.clientId), c.prclKatcl "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c "
@@ -441,7 +441,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountClient> countOsnClientC(Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, COUNT(DISTINCT c.clientId), c.prclKatcl "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c "
@@ -466,7 +466,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountClient> countClient(Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(DISTINCT c.clientId), c.prclKatcl "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c "
@@ -492,7 +492,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountClient> countOsnClient(Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, COUNT(DISTINCT c.clientId), c.prclKatcl "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c "
@@ -517,7 +517,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountPriyom> countPrCl(Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(c.prclId) "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c  "
@@ -541,7 +541,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountPriyom> countPrClC(Date dateN, Date dateK) {
         String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(c.prclId) "
                 + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c  "
@@ -565,7 +565,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<ReestrPMPK> reestrChildren(Date dateN, Date dateK) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
@@ -601,7 +601,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             child.setDatep((Date) o[7]);
             result.add(child);
         }
-
+        
         String qlString2 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, PriyomClient pc "
@@ -649,7 +649,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         for (ReestrPMPK ch : result2) {
             result.add(ch);
         }
-
+        
         String qlString3 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, "
                 + "c.childId, p.priyomDate "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, "
@@ -686,7 +686,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         String qlString4 = "SELECT c.childId, o.sprobrShname, p.priyomDate, k.pmpkDatek "
                 + "FROM Children c, Priyom p, SprUsl u, SprObr o, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -709,7 +709,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         String qlString5 = "SELECT c.childId, v.sprobrvarName, p.priyomDate "
                 + "FROM Children c, Priyom p, SprUsl u, SprObrVar v, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -731,10 +731,10 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         return result;
     }
-
+    
     public List<ReestrPMPK> reestrChildrenReg(Date dateN, Date dateK, SprRegion region) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
@@ -771,7 +771,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             child.setDatep((Date) o[7]);
             result.add(child);
         }
-
+        
         String qlString2 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, PriyomClient pc "
@@ -820,7 +820,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         for (ReestrPMPK ch : result2) {
             result.add(ch);
         }
-
+        
         String qlString3 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, "
                 + "SprStatPod sp, SprStat s2, PriyomClient pc "
@@ -856,7 +856,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         String qlString4 = "SELECT c.childId, o.sprobrShname "
                 + "FROM Children c, Priyom p, SprUsl u, SprObr o, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -878,7 +878,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         String qlString5 = "SELECT c.childId, v.sprobrvarName "
                 + "FROM Children c, Priyom p, SprUsl u, SprObrVar v, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -900,10 +900,10 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         return result;
     }
-
+    
     public List<CountStatPmpk> countPmpk(Date dateN, Date dateK) {
         String qlString = "SELECT r.sprregName, COUNT(p.priyomId) "
                 + "FROM SprRegion r, Priyom p, SprUsl u "
@@ -927,7 +927,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKStatus> pmpkStatus(Date dateN, Date dateK) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, "
                 + "st.sprstatName, r.sprregName "
@@ -963,7 +963,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKStatus> pmpkStatusReg(Date dateN, Date dateK, SprRegion reg) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, "
                 + "st.sprstatName, r.sprregName "
@@ -1000,7 +1000,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKR> pmpkIpr(Date d1, Date d2) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
@@ -1025,7 +1025,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKR> pmpkIprReg(Date d1, Date d2, SprRegion reg) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
@@ -1051,7 +1051,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKR> pmpkGia(Date d1, Date d2) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
@@ -1078,7 +1078,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKR> pmpkGiaReg(Date d1, Date d2, SprRegion reg) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
@@ -1106,7 +1106,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKTer> pmpkTer(Date d1, Date d2) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, p.pmpkTpmpk "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
@@ -1138,7 +1138,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKTer> pmpkTerReg(Date d1, Date d2, SprRegion reg) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, p.pmpkTpmpk "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
@@ -1171,7 +1171,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKTer> pmpkRek(Date d1, Date d2) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, "
                 + "r.sprregName, rek.sprrekName "
@@ -1199,7 +1199,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<PMPKTer> pmpkRekReg(Date d1, Date d2, SprRegion reg) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, "
                 + "r.sprregName, rek.sprrekName "
@@ -1228,7 +1228,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountStatusReg> countStatusPmpk(Date dateN, Date dateK) {
         String qlString = "SELECT count(c), st.sprstatName, r.sprregName "
                 + "FROM Children c, Priyom pr, PriyomClient pc, ChildStatus cs, SprStat st, SprUsl usl, SprRegion r "
@@ -1264,7 +1264,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountStatusReg> countRekPmpk(Date date1, Date date2) {
         String qlString = "SELECT count(c), rek.sprrekName, r.sprregName "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
@@ -1292,7 +1292,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         }
         return result;
     }
-
+    
     public List<CountStatusReg> countParPmpk(Date d1, Date d2) {
         String qlString = "SELECT count(c), r.sprregName "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
@@ -1317,7 +1317,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             r.setReg((String) o[1]);
             result.add(r);
         }
-
+        
         String qlString2 = "SELECT count(c), r.sprregName "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
                 + "WHERE pr = pc.priyomId AND pc.clientId = c.childId AND pr.spruslId = usl "
@@ -1342,7 +1342,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             r.setReg((String) o[1]);
             result.add(r);
         }
-
+        
         String qlString3 = "SELECT count(c), r.sprregName, p.pmpkTpmpk "
                 + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
                 + "WHERE pr = pc.priyomId AND pc.clientId = c.childId AND pr.spruslId = usl "
@@ -1363,17 +1363,41 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             CountStatusReg r = new CountStatusReg();
             Long l = (Long) o[0];
             r.setCount(l.intValue());
-            if ((Long) o[2] == 1) {
+            if ((Integer) o[2] == 1) {
                 r.setStatus("по направлению");
-            } else if ((Long) o[2] == 2) {
+            } else if ((Integer) o[2] == 2) {
                 r.setStatus("обжалование");
             }
             r.setReg((String) o[1]);
             result.add(r);
         }
+        
+        String qlString4 = "SELECT count(c), r.sprregName "
+                + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
+                + "WHERE pr = pc.priyomId AND pc.clientId = c.childId AND pr.spruslId = usl "
+                + "AND c.sprregId = r AND p.prclId = pc AND usl.spruslPmpk = :pmpk "
+                + "AND pr.priyomDate >= :date1 AND pr.priyomDate <= :date2 "
+                + "AND p.pmpkFirstOvz = :first "
+                + "GROUP BY r.sprregName "
+                + "ORDER BY r.sprregName ";
+        Query query4 = em.createQuery(qlString4)
+                .setParameter("date1", d1)
+                .setParameter("date2", d2)
+                .setParameter("pmpk", 1)
+                .setParameter("first", 1);
+        List resultList4 = query4.getResultList();
+        for (int i = 0; i < resultList4.size(); i++) {
+            Object[] o = (Object[]) resultList4.get(i);
+            CountStatusReg r = new CountStatusReg();
+            Long l = (Long) o[0];
+            r.setCount(l.intValue());
+            r.setStatus("ОВЗ впервые");
+            r.setReg((String) o[1]);
+            result.add(r);
+        }
         return result;
     }
-
+    
     public List<ReestrMonitPMPK> reestrMonitChildrenReg(Date dateN, Date dateK, SprRegion region) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, "
                 + "c.childId, max (p.priyomDate), c.childNom "
@@ -1411,7 +1435,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             child.setDatep((Date) o[7]);
             result.add(child);
         }
-
+        
         String qlString4 = "SELECT c.childId, k.pmpkNp, p.priyomDate "
                 + "FROM Children c, Priyom p, SprUsl u, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -1433,10 +1457,10 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         return result;
     }
-
+    
     public List<ReestrPMPKFull> reestrChildrenFull(Date dateN, Date dateK) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
@@ -1474,7 +1498,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             child.setDatep((Date) o[7]);
             result.add(child);
         }
-
+        
         String qlString2 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, PriyomClient pc "
@@ -1522,7 +1546,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             }
         }
         result.addAll(result2);
-
+        
         String qlString21 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, PriyomClient pc "
@@ -1570,7 +1594,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             }
         }
         result.addAll(result21);
-
+        
         String qlString22 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, PriyomClient pc "
@@ -1618,7 +1642,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             }
         }
         result.addAll(result22);
-
+        
         String qlString3 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, "
                 + "c.childId, p.priyomDate "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, "
@@ -1655,7 +1679,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         String qlString4 = "SELECT c.childId, o.sprobrShname, p.priyomDate, k.pmpkDatek "
                 + "FROM Children c, Priyom p, SprUsl u, SprObr o, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -1678,7 +1702,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         String qlString5 = "SELECT c.childId, v.sprobrvarName, p.priyomDate "
                 + "FROM Children c, Priyom p, SprUsl u, SprObrVar v, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -1750,10 +1774,10 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         return result;
     }
-
+    
     public List<ReestrPMPK> reestrChildrenRegFull(Date dateN, Date dateK, SprRegion region) {
         String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
@@ -1790,7 +1814,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             child.setDatep((Date) o[7]);
             result.add(child);
         }
-
+        
         String qlString2 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId, "
                 + "p.priyomDate  "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, PriyomClient pc "
@@ -1839,7 +1863,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
         for (ReestrPMPK ch : result2) {
             result.add(ch);
         }
-
+        
         String qlString3 = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName, s.sprstatName, c.childId "
                 + "FROM Children c, SprRegion r, SprStat s, ChildStatus cs, Priyom p, SprUsl u, "
                 + "SprStatPod sp, SprStat s2, PriyomClient pc "
@@ -1875,7 +1899,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         String qlString4 = "SELECT c.childId, o.sprobrShname "
                 + "FROM Children c, Priyom p, SprUsl u, SprObr o, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -1897,7 +1921,7 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         String qlString5 = "SELECT c.childId, v.sprobrvarName "
                 + "FROM Children c, Priyom p, SprUsl u, SprObrVar v, Pmpk k, PriyomClient pc "
                 + "WHERE pc.priyomId = p AND pc.clientId = c.childId AND pc.prclKatcl = :kat "
@@ -1919,8 +1943,188 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
                 }
             }
         }
-
+        
         return result;
     }
-
+    
+    public List<PMPKR> pmpkFirstOvz(Date d1, Date d2) {
+        String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName "
+                + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
+                + "WHERE pr = pc.priyomId AND pc.clientId = c.childId AND pr.spruslId = usl "
+                + "AND c.sprregId = r AND p.prclId = pc AND usl.spruslPmpk = :pmpk "
+                + "AND pr.priyomDate >= :date1 AND pr.priyomDate <= :date2 "
+                + "AND p.pmpkFirstOvz = :first "
+                + "ORDER BY c.childFam, c.childName, c.childPatr ";
+        Query query = em.createQuery(qlString)
+                .setParameter("date1", d1)
+                .setParameter("date2", d2)
+                .setParameter("pmpk", 1)
+                .setParameter("first", 1);
+        List resultList = query.getResultList();
+        List<PMPKR> result = new ArrayList<>();
+        for (int i = 0; i < resultList.size(); i++) {
+            Object[] o = (Object[]) resultList.get(i);
+            PMPKR r = new PMPKR();
+            r.setFio((String) o[0] + " " + (String) o[1] + " " + (String) o[2]);
+            r.setDr((Date) o[3]);
+            r.setReg((String) o[4]);
+            result.add(r);
+        }
+        return result;
+    }
+    
+    public List<PMPKR> pmpkFirstOvzReg(Date d1, Date d2, SprRegion reg) {
+        String qlString = "SELECT c.childFam, c.childName, c.childPatr, c.childDr, r.sprregName "
+                + "FROM Children c, Priyom pr, PriyomClient pc, SprUsl usl, SprRegion r, Pmpk p "
+                + "WHERE pr = pc.priyomId AND pc.clientId = c.childId AND pr.spruslId = usl "
+                + "AND c.sprregId = r AND p.prclId = pc AND usl.spruslPmpk = :pmpk "
+                + "AND pr.priyomDate >= :date1 AND pr.priyomDate <= :date2 AND r = :reg "
+                + "AND p.pmpkFirstOvz = :first "
+                + "ORDER BY c.childFam, c.childName, c.childPatr ";
+        Query query = em.createQuery(qlString)
+                .setParameter("date1", d1)
+                .setParameter("date2", d2)
+                .setParameter("pmpk", 1)
+                .setParameter("reg", reg)
+                .setParameter("first", 1);
+        List resultList = query.getResultList();
+        List<PMPKR> result = new ArrayList<>();
+        for (int i = 0; i < resultList.size(); i++) {
+            Object[] o = (Object[]) resultList.get(i);
+            PMPKR r = new PMPKR();
+            r.setFio((String) o[0] + " " + (String) o[1] + " " + (String) o[2]);
+            r.setDr((Date) o[3]);
+            r.setReg((String) o[4]);
+            result.add(r);
+        }
+        return result;
+    }
+    
+    public List<CountClient> countClientUslKat(Date dateN, Date dateK) {
+        String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(DISTINCT c.clientId), c.prclKatcl, r.sprregCenter "
+                + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c "
+                + "WHERE o = u.sprosnuslId AND p.spruslId = u "
+                + "AND c.priyomId = p "
+                + "AND p.priyomDate >= :date1 AND p.priyomDate <= :date2 "
+                + "AND p.sprregId = r "
+                + "GROUP BY o.sprosnuslName, u.spruslName, c.prclKatcl, r.sprregCenter ";
+        TypedQuery<CountClient> query = em.createQuery(qlString, CountClient.class)
+                .setParameter("date1", dateN)
+                .setParameter("date2", dateK);
+        List resultList = query.getResultList();
+        List<CountClient> result = new ArrayList<>();
+        for (int i = 0; i < resultList.size(); i++) {
+            Object[] o = (Object[]) resultList.get(i);
+            CountClient count = new CountClient();
+            count.setOsnUsl((String) o[0]);
+            count.setUsl((String) o[1]);
+            Long l = (Long) o[2];
+            count.setCount(l.intValue());
+            count.setKatClient((String) o[3]);            
+            Integer isCenter = (Integer) o[4];
+            if (isCenter == 1) {
+                count.setIsCenter(Boolean.TRUE);
+            } else {
+                count.setIsCenter(Boolean.FALSE);
+            }
+            result.add(count);
+        }
+        return result;
+    }
+    
+    public List<CountPriyom> countPriyomUslKat(Date dateN, Date dateK) {
+        String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(p.priyomId), "
+                + "r.sprregCenter, pc.prclKatcl "
+                + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient pc "
+                + "WHERE o = u.sprosnuslId AND p.spruslId = u "
+                + "AND p.priyomDate >= :date1 AND p.priyomDate <= :date2 "
+                + "AND p.sprregId = r AND pc.priyomId = p "
+                + "GROUP BY o.sprosnuslName, u.spruslName, r.sprregCenter, pc.prclKatcl";
+        TypedQuery<CountPriyom> query = em.createQuery(qlString, CountPriyom.class)
+                .setParameter("date1", dateN)
+                .setParameter("date2", dateK);
+        List resultList = query.getResultList();
+        List<CountPriyom> result = new ArrayList<>();
+        for (int i = 0; i < resultList.size(); i++) {
+            Object[] o = (Object[]) resultList.get(i);
+            CountPriyom count = new CountPriyom();
+            count.setOsnUsl((String) o[0]);
+            count.setUsl((String) o[1]);
+            Long l = (Long) o[2];
+            count.setCount(l.intValue());
+            Integer isCenter = (Integer) o[3];
+            if (isCenter == 1) {
+                count.setIsCenter(Boolean.TRUE);
+            } else {
+                count.setIsCenter(Boolean.FALSE);
+            }
+            count.setKatClient((String) o[4]);
+            result.add(count);
+        }
+        return result;
+    }
+    
+    public List<CountClient> countOsnClientUslKat(Date dateN, Date dateK) {
+        String qlString = "SELECT o.sprosnuslName, COUNT(DISTINCT c.clientId), "
+                + "c.prclKatcl, r.sprregCenter "
+                + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c "
+                + "WHERE o = u.sprosnuslId AND p.spruslId = u "
+                + "AND c.priyomId = p "
+                + "AND p.priyomDate >= :date1 AND p.priyomDate <= :date2 "
+                + "AND p.sprregId = r "
+                + "GROUP BY o.sprosnuslName, c.prclKatcl, r.sprregCenter ";
+        TypedQuery<CountClient> query = em.createQuery(qlString, CountClient.class)
+                .setParameter("date1", dateN)
+                .setParameter("date2", dateK);
+        List resultList = query.getResultList();
+        List<CountClient> result = new ArrayList<>();
+        for (int i = 0; i < resultList.size(); i++) {
+            Object[] o = (Object[]) resultList.get(i);
+            CountClient count = new CountClient();
+            count.setOsnUsl((String) o[0]);
+            Long l = (Long) o[1];
+            count.setCount(l.intValue());
+            count.setKatClient((String) o[2]);
+            Integer isCenter = (Integer) o[3];
+            if (isCenter == 1) {
+                count.setIsCenter(Boolean.TRUE);
+            } else {
+                count.setIsCenter(Boolean.FALSE);
+            }
+            result.add(count);
+        }
+        return result;
+    }
+    
+    public List<CountPriyom> countPrClUslKat(Date dateN, Date dateK) {
+        String qlString = "SELECT o.sprosnuslName, u.spruslName, COUNT(c.prclId), "
+                + "r.sprregCenter, c.prclKatcl "
+                + "FROM SprOsnusl o, SprUsl u, Priyom p, SprRegion r, PriyomClient c  "
+                + "WHERE o = u.sprosnuslId AND p.spruslId = u AND c.priyomId = p "
+                + "AND p.priyomDate >= :date1 AND p.priyomDate <= :date2 "
+                + "AND p.sprregId = r "
+                + "GROUP BY o.sprosnuslName, u.spruslName, r.sprregCenter, c.prclKatcl ";
+        TypedQuery<CountPriyom> query = em.createQuery(qlString, CountPriyom.class)
+                .setParameter("date1", dateN)
+                .setParameter("date2", dateK);
+        List resultList = query.getResultList();
+        List<CountPriyom> result = new ArrayList<>();
+        for (int i = 0; i < resultList.size(); i++) {
+            Object[] o = (Object[]) resultList.get(i);
+            CountPriyom count = new CountPriyom();
+            count.setOsnUsl((String) o[0]);
+            count.setUsl((String) o[1]);
+            Long l = (Long) o[2];
+            count.setCount(l.intValue());
+            Integer isCenter = (Integer) o[3];
+            if (isCenter == 1) {
+                count.setIsCenter(Boolean.TRUE);
+            } else {
+                count.setIsCenter(Boolean.FALSE);
+            }
+            count.setKatClient((String) o[4]);
+            result.add(count);
+        }
+        return result;
+    }
 }

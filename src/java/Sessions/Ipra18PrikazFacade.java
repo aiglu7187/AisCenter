@@ -7,6 +7,8 @@ package Sessions;
 
 import Entities.Ipra18;
 import Entities.Ipra18Prikaz;
+import Entities.SprRegion;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -58,4 +60,8 @@ public class Ipra18PrikazFacade extends AbstractFacade<Ipra18Prikaz> {
         List<Ipra18Prikaz> result = query.getResultList();
         return result;
     }
+    
+    
+
+    
 }

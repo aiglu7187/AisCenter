@@ -661,8 +661,8 @@ public class MonitoringServlet extends HttpServlet {
                             скобок, знаков +, |, ! и составлен по правилам:
                             () - определяют уровень выражения, н-р (a+b)|(b+c) - два уровня
                             ! - отрицание, ставится как перед текстовым элементов, так и перед скобками
-                            | - логическое ИЛИ 
-                            + - логическое И
+                            | - логическое или
+                            + - логическое и
                             | и + не могут быть на одном уровне (необходимо разделить скобками), н-р:
                             a+b|c - неверно, 
                             (a+b)|c - верно, 
@@ -1350,8 +1350,8 @@ public class MonitoringServlet extends HttpServlet {
                             скобок, знаков +, |, ! и составлен по правилам:
                             () - определяют уровень выражения, н-р (a+b)|(b+c) - два уровня
                             ! - отрицание, ставится как перед текстовым элементов, так и перед скобками
-                            | - логическое ИЛИ 
-                            + - логическое И
+                            | - логическое или 
+                            + - логическое и
                             | и + не могут быть на одном уровне (необходимо разделить скобками), н-р:
                             a+b|c - неверно, 
                             (a+b)|c - верно, 
@@ -1394,7 +1394,7 @@ public class MonitoringServlet extends HttpServlet {
                 }
 
                 for (int i = inpRow - 1; i < sheet.getRows(); i++) {
-                    if ((fieldFamCol != 0) && (fieldNameCol != 0) // ФИО и дата рождения
+                    if ((fieldFamCol != 0) && (fieldNameCol != 0) // фио и дата рождения
                             && (fieldPatrCol != 0) && (fieldDrCol != 0)) {
                         Children child = null;
                         if ((!fieldFamCol.equals(fieldNameCol)) && (!fieldFamCol.equals(fieldPatrCol))

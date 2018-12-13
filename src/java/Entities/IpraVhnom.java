@@ -44,8 +44,8 @@ public class IpraVhnom implements Serializable {
     @Column(name = "IPRAVHNOM_NOM")
     private Integer ipravhnomNom;
     @Size(max = 10)
-    @Column(name = "IPRAISHNOM_SUFFIX")
-    private String ipraishnomSuffix;
+    @Column(name = "IPRAVHNOM_SUFFIX")
+    private String ipravhnomSuffix;
 
     public Integer getIpravhnomId() {
         return ipravhnomId;
@@ -63,12 +63,12 @@ public class IpraVhnom implements Serializable {
         this.ipravhnomNom = ipravhnomNom;
     }
     
-    public String getIpraishnomSuffix() {
-        return ipraishnomSuffix;
+    public String getIpravhnomSuffix() {
+        return ipravhnomSuffix;
     }
 
-    public void setIpraishnomSuffix(String ipraishnomSuffix) {
-        this.ipraishnomSuffix = ipraishnomSuffix;
+    public void setIpravhnomSuffix(String ipravhnomSuffix) {
+        this.ipravhnomSuffix = ipravhnomSuffix;
     }
 
     @Override

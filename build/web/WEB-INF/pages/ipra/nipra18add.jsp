@@ -33,7 +33,7 @@
                 <label for="tab1" title="Данные">Данные</label>    
                 <section id="content-tab1">
                     <div id="divIpra">
-                        <p class="stp">
+
                         <table class="noborder">
                             <tr>
                                 <td>
@@ -68,7 +68,7 @@
                                 </td>
                             </tr>
                         </table>
-                        </p>
+
                         <p class="stp">
                             Бюро МСЭ:
                             <select id="selMse">
@@ -82,13 +82,35 @@
                             <input type="hidden" id="mseId" name="mseId" >
                         </p>        
                         <p class="stp">
-                            <strong>Входящее письмо в ДО</strong>
-                            <br>
-                            номер: <input type="text" id="ipraVhToDON" name="ipraVhToDON" maxlength="50" style="width: 150px;"> 
-                            дата: <input type="date" id="ipraVhToDOD" name="ipraVhToDOD" style="height: 20px;">
-                        </p>                        
+                            <strong>Входящее письмо в ДО из МСЭ</strong>
+                        </p>
+                        <table>
+                            <tr>
+                                <td>номер <input type="text" id="ipraVhToDON" name="ipraVhToDON" maxlength="50" style="width: 150px;"> 
+                                    от <input type="date" id="ipraVhToDOD" name="ipraVhToDOD" style="height: 20px;">
+                                </td>
+                            </tr>
+                        </table>
+                        <p class="stp">
+                            <strong>Входящее письмо в ОЦППМСП из ДО</strong>
+                        </p>
+                        <table class="noborder">
+                            <tr>
+                                <td>
+                                    от <input type="date" id="ipraVhToCenterD" name="ipraVhToCenterD" style="height: 20px;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    исходящий номер <input type="text" id="ipraToCenterIshN" name="ipraToCenterIshN" maxlength="50" style="width: 150px;"> 
+                                    от <input type="date" id="ipraToCenterIshD" name="ipraToCenterIshD" style="height: 20px;">
+                                </td>
+                            </tr>
+                        </table>                        
+
                         <p class="stp">
                             <strong>Даты отчётов</strong>
+                        </p>
                         <table class="noborder">
                             <tr>
                                 <td>
@@ -115,7 +137,7 @@
                                 </td>
                             </tr>
                         </table>
-                        </p>
+
                     </div>
                     <p style="margin-top: 15px; margin-bottom: 15px;">
                         <a class="greybtn" id="saveBtn" name="saveBtn">

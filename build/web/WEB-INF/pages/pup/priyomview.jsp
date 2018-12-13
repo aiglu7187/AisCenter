@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="priyomview0926.js" charset="utf-8"></script>
-        <script type="text/javascript" src="addpriyom0928.js" charset="utf-8"></script>
+        <script type="text/javascript" src="addpriyom1129.js" charset="utf-8"></script>
         <link href="css/styles0622.css" rel="stylesheet" type="text/css">
         <title>
             <c:if test="${!copy}">
@@ -379,6 +379,20 @@
                                 <c:forEach var="pmpk" items="${pmpklist}">
                                     <c:if test="${pmpk.getPrclId().getPrclKatcl().equals('children')}">
                                         <c:if test="${pmpk.getPrclId().getClientId() == child.getChildId()}">
+                                            <div id = "divFirstOvz${j}">
+                                                <br>
+                                                <label>
+                                                    <c:if test="${pmpk.getPmpkFirstOvz() == 0}">
+                                                        <input type = "checkbox" id = "firstOvz${j}" name = "firstOvz${j}">
+                                                    </c:if>
+                                                    <c:if test="${pmpk.getPmpkFirstOvz() == 1}">
+                                                        <input checked type = "checkbox" id = "firstOvz${j}" name = "firstOvz${j}">
+                                                    </c:if>
+                                                        ОВЗ выявлены впервые
+                                                </label>
+                                                <br>
+                                                <br>
+                                            </div>
                                             <div id="divOu${j}">
                                                 Образовательное учреждение: 
                                                 <input type="hidden" id="ou${j}" name="ou${j}" value="${pmpk.getPmpkOu()}">

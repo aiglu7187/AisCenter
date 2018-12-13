@@ -61,6 +61,8 @@ public class Pmpk implements Serializable {
     private Integer pmpkIpr;
     @Column(name = "PMPK_SOGL")
     private Integer pmpkSogl;
+    @Column(name = "PMPK_FIRST_OVZ")
+    private Integer pmpkFirstOvz;
     @OneToMany(mappedBy = "pmpkId")
     private Collection<PmpkParent> pmpkParentCollection;
     @OneToMany(mappedBy = "pmpkId")
@@ -154,6 +156,14 @@ public class Pmpk implements Serializable {
 
     public void setPmpkIpr(Integer pmpkIpr) {
         this.pmpkIpr = pmpkIpr;
+    }
+    
+    public Integer getPmpkFirstOvz() {
+        return pmpkFirstOvz;
+    }
+
+    public void setPmpkFirstOvz(Integer pmpkFirstOvz) {
+        this.pmpkFirstOvz = pmpkFirstOvz;
     }
 
     public Integer getPmpkSogl() {

@@ -6,6 +6,7 @@
 package Sessions;
 
 import Entities.Ipra18N;
+import Entities.SprVhType;
 import Entities.VhCorr;
 import java.util.List;
 import javax.ejb.Stateless;
@@ -41,4 +42,13 @@ public class VhCorrFacade extends AbstractFacade<VhCorr> {
         return result;
     }
     
+    public List<VhCorr> findByIpraAndType(Ipra18N ipra, SprVhType type){
+        String qlString = "SELECT vc FROM VhCorr vc, IpraVhcorr ivc "
+                + "WHERE ivc.vhcorrId = vc AND ivc.ipra18Id = :ipra AND vc.sprvhtypeId = :type ";
+        TypedQuery<VhCorr> query = em.createQuery(qlString, VhCorr.class)
+                .setParameter("ipra", ipra)
+                .setParameter("type", type);
+        List<VhCorr> result = query.getResultList();
+        return result;
+    }
 }

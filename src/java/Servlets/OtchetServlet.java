@@ -84,8 +84,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("rpmpk")) {
+        } else if (id.equals("rpmpk")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -100,8 +99,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("statpmpk")) {
+        } else if (id.equals("statpmpk")) {
             userPath = "/pmpk/statpmpk";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
@@ -109,8 +107,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("status")) {
+        } else if (id.equals("status")) {
             userPath = "/otchet/otchetstat";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
@@ -118,8 +115,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("problem")) {
+        } else if (id.equals("problem")) {
             userPath = "/otchet/otchetproblem";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
@@ -127,8 +123,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("age")) {
+        } else if (id.equals("age")) {
             userPath = "/otchet/otchetage";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
@@ -136,8 +131,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("pmpkstatus")) {
+        } else if (id.equals("pmpkstatus")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -152,8 +146,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("pmpkipr")) {
+        } else if (id.equals("pmpkipr")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -168,8 +161,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("pmpkgia")) {
+        } else if (id.equals("pmpkgia")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -184,8 +176,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("pmpkter")) {
+        } else if (id.equals("pmpkter")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -200,8 +191,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("pmpkrek")) {
+        } else if (id.equals("pmpkrek")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -216,8 +206,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("statpmpkstatus")) {
+        } else if (id.equals("statpmpkstatus")) {
             userPath = "/pmpk/statpmpkstatus";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
@@ -225,8 +214,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("statpmpkrek")) {
+        } else if (id.equals("statpmpkrek")) {
             userPath = "/pmpk/statpmpkrek";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
@@ -234,8 +222,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("statpmpkpar")) {
+        } else if (id.equals("statpmpkpar")) {
             userPath = "/pmpk/statpmpkpar";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
@@ -243,8 +230,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("rpmpkmonit")) {
+        } else if (id.equals("rpmpkmonit")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -259,8 +245,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("toovzfgos")) {
+        } else if (id.equals("toovzfgos")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -275,8 +260,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        }
-        if (id.equals("toovzarch")) {
+        } else if (id.equals("toovzarch")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -313,7 +297,7 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-        } else if (id.equals("rpmpkfull")){
+        } else if (id.equals("rpmpkfull")) {
             try {
                 session.removeAttribute("regions");
             } catch (Exception ex) {
@@ -322,6 +306,36 @@ public class OtchetServlet extends HttpServlet {
             Collections.sort(regions, new RegionComparator());
             session.setAttribute("regions", regions);
             userPath = "/pmpk/reestrpmpkfull";
+            url = "/WEB-INF/pages" + userPath + ".jsp";
+            try {
+                request.getRequestDispatcher(url).forward(request, response);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else if (id.equals("pmpkfirstovz")) {
+            try {
+                session.removeAttribute("regions");
+            } catch (Exception ex) {
+            }
+            List<SprRegion> regions = sprRegionFacade.findNoCenter();
+            Collections.sort(regions, new RegionComparator());
+            session.setAttribute("regions", regions);
+            userPath = "/pmpk/pmpkfirstovz";
+            url = "/WEB-INF/pages" + userPath + ".jsp";
+            try {
+                request.getRequestDispatcher(url).forward(request, response);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else if (id.equals("statuslkat")) {
+            try {
+                session.removeAttribute("regions");
+            } catch (Exception ex) {
+            }
+            List<SprRegion> regions = sprRegionFacade.findNoCenter();
+            Collections.sort(regions, new RegionComparator());
+            session.setAttribute("regions", regions);
+            userPath = "/otchet/otchetstatuslkat";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
                 request.getRequestDispatcher(url).forward(request, response);

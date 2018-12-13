@@ -19,7 +19,10 @@
             <tr>
                 <td onclick="window.open('otchet?id=goszad', '_blank')">
                     Общий отчет по госзаданию
-                </td>                
+                </td>    
+                <td onclick="window.open('otchet?id=statuslkat', '_blank')">
+                    Статистический отчет по услугам и категориям клиентов
+                </td>
                 <td onclick="window.open('otchet?id=status', '_blank')">
                     Отчет по статусам детей
                 </td>
@@ -29,6 +32,9 @@
                 <td onclick="window.open('otchet?id=age', '_blank')">
                     Отчет по возрасту детей
                 </td> 
+                <%--    <td onclick="window.open('otchet?id=consultage', '_blank')">
+                    Отчет по консультированию законных представителей (с учётом возраста детей)
+                </td> --%>
             </tr>            
         </table>      
         <h3>Реестры</h3>
@@ -37,6 +43,9 @@
                 <td onclick="window.open('otchet?id=reestrusl', '_blank')">
                     Список клиентов по услуге со специалистами
                 </td>     
+             <%--    <td onclick="window.open('otchet?id=consultagereestr', '_blank')">
+                    Реестр законных представителей (по консультированию с учётом возраста детей)
+                </td>--%>
             </tr>            
         </table>      
     </c:if>
