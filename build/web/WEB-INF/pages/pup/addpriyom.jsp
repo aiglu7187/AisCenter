@@ -12,7 +12,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="addpriyom1129.js" charset="utf-8"></script>
-        <link href="css/styles0622.css" rel="stylesheet" type="text/css">
+        <link href="css/styles1216.css" rel="stylesheet" type="text/css">
         <title>Прием</title>
     </head>
     <body>

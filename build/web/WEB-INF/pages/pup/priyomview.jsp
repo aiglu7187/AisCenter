@@ -12,7 +12,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="priyomview0926.js" charset="utf-8"></script>
         <script type="text/javascript" src="addpriyom1129.js" charset="utf-8"></script>
-        <link href="css/styles0622.css" rel="stylesheet" type="text/css">
+        <link href="css/styles1216.css" rel="stylesheet" type="text/css">
         <title>
             <c:if test="${!copy}">
                 <c:out  value="${datepriyom}"/>

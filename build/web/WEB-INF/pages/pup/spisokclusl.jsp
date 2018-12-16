@@ -12,7 +12,7 @@
     <head>
         <script type="text/javascript" src="spisokclusl0829.js" charset="utf-8"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="css/styles0622.css" rel="stylesheet" type="text/css">
+        <link href="css/styles1216.css" rel="stylesheet" type="text/css">
         <title>Список клиентов по услугам</title>
     </head>
     <body>

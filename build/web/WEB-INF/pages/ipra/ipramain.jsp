@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link href="css/styles0622.css" rel="stylesheet" type="text/css">
+        <link href="css/styles1216.css" rel="stylesheet" type="text/css">
         <title>ИПРА</title>
     </head>
     <body>
@@ -88,14 +88,14 @@
                 </tr>            
             </table>
             
-            <h3>Новая версия ИПРА 2018</h3>
+        <%--    <h3>Новая версия ИПРА 2018</h3>
             <table class="puptab">
                 <tr>
                     <td onclick="window.open('ipra2018new?action=openlist&tab=1', '_blank')">
                         Список ИПРА
                     </td>             
                 </tr>            
-            </table>
+            </table>--%>
         </c:if>
     </body>
 </html>
