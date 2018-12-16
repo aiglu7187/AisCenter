@@ -615,6 +615,17 @@ function appendIpra(divInfoChild) {
         divIpra.appendChild(omsuReqD);
         divIpra.appendChild(document.createElement("br"));
         divIpra.appendChild(document.createElement("br"));
+        // галочка "Отказ"
+        var lblOtkaz = document.createElement("label");        
+        var chbOtkaz = document.createElement("input");
+        chbOtkaz.type = "checkbox";
+        chbOtkaz.id = "chbOtkaz";
+        chbOtkaz.name = "chbOtkaz";
+        lblOtkaz.appendChild(chbOtkaz);
+        lblOtkaz.appendChild(document.createTextNode("отказ"));
+        divIpra.appendChild(lblOtkaz);
+        divIpra.appendChild(document.createElement("br"));
+        divIpra.appendChild(document.createElement("br"));
 
         var lblVhDo = document.createElement("strong");
         lblVhDo.appendChild(document.createTextNode("Входящее письмо в ДО из ОМСУ"));

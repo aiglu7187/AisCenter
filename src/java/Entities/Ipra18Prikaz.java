@@ -115,7 +115,9 @@ public class Ipra18Prikaz implements Serializable {
     private SprOtherPmpk sprotherpmpkId;
     @JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")
     @ManyToOne
-    private Users userId;    
+    private Users userId;  
+    @Column(name = "IPRA18PRIKAZ_OTKAZ")
+    private Integer ipra18prikazOtkaz;
 
     public Ipra18Prikaz() {
     }
@@ -324,5 +326,13 @@ public class Ipra18Prikaz implements Serializable {
         }
         return strD;
     }    
+    
+    public Integer getIpra18prikazOtkaz() {
+        return ipra18prikazOtkaz;
+    }
+
+    public void setIpra18prikazOtkaz(Integer ipra18prikazOtkaz) {
+        this.ipra18prikazOtkaz = ipra18prikazOtkaz;
+    }
 
 }
