@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="ipra18_1015.js" charset="utf-8"></script>
+        <script type="text/javascript" src="ipra18_1216.js" charset="utf-8"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="css/styles1216.css" rel="stylesheet" type="text/css">
         <title>ИПРА - ${ipra.getChildId().getChildFam()} ${ipra.getChildId().getChildName()} ${ipra.getChildId().getChildPatr()}</title>
@@ -130,6 +130,17 @@
                                     <input type = "text" id = "omsuReqN" name = "omsuReqN" value="${ipraPrikaz.getIpra18prikazReqN()}" >
                                     дата: 
                                     <input type = "date" id = "omsuReqD" name = "omsuReqD" value="${ipra.getFormatDate(ipraPrikaz.getIpra18prikazReqD())}" >
+                                    <br>
+                                    <br>
+                                    <label>
+                                        <c:if test="${ipraPrikaz.getIpra18prikazOtkaz() == 0}">
+                                            <input type = "checkbox" id = "chbOtkaz" name = "chbOtkaz">
+                                        </c:if>
+                                        <c:if test="${ipraPrikaz.getIpra18prikazOtkaz() == 1}">
+                                            <input checked type = "checkbox" id = "chbOtkaz" name = "chbOtkaz">
+                                        </c:if>
+                                        <strong>Отказ</strong>
+                                    </label>  
                                     <br>
                                     <br>
                                     <strong>Входящее письмо в ДО из ОМСУ</strong>

@@ -1009,7 +1009,7 @@ public class Ipra2018SpisokServlet extends HttpServlet {
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
-        } else if (action.equals("opennoinfo")){
+        } else if (action.equals("opennoinfo")) {
             userPath = "/ipra/ipra18noinfo";
             url = "/WEB-INF/pages" + userPath + ".jsp";
             try {
@@ -1027,7 +1027,7 @@ public class Ipra2018SpisokServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            
+
         }
     }
 
@@ -1118,7 +1118,7 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                 try {
                     childDr = format.parse(childDrS);
                 } catch (ParseException ex) {
-                    Logger.getLogger(SaveIpraServlet.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 String regIdS = params.get("regId")[0];
                 Integer regId = 0;
@@ -1317,6 +1317,18 @@ public class Ipra2018SpisokServlet extends HttpServlet {
             if (omsu != null) {
                 ipraPrikaz.setSpromsuId(omsu);
             }
+
+            String chbOtkaz = null;
+            try {
+                chbOtkaz = params.get("chbOtkaz")[0];
+            } catch (Exception ex) {
+            }
+            if (chbOtkaz != null){
+                if (chbOtkaz.equals("on")){
+                    ipraPrikaz.setIpra18prikazOtkaz(1);
+                }
+            }
+
             // номер запроса из ОМСУ
             String omsuReqN = "";
             try {
