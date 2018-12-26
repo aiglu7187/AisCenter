@@ -379,6 +379,50 @@
                 </c:if> 
                 <input type="button" name="closeBtn" id = "closeBtn" value="Закрыть" onclick="javascript:window.close();">
             </form>
+            <c:if test="${(pmpkParentList != null)&&(pmpkParentList.size() > 0)}">
+                <div id="pmpkParent">
+                    <br>
+                    <strong>Присутствие на ПМПК в качестве законного представителя</strong>
+                    <br>
+                    <br>
+                    <table class="regular" id="pmpktab">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td>Дата</td>
+                                <td>Специалисты</td>
+                                <td>Место проведения</td>
+                                <td>Ребенок</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="pmpk" items="${pmpkParentList}">
+                                <tr>
+                                    <td><c:out value="${pmpk.getPmpkId().getPrclId().getPriyomId().getPriyomId()}" /></td>
+                                    <td><c:out value="${pmpk.getPmpkId().getPrclId().getPriyomId().getFormatDate()}" /></td>
+                                    <td>
+                                        <c:forEach var="pks" items="${pmpkSotrud}">
+                                            <c:if test="${pmpk.getPmpkId().getPrclId().getPriyomId() == pks.getPriyomId()}">
+                                                <c:out value="${pks.getSotruddolgnId().getSotrudId().getSotrudFIO()}" /><br>
+                                            </c:if>
+                                        </c:forEach>
+                                    </td>
+                                    <td><c:out value="${pmpk.getPmpkId().getPrclId().getPriyomId().getSprregId().getSprregName()}" /></td>
+                                    <td>
+                                        <c:if test="${childrenPmpkList.size() > 0}">
+                                            <c:forEach var="chpk" items="${childrenPmpkList}">                                                
+                                                <c:if test="${chpk.getPmpk() == pmpk.getPmpkId()}">
+                                                    <c:out value="${chpk.getChild().getFIO()} ${chpk.getChild().getFormat2Dr()}" />
+                                                </c:if>
+                                            </c:forEach>
+                                        </c:if>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </div>
+            </c:if>
             <c:if test="${(prcl != null)&&(prcl.size() != 0)}">
                 <div id="usl">
                     <p>

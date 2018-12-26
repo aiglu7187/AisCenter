@@ -482,4 +482,16 @@ public class PriyomClientFacade extends AbstractFacade<PriyomClient> {
         return result;
     }
     
+    public List<PriyomClient> findByClientAndDate(Integer clientId, String kat, Date date1, Date date2) {
+        String ql = "SELECT p FROM PriyomClient p, Priyom pr WHERE p.clientId = :clientId AND p.prclKatcl = :prclKatcl "
+                + "AND pr = p.priyomId AND pr.priyomDate >= :date1 AND pr.priyomDate <= :date2 "
+                + "ORDER BY pr.priyomDate";
+        TypedQuery<PriyomClient> query = em.createQuery(ql, PriyomClient.class)
+                .setParameter("clientId", clientId)
+                .setParameter("prclKatcl", kat)
+                .setParameter("date1", date1)
+                .setParameter("date2", date2);
+        List<PriyomClient> result = query.getResultList();
+        return result;
+    }
 }

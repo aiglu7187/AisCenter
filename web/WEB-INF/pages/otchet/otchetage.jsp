@@ -10,7 +10,7 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script type="text/javascript" src="otchet1207.js" charset="utf-8"></script>
+        <script type="text/javascript" src="otchet1226.js" charset="utf-8"></script>
         <link href="css/styles1216.css" rel="stylesheet" type="text/css">
         <title>Отчет по возрасту детей</title>
     </head>

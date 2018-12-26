@@ -26,6 +26,7 @@ import Entities.PayuslSotrud;
 import Entities.Ped;
 import Entities.PedOldfio;
 import Entities.PedReg;
+import Entities.PmpkParent;
 import Entities.PriyomClient;
 import Entities.PriyomSotrud;
 import Entities.PriyomSubject;
@@ -36,6 +37,7 @@ import Entities.Telephon;
 import Entities.Users;
 import Other.ChildStatusComparator;
 import Other.FamilyMember;
+import Other.PmpkChild;
 import Other.RegionComparator;
 import Sessions.ChildEduplaceFacade;
 import Sessions.ChildStatusFacade;
@@ -58,6 +60,8 @@ import Sessions.PayuslSotrudFacade;
 import Sessions.PedFacade;
 import Sessions.PedOldfioFacade;
 import Sessions.PedRegFacade;
+import Sessions.PmpkFacade;
+import Sessions.PmpkParentFacade;
 import Sessions.PriyomClientFacade;
 import Sessions.PriyomSotrudFacade;
 import Sessions.PriyomSubjectFacade;
@@ -154,6 +158,8 @@ public class ClientServlet extends HttpServlet {
     ChildrenEducondEqFacade childrenEducondEqFacade = new ChildrenEducondEqFacade();
     @EJB
     MonitoringEducondFacade monitoringEducondFacade = new MonitoringEducondFacade();
+    @EJB
+    PmpkParentFacade pmpkParentFacade = new PmpkParentFacade();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -278,7 +284,11 @@ public class ClientServlet extends HttpServlet {
             session.removeAttribute("monitEducondList");
         } catch (Exception ex) {
         }
-        
+        try {
+            session.removeAttribute("pmpkParentList");
+        } catch (Exception ex) {
+        }
+
         String kat = request.getParameter("kat");
         String idS = request.getParameter("id");
         Integer id = Integer.parseInt(idS);
@@ -292,6 +302,8 @@ public class ClientServlet extends HttpServlet {
         Boolean itsOk = true;
 
         Children child = null;
+        Parents parent = null;
+        Ped ped = null;
         switch (kat) {
             case "children":
                 try {
@@ -310,7 +322,7 @@ public class ClientServlet extends HttpServlet {
                 break;
             case "parents":
                 try {
-                    Parents parent = parentsFacade.findById(id);
+                    parent = parentsFacade.findById(id);
                     session.setAttribute("client", parent);
                     List<ParentsReg> cr = parentsRegFacade.findByParent(parent);
                     session.setAttribute("parentreg", cr);
@@ -327,7 +339,7 @@ public class ClientServlet extends HttpServlet {
                 break;
             case "ped":
                 try {
-                    Ped ped = pedFacade.findById(id);
+                    ped = pedFacade.findById(id);
                     session.setAttribute("client", ped);
                     session.setAttribute("org", org);
                     session.setAttribute("dolg", dolg);
@@ -360,6 +372,35 @@ public class ClientServlet extends HttpServlet {
         }
         if (prSub != null) {
             session.setAttribute("prsub", prSub);
+        }
+
+        // родитель может быть зак.представителем на ПМПК, проверяем
+        List<PmpkParent> pmpkParentList = new ArrayList<>();
+        if (parent != null) {
+            pmpkParentList = pmpkParentFacade.findByParent(parent);
+        }
+        if (!pmpkParentList.isEmpty()) {
+            List<PriyomSotrud> pmpkSotrud = new ArrayList<>();  // список сотрудников к ПМПК
+            List<PmpkChild> childrenPmpkList = new ArrayList<>(); // список детей на ПМПК, с которыми был родитель
+            for (PmpkParent pk : pmpkParentList) {
+                List<PriyomSotrud> prSotr = priyomSotrudFacade.findByPriyom(pk.getPmpkId().getPrclId().getPriyomId());
+                for (PriyomSotrud prS : prSotr) {
+                    pmpkSotrud.add(prS);
+                }
+                if (pk.getPmpkId().getPrclId().getPrclKatcl().equals("children")) {
+                    try {
+                        PmpkChild pmpkChild = new PmpkChild();
+                        pmpkChild.setChild(childrenFacade.findById(pk.getPmpkId().getPrclId().getClientId()));
+                        pmpkChild.setPmpk(pk.getPmpkId());
+                        childrenPmpkList.add(pmpkChild);
+                    } catch (Exception ex) {
+                    }
+                }
+            }
+
+            session.setAttribute("pmpkParentList", pmpkParentList);
+            session.setAttribute("childrenPmpkList", childrenPmpkList);
+            session.setAttribute("pmpkSotrud", pmpkSotrud);
         }
 
         List<ChildEduplace> eduplaces = null;
@@ -447,7 +488,7 @@ public class ClientServlet extends HttpServlet {
 
         List<MonitoringEducond> monitEducondList = monitoringEducondFacade.findByChild(child);
         session.setAttribute("monitEducondList", monitEducondList);
-        List<ChildrenEducond> educondList = childrenEducondFacade.findByChild(child);        
+        List<ChildrenEducond> educondList = childrenEducondFacade.findByChild(child);
         session.setAttribute("educondList", educondList);
         List<ChildrenEducondRek> educondrekList = new ArrayList<>();
         for (ChildrenEducond ce : educondList) {
@@ -459,7 +500,7 @@ public class ClientServlet extends HttpServlet {
             educondeqList.addAll(childrenEducondEqFacade.findByChildreneducond(ce));
         }
         session.setAttribute("educondeqList", educondeqList);
-        
+
         if (itsOk == true) {
             userPath = "/pup/clientview";
         } else if (itsOk == false) {

@@ -1327,6 +1327,8 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                 if (chbOtkaz.equals("on")){
                     ipraPrikaz.setIpra18prikazOtkaz(1);
                 }
+            } else {
+                ipraPrikaz.setIpra18prikazOtkaz(0);
             }
 
             // номер запроса из ОМСУ

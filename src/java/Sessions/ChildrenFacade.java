@@ -936,4 +936,14 @@ public class ChildrenFacade extends AbstractFacade<Children> {
         }
         return result;
     }
+    
+    public List<Children> findAllChildrenDrAfter(Date date) {
+        String qlString = "SELECT c FROM Children c "
+                + "WHERE c.childDr >= :date ";
+        TypedQuery query = em.createQuery(qlString, Children.class)
+                .setParameter("date", date);
+        List<Children> result;
+        result = query.getResultList();
+        return result;
+    }
 }

@@ -342,6 +342,14 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        } else if (id.equals("ranniy")){
+            userPath = "/otchet/otchetranniy";
+            url = "/WEB-INF/pages" + userPath + ".jsp";
+            try {
+                request.getRequestDispatcher(url).forward(request, response);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

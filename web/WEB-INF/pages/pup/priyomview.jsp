@@ -33,11 +33,11 @@
             <c:set var="o" value="0" />
             <c:set var="r" value="0" />
             <c:set var="c" value="1" />
-            <h3><c:out  value="${priyom.getSpruslId().getSpruslName()}"/></h3>
+            <h3><c:out  value="${usl.getSpruslName()}"/></h3>
             <c:if test="${!copy}">
                 <input type="hidden" name="priyomId" id="priyomId" value="${priyom.getPriyomId()}">
             </c:if>            
-            <input type="hidden" name="uslId" id="uslId" value="${priyom.getSpruslId().getSpruslId()}">
+            <input type="hidden" name="uslId" id="uslId" value="${usl.getSpruslId()}">
             <input type="hidden" name="problem" id="problem" value="${priyom.getSpruslId().getSpruslProblem()}">
             <input type="hidden" name="stat" id="stat" value="${priyom.getSpruslId().getSpruslStat()}">
             <input type="hidden" name="monit" id="monit" value="${priyom.getSpruslId().getSpruslMonit()}">

@@ -5,6 +5,8 @@
  */
 package Other;
 
+import java.util.Objects;
+
 /**
  *
  * @author Aiglu
@@ -56,5 +58,17 @@ public class Age {
     
     public void setMonths (Integer months){
         this.months = months;
+    }
+    
+    public Boolean younger(Age age){
+        Boolean result = false;
+        if (this.years < age.years){
+            result = true;
+        } else if (this.years == age.years){
+            if (this.months <= age.months){
+                result = true;
+            }                 
+        }
+        return result;
     }
 }

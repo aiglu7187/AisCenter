@@ -133,7 +133,7 @@
                                     <br>
                                     <br>
                                     <label>
-                                        <c:if test="${ipraPrikaz.getIpra18prikazOtkaz() == 0}">
+                                        <c:if test="${(ipraPrikaz.getIpra18prikazOtkaz() == 0) || (ipraPrikaz.getIpra18prikazOtkaz() == null)}">
                                             <input type = "checkbox" id = "chbOtkaz" name = "chbOtkaz">
                                         </c:if>
                                         <c:if test="${ipraPrikaz.getIpra18prikazOtkaz() == 1}">

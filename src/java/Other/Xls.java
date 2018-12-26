@@ -25,6 +25,7 @@ import Entities.SprUsl;
 import Reestr.PMPKR;
 import Reestr.PMPKStatus;
 import Reestr.PMPKTer;
+import Reestr.Reestr;
 import Reestr.ReestrMonitPMPK;
 import Reestr.ReestrPMPK;
 import Reestr.ReestrPMPKFull;
@@ -33,11 +34,13 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.servlet.ServletOutputStream;
@@ -4600,7 +4603,7 @@ public class Xls {
                     sheet.addCell(new Label(6, j, ipra.getIpra18IshmseN(), tnr12ptFormat));
                     sheet.addCell(new Label(7, j, ipra.getFormat2Date(ipra.getIpra18IshmseD()), tnr12ptFormat));
                     sheet.addCell(new Label(8, j, ipra.getIpra18N(), tnr12ptFormat));
-                    sheet.addCell(new Label(9, j, ipra.getFormat2Date(ipra.getIpra18Dateexp()), tnr12ptFormat));                    
+                    sheet.addCell(new Label(9, j, ipra.getFormat2Date(ipra.getIpra18Dateexp()), tnr12ptFormat));
                 } catch (RowsExceededException e) {
                     e.printStackTrace();
                 } catch (WriteException e) {
@@ -4651,7 +4654,7 @@ public class Xls {
             cv = sheet.getColumnView(9);
             cv.setSize(90 * 37);
             sheet.setColumnView(9, cv);
-            
+
         } catch (IOException e) {
             // TODO Автоматически созданный блок catch
             e.printStackTrace();
@@ -4669,7 +4672,7 @@ public class Xls {
         }
 
     }
-    
+
     public static void printOtchetUslKat(ServletOutputStream os, Date date1, Date date2, List<Gz> gzs) throws WriteException {
         WorkbookSettings ws = new WorkbookSettings();
         ws.setLocale(new Locale("ru", "RU"));
@@ -4745,7 +4748,7 @@ public class Xls {
                 sheet.addCell(new Label(3, 4, "Дети", tnr12ptFormat));
                 sheet.addCell(new Label(4, 4, "Законные представители", tnr12ptFormat));
                 sheet.addCell(new Label(5, 4, "Педагоги", tnr12ptFormat));
-            /*    sheet.mergeCells(6, 3, 8, 3);
+                /*    sheet.mergeCells(6, 3, 8, 3);
                 sheet.addCell(new Label(6, 3, "Кол-во услуг", tnr12ptFormat));
                 sheet.addCell(new Label(6, 4, "Дети", tnr12ptFormat));
                 sheet.addCell(new Label(7, 4, "Законные представители", tnr12ptFormat));
@@ -4852,7 +4855,7 @@ public class Xls {
             cv = sheet.getColumnView(5);
             cv.setSize(180 * 37);
             sheet.setColumnView(5, cv);
-            
+
             cv = sheet.getColumnView(6);
             cv.setSize(180 * 37);
             sheet.setColumnView(6, cv);
@@ -4864,8 +4867,8 @@ public class Xls {
             cv = sheet.getColumnView(8);
             cv.setSize(180 * 37);
             sheet.setColumnView(8, cv);
-            
-       /*     cv = sheet.getColumnView(9);
+
+            /*     cv = sheet.getColumnView(9);
             cv.setSize(180 * 37);
             sheet.setColumnView(9, cv);
 
@@ -4876,7 +4879,6 @@ public class Xls {
             cv = sheet.getColumnView(11);
             cv.setSize(180 * 37);
             sheet.setColumnView(11, cv);*/
-
             //    sheetAutoFitColumns(sheet);
         } catch (IOException e) {
             // TODO Автоматически созданный блок catch
@@ -4894,7 +4896,628 @@ public class Xls {
             e.printStackTrace();
         }
     }
-    
+
+    public static void printRanniy(ServletOutputStream os, Date date1, Date date2, Map<List<String>, Integer> countChildren,
+            Map<List<String>, Integer> countParents, List<Reestr> pmpkReestr,
+            List<Reestr> massajReestr, List<Reestr> uslReestr, List<Reestr> consultReestr,
+            Set<String> regSet, Set<String> childrenUslSet, Set<String> parentsUslSet) throws WriteException {
+        WorkbookSettings ws = new WorkbookSettings();
+        ws.setLocale(new Locale("ru", "RU"));
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat();
+            dateFormat.applyPattern("dd.MM.yyyy");
+
+            workbook = Workbook.createWorkbook(os, ws);
+
+            WritableCellFormat tnr12ptBoldFormat;
+            WritableCellFormat tnr12ptFormat;
+            WritableCellFormat tnr12ptBoldFormatLeft;
+            WritableCellFormat tnr12ptFormatLeft;
+            WritableCellFormat tnr12ptFormatNoBorder;
+            WritableCellFormat tnr12ptFormatLeftCenter;
+            WritableCellFormat tnr12ptFormatRight;
+            WritableCellFormat tnr12ptVertFormat;
+            WritableCellFormat tnr12ptFormatBoldLeftBorder;
+
+            // жирный по центру
+            WritableFont tnr12ptBold = new WritableFont(WritableFont.TIMES, 12, WritableFont.BOLD);
+            tnr12ptBoldFormat = new WritableCellFormat(tnr12ptBold);
+            tnr12ptBoldFormat.setAlignment(Alignment.CENTRE);
+
+            // обычный по центру
+            WritableFont tnr12pt = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD);
+            tnr12ptFormat = new WritableCellFormat(tnr12pt);
+            tnr12ptFormat.setAlignment(Alignment.CENTRE);
+            tnr12ptFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
+
+            // обычный по центру без границ                
+            tnr12ptFormatNoBorder = new WritableCellFormat(tnr12pt);
+            tnr12ptFormatNoBorder.setAlignment(Alignment.LEFT);
+
+            // жирный влево
+            WritableFont tnr12ptBoldLeft = new WritableFont(WritableFont.TIMES, 12, WritableFont.BOLD);
+            tnr12ptBoldFormatLeft = new WritableCellFormat(tnr12ptBoldLeft);
+            tnr12ptBoldFormatLeft.setAlignment(Alignment.LEFT);
+
+            // обычный влево                
+            WritableFont tnr12ptLeft = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD);
+            tnr12ptFormatLeft = new WritableCellFormat(tnr12ptLeft);
+            tnr12ptFormatLeft.setAlignment(Alignment.LEFT);
+            tnr12ptFormatLeft.setBorder(Border.ALL, BorderLineStyle.THIN);
+            
+            // жирный влево с рамкой                
+            WritableFont tnr12ptBoldLeftBorder = new WritableFont(WritableFont.TIMES, 12, WritableFont.BOLD);
+            tnr12ptFormatBoldLeftBorder = new WritableCellFormat(tnr12ptBoldLeftBorder);
+            tnr12ptFormatBoldLeftBorder.setAlignment(Alignment.LEFT);
+            tnr12ptFormatBoldLeftBorder.setBorder(Border.ALL, BorderLineStyle.THIN);
+
+            // обычный вправо
+            WritableFont tnr12ptRight = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD);
+            tnr12ptFormatRight = new WritableCellFormat(tnr12ptRight);
+            tnr12ptFormatRight.setAlignment(Alignment.RIGHT);
+            tnr12ptFormatRight.setBorder(Border.ALL, BorderLineStyle.THIN);
+
+            // обычный влево по центру по вертикали                
+            WritableFont tnr12ptLeftCenter = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD);
+            tnr12ptFormatLeftCenter = new WritableCellFormat(tnr12ptLeftCenter);
+            tnr12ptFormatLeftCenter.setAlignment(Alignment.LEFT);
+            tnr12ptFormatLeftCenter.setVerticalAlignment(VerticalAlignment.CENTRE);
+            tnr12ptFormatLeftCenter.setBorder(Border.ALL, BorderLineStyle.THIN);
+            tnr12ptFormatLeftCenter.setWrap(true);
+
+            // обычный по центру вертикально
+            tnr12ptVertFormat = new WritableCellFormat(tnr12pt);
+            tnr12ptVertFormat.setAlignment(Alignment.CENTRE);
+            tnr12ptVertFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
+            tnr12ptVertFormat.setOrientation(Orientation.PLUS_90);
+
+            // Лист 1 - статистика
+            sheet = workbook.createSheet("Статистика", 0);
+            // вычисляем кол-во столбцов
+            int n = 2 + regSet.size();
+            try {
+                sheet.mergeCells(0, 0, n - 1, 0);
+                sheet.addCell(new Label(0, 0, "Статистические данные об услугах, оказанных детям раннего возраста и их законным представителям", tnr12ptBoldFormat));
+                sheet.mergeCells(0, 1, n - 1, 1);
+                sheet.addCell(new Label(0, 1, "за период с " + dateFormat.format(date1) + " по " + dateFormat.format(date2), tnr12ptBoldFormat));
+                sheet.mergeCells(0, 3, 0, 4);
+                sheet.addCell(new Label(0, 3, "Категория/Услуга", tnr12ptFormat));
+                sheet.mergeCells(1, 3, 1, 4);
+                sheet.addCell(new Label(1, 3, "Всего", tnr12ptFormat));
+                sheet.mergeCells(2, 3, n - 1, 3);
+                sheet.addCell(new Label(2, 3, "Районы", tnr12ptFormat));
+                int j = 2;
+                for (String reg : regSet) {
+                    sheet.addCell(new Label(j++, 4, reg, tnr12ptFormat));
+                }
+
+                int i = 5;
+                String vsego = "Всего";
+                String kol = "количество";
+                String obr = "обращения";
+                String keyCh = "Количество детей";
+                String keyPar = "Количество законных представителей";
+                String keyObrCh = "Количество обращений детей";
+                String keyObrPar = "Количество обращений законных представителей";
+                // общее кол-во детей                
+                sheet.addCell(new Label(0, i, keyCh, tnr12ptFormatBoldLeftBorder));
+                List<String> key1 = Arrays.asList(keyCh, kol, vsego);
+                sheet.addCell(new Number(1, i, countChildren.get(key1), tnr12ptFormat));
+                j = 2;
+                for (String reg : regSet) {
+                    List<String> key = Arrays.asList(keyCh, kol, reg);
+                    try {
+                        sheet.addCell(new Number(j, i, countChildren.get(key), tnr12ptFormat));
+                    } catch (Exception ex) {
+                        sheet.addCell(new Number(j, i,0, tnr12ptFormat));
+                    }
+                    j++;
+                }
+                i++;
+                // кол-во детей по услугам
+                for (String usl : childrenUslSet) {
+                    sheet.addCell(new Label(0, i, usl, tnr12ptFormatLeft));
+                    List<String> key2 = Arrays.asList(usl, kol, vsego);
+                    try {
+                        sheet.addCell(new Number(1, i, countChildren.get(key2), tnr12ptFormat));
+                    } catch (Exception ex) {
+                        sheet.addCell(new Number(1, i, 0, tnr12ptFormat));
+                    }
+                    j = 2;
+                    for (String reg : regSet) {
+                        List<String> key = Arrays.asList(usl, kol, reg);
+                        try {
+                            sheet.addCell(new Number(j, i, countChildren.get(key), tnr12ptFormat));
+                        } catch (Exception ex) {
+                            sheet.addCell(new Number(j, i, 0, tnr12ptFormat));
+                        }
+                        j++;
+                    }
+                    i++;
+                }
+                // кол-во обращений детей                
+                sheet.addCell(new Label(0, i, keyObrCh, tnr12ptFormatBoldLeftBorder));
+                List<String> key3 = Arrays.asList(keyObrCh, obr, vsego);
+                try {
+                    sheet.addCell(new Number(1, i, countChildren.get(key3), tnr12ptFormat));
+                } catch (Exception ex) {
+                    sheet.addCell(new Number(1, i, 0, tnr12ptFormat));
+                }
+                j = 2;
+                for (String reg : regSet) {
+                    List<String> key = Arrays.asList(keyObrCh, obr, reg);
+                    try {
+                        sheet.addCell(new Number(j, i, countChildren.get(key), tnr12ptFormat));
+                    } catch (Exception ex) {
+                        sheet.addCell(new Number(j, i, 0, tnr12ptFormat));
+                    }
+                    j++;
+                }
+                i++;
+                // кол-во обращений детей по услугам
+                for (String usl : childrenUslSet) {
+                    sheet.addCell(new Label(0, i, usl, tnr12ptFormatLeft));
+                    List<String> key2 = Arrays.asList(usl, obr, vsego);
+                    try {
+                        sheet.addCell(new Number(1, i, countChildren.get(key2), tnr12ptFormat));
+                    } catch (Exception ex) {
+                        sheet.addCell(new Number(1, i, 0, tnr12ptFormat));
+                    }
+                    j = 2;
+                    for (String reg : regSet) {
+                        List<String> key = Arrays.asList(usl, obr, reg);
+                        try {
+                            sheet.addCell(new Number(j, i, countChildren.get(key), tnr12ptFormat));
+                        } catch (Exception ex) {
+                            sheet.addCell(new Number(j, i, 0, tnr12ptFormat));
+                        }
+                        j++;
+                    }
+                    i++;
+                }
+                // общее кол-во зак.представителей                
+                sheet.addCell(new Label(0, i, keyPar, tnr12ptFormatBoldLeftBorder));
+                List<String> key4 = Arrays.asList(keyPar, kol, vsego);
+                try {
+                    sheet.addCell(new Number(1, i, countParents.get(key4), tnr12ptFormat));
+                } catch (Exception ex) {
+                    sheet.addCell(new Number(1, i, 0, tnr12ptFormat));
+                }
+                j = 2;
+                for (String reg : regSet) {
+                    List<String> key = Arrays.asList(keyPar, kol, reg);
+                    try {
+                        sheet.addCell(new Number(j, i, countParents.get(key), tnr12ptFormat));
+                    } catch (Exception ex) {
+                        sheet.addCell(new Number(j, i, 0, tnr12ptFormat));
+                    }
+                    j++;
+                }
+                i++;
+                // кол-во зак.представителей по услугам
+                for (String usl : parentsUslSet) {
+                    sheet.addCell(new Label(0, i, usl, tnr12ptFormatLeft));
+                    List<String> key2 = Arrays.asList(usl, kol, vsego);
+                    try {
+                        sheet.addCell(new Number(1, i, countParents.get(key2), tnr12ptFormat));
+                    } catch (Exception ex) {
+                        sheet.addCell(new Number(1, i, 0, tnr12ptFormat));
+                    }
+                    j = 2;
+                    for (String reg : regSet) {
+                        List<String> key = Arrays.asList(usl, kol, reg);
+                        try {
+                            sheet.addCell(new Number(j, i, countParents.get(key), tnr12ptFormat));
+                        } catch (Exception ex) {
+                            sheet.addCell(new Number(j, i, 0, tnr12ptFormat));
+                        }
+                        j++;
+                    }
+                    i++;
+                }
+                // кол-во обращений зак.представителей                
+                sheet.addCell(new Label(0, i, keyObrPar, tnr12ptFormatBoldLeftBorder));
+                List<String> key6 = Arrays.asList(keyObrPar, obr, vsego);
+                try {
+                    sheet.addCell(new Number(1, i, countParents.get(key6), tnr12ptFormat));
+                } catch (Exception ex) {
+                    sheet.addCell(new Number(1, i, 0, tnr12ptFormat));
+                }
+                j = 2;
+                for (String reg : regSet) {
+                    List<String> key = Arrays.asList(keyObrPar, obr, reg);
+                    try {
+                        sheet.addCell(new Number(j, i, countParents.get(key), tnr12ptFormat));
+                    } catch (Exception ex) {
+                        sheet.addCell(new Number(j, i, 0, tnr12ptFormat));
+                    }
+                    j++;
+                }
+                i++;
+                // кол-во обращений зак.представителей по услугам
+                for (String usl : parentsUslSet) {
+                    sheet.addCell(new Label(0, i, usl, tnr12ptFormatLeft));
+                    List<String> key2 = Arrays.asList(usl, obr, vsego);
+                    try {
+                        sheet.addCell(new Number(1, i, countParents.get(key2), tnr12ptFormat));
+                    } catch (Exception ex) {
+                        sheet.addCell(new Number(1, i, 0, tnr12ptFormat));
+                    }
+                    j = 2;
+                    for (String reg : regSet) {
+                        List<String> key = Arrays.asList(usl, obr, reg);
+                        try {
+                            sheet.addCell(new Number(j, i, countParents.get(key), tnr12ptFormat));
+                        } catch (Exception ex) {
+                            sheet.addCell(new Number(j, i, 0, tnr12ptFormat));
+                        }
+                        j++;
+                    }
+                    i++;
+                }
+
+                CellView cv = sheet.getColumnView(0);
+                cv.setSize(360 * 37);
+                sheet.setColumnView(0, cv);
+
+                cv = sheet.getColumnView(1);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(1, cv);
+
+                for (int k = 2; k < n; k++) {
+                    cv = sheet.getColumnView(k);
+                    cv.setSize(130 * 37);
+                    sheet.setColumnView(k, cv);
+                }
+
+            } catch (RowsExceededException e) {
+                e.printStackTrace();
+            } catch (WriteException e) {
+                e.printStackTrace();
+            }
+
+            // Лист 2 - дети РВ прошедшие ПМПК
+            sheet = workbook.createSheet("Дети ПМПК", 1);
+            try {
+                sheet.mergeCells(0, 0, 6, 0);
+                sheet.addCell(new Label(0, 0, "Реестр детей раннего возраста, прошедших ПМПК", tnr12ptBoldFormat));
+                sheet.mergeCells(0, 1, 6, 1);
+                sheet.addCell(new Label(0, 1, "за период с " + dateFormat.format(date1) + " по " + dateFormat.format(date2), tnr12ptBoldFormat));
+                sheet.addCell(new Label(0, 3, "№ п/п", tnr12ptFormat));
+                sheet.addCell(new Label(1, 3, "Фамилия", tnr12ptFormat));
+                sheet.addCell(new Label(2, 3, "Имя", tnr12ptFormat));
+                sheet.addCell(new Label(3, 3, "Отчество", tnr12ptFormat));
+                sheet.addCell(new Label(4, 3, "Дата рождения", tnr12ptFormat));
+                sheet.addCell(new Label(5, 3, "Район", tnr12ptFormat));
+                sheet.addCell(new Label(6, 3, "Дата ПМПК", tnr12ptFormat));
+                sheet.addCell(new Label(7, 3, "Место проведения", tnr12ptFormat));
+
+                int i = 4;
+                int nom = 1;
+                for (Reestr r : pmpkReestr) {
+                    sheet.addCell(new Number(0, i, nom, tnr12ptFormat));
+                    sheet.addCell(new Label(1, i, r.getFam(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(2, i, r.getName(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(3, i, r.getPatr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(4, i, r.getFormat2Dr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(5, i, r.getReg(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(6, i, r.getFormat2Date(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(7, i, r.getRegPr(), tnr12ptFormatLeft));
+                    i++;
+                    nom++;
+                }
+
+                CellView cv = sheet.getColumnView(0);
+                cv.setSize(48 * 48);
+                sheet.setColumnView(0, cv);
+
+                cv = sheet.getColumnView(1);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(1, cv);
+
+                cv = sheet.getColumnView(2);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(2, cv);
+
+                cv = sheet.getColumnView(3);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(3, cv);
+
+                cv = sheet.getColumnView(4);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(4, cv);
+
+                cv = sheet.getColumnView(5);
+                cv.setSize(180 * 37);
+                sheet.setColumnView(5, cv);
+
+                cv = sheet.getColumnView(6);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(6, cv);
+
+                cv = sheet.getColumnView(7);
+                cv.setSize(180 * 37);
+                sheet.setColumnView(7, cv);
+
+            } catch (RowsExceededException e) {
+                e.printStackTrace();
+            } catch (WriteException e) {
+                e.printStackTrace();
+            }
+
+            // Лист 3 - дети РВ посещавшие массаж
+            sheet = workbook.createSheet("Дети массаж", 2);
+            try {
+                sheet.mergeCells(0, 0, 6, 0);
+                sheet.addCell(new Label(0, 0, "Реестр детей раннего возраста, посещавшие массаж", tnr12ptBoldFormat));
+                sheet.mergeCells(0, 1, 6, 1);
+                sheet.addCell(new Label(0, 1, "за период с " + dateFormat.format(date1) + " по " + dateFormat.format(date2), tnr12ptBoldFormat));
+                sheet.addCell(new Label(0, 3, "№ п/п", tnr12ptFormat));
+                sheet.addCell(new Label(1, 3, "Фамилия", tnr12ptFormat));
+                sheet.addCell(new Label(2, 3, "Имя", tnr12ptFormat));
+                sheet.addCell(new Label(3, 3, "Отчество", tnr12ptFormat));
+                sheet.addCell(new Label(4, 3, "Дата рождения", tnr12ptFormat));
+                sheet.addCell(new Label(5, 3, "Район", tnr12ptFormat));
+                sheet.addCell(new Label(6, 3, "Дата сеанса", tnr12ptFormat));
+
+                int i = 4;
+                int nom = 1;
+                for (Reestr r : massajReestr) {
+                    sheet.addCell(new Number(0, i, nom, tnr12ptFormat));
+                    sheet.addCell(new Label(1, i, r.getFam(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(2, i, r.getName(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(3, i, r.getPatr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(4, i, r.getFormat2Dr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(5, i, r.getReg(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(6, i, r.getFormat2Date(), tnr12ptFormatLeft));
+                    i++;
+                    nom++;
+                }
+
+                CellView cv = sheet.getColumnView(0);
+                cv.setSize(48 * 37);
+                sheet.setColumnView(0, cv);
+
+                cv = sheet.getColumnView(1);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(1, cv);
+
+                cv = sheet.getColumnView(2);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(2, cv);
+
+                cv = sheet.getColumnView(3);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(3, cv);
+
+                cv = sheet.getColumnView(4);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(4, cv);
+
+                cv = sheet.getColumnView(5);
+                cv.setSize(180 * 37);
+                sheet.setColumnView(5, cv);
+
+                cv = sheet.getColumnView(6);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(6, cv);
+            } catch (RowsExceededException e) {
+                e.printStackTrace();
+            } catch (WriteException e) {
+                e.printStackTrace();
+            }
+
+            // Лист 4 - дети РВ, получившие другие услуги
+            sheet = workbook.createSheet("Дети другие услуги", 3);
+            try {
+                sheet.mergeCells(0, 0, 8, 0);
+                sheet.addCell(new Label(0, 0, "Реестр детей раннего возраста, получивших другие услуги", tnr12ptBoldFormat));
+                sheet.mergeCells(0, 1, 8, 1);
+                sheet.addCell(new Label(0, 1, "за период с " + dateFormat.format(date1) + " по " + dateFormat.format(date2), tnr12ptBoldFormat));
+                sheet.addCell(new Label(0, 3, "№ п/п", tnr12ptFormat));
+                sheet.addCell(new Label(1, 3, "Фамилия", tnr12ptFormat));
+                sheet.addCell(new Label(2, 3, "Имя", tnr12ptFormat));
+                sheet.addCell(new Label(3, 3, "Отчество", tnr12ptFormat));
+                sheet.addCell(new Label(4, 3, "Дата рождения", tnr12ptFormat));
+                sheet.addCell(new Label(5, 3, "Район", tnr12ptFormat));
+                sheet.addCell(new Label(6, 3, "Дата услуги", tnr12ptFormat));
+                sheet.addCell(new Label(7, 3, "Место проведения услуги", tnr12ptFormat));
+                sheet.addCell(new Label(8, 3, "Специалисты", tnr12ptFormat));
+
+                int i = 4;
+                int nom = 1;
+                for (Reestr r : uslReestr) {
+                    sheet.addCell(new Number(0, i, nom, tnr12ptFormat));
+                    sheet.addCell(new Label(1, i, r.getFam(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(2, i, r.getName(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(3, i, r.getPatr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(4, i, r.getFormat2Dr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(5, i, r.getReg(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(6, i, r.getFormat2Date(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(7, i, r.getUsl(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(8, i, r.getInfo(), tnr12ptFormatLeft));
+                    i++;
+                    nom++;
+                }
+
+                CellView cv = sheet.getColumnView(0);
+                cv.setSize(48 * 37);
+                sheet.setColumnView(0, cv);
+
+                cv = sheet.getColumnView(1);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(1, cv);
+
+                cv = sheet.getColumnView(2);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(2, cv);
+
+                cv = sheet.getColumnView(3);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(3, cv);
+
+                cv = sheet.getColumnView(4);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(4, cv);
+
+                cv = sheet.getColumnView(5);
+                cv.setSize(180 * 37);
+                sheet.setColumnView(5, cv);
+
+                cv = sheet.getColumnView(6);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(6, cv);
+
+                cv = sheet.getColumnView(7);
+                cv.setSize(180 * 37);
+                sheet.setColumnView(7, cv);
+
+                cv = sheet.getColumnView(8);
+                cv.setSize(300 * 37);
+                sheet.setColumnView(8, cv);
+
+            } catch (RowsExceededException e) {
+                e.printStackTrace();
+            } catch (WriteException e) {
+                e.printStackTrace();
+            }
+
+            // Лист 5 - зак.представители детей РВ, получившие услуги
+            sheet = workbook.createSheet("Законные представители", 3);
+            try {
+                sheet.mergeCells(0, 0, 11, 0);
+                sheet.addCell(new Label(0, 0, "Реестр законных представителей детей раннего возраста, получивших услуги", tnr12ptBoldFormat));
+                sheet.mergeCells(0, 1, 11, 1);
+                sheet.addCell(new Label(0, 1, "за период с " + dateFormat.format(date1) + " по " + dateFormat.format(date2), tnr12ptBoldFormat));
+                sheet.addCell(new Label(0, 3, "№ п/п", tnr12ptFormat));
+                sheet.mergeCells(1, 3, 3, 3);
+                sheet.addCell(new Label(1, 3, "Законный представитель", tnr12ptFormat));
+                sheet.addCell(new Label(1, 4, "Фамилия", tnr12ptFormat));
+                sheet.addCell(new Label(2, 4, "Имя", tnr12ptFormat));
+                sheet.addCell(new Label(3, 4, "Отчество", tnr12ptFormat));
+                sheet.mergeCells(4, 3, 7, 3);
+                sheet.addCell(new Label(4, 3, "Ребёнок", tnr12ptFormat));
+                sheet.addCell(new Label(4, 4, "Фамилия", tnr12ptFormat));
+                sheet.addCell(new Label(5, 4, "Имя", tnr12ptFormat));
+                sheet.addCell(new Label(6, 4, "Отчество", tnr12ptFormat));
+                sheet.addCell(new Label(7, 4, "Дата рождения", tnr12ptFormat));
+                sheet.mergeCells(8, 3, 8, 4);
+                sheet.addCell(new Label(8, 3, "Район", tnr12ptFormat));
+                sheet.mergeCells(9, 3, 9, 4);
+                sheet.addCell(new Label(9, 3, "Дата услуги", tnr12ptFormat));
+                sheet.mergeCells(10, 3, 10, 4);
+                sheet.addCell(new Label(10, 3, "Услуга", tnr12ptFormat));
+                sheet.mergeCells(11, 3, 11, 4);
+                sheet.addCell(new Label(11, 3, "Место проведения услуги", tnr12ptFormat));
+                sheet.mergeCells(12, 3, 12, 4);
+                sheet.addCell(new Label(12, 3, "Специалисты", tnr12ptFormat));
+
+                int i = 5;
+                for (Reestr r : consultReestr) {
+                    sheet.addCell(new Number(0, i, i - 4, tnr12ptFormat));
+                    sheet.addCell(new Label(1, i, r.getFamPar(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(2, i, r.getNamePar(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(3, i, r.getPatrPar(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(4, i, r.getFam(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(5, i, r.getName(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(6, i, r.getPatr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(7, i, r.getFormat2Dr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(8, i, r.getReg(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(9, i, r.getFormat2Date(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(10, i, r.getUsl(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(11, i, r.getRegPr(), tnr12ptFormatLeft));
+                    sheet.addCell(new Label(12, i, r.getInfo(), tnr12ptFormatLeft));
+                    i++;
+                }
+
+                CellView cv = sheet.getColumnView(0);
+                cv.setSize(48 * 37);
+                sheet.setColumnView(0, cv);
+
+                cv = sheet.getColumnView(1);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(1, cv);
+
+                cv = sheet.getColumnView(2);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(2, cv);
+
+                cv = sheet.getColumnView(3);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(3, cv);
+
+                cv = sheet.getColumnView(4);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(4, cv);
+
+                cv = sheet.getColumnView(5);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(5, cv);
+
+                cv = sheet.getColumnView(6);
+                cv.setSize(240 * 37);
+                sheet.setColumnView(6, cv);
+
+                cv = sheet.getColumnView(7);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(7, cv);
+
+                cv = sheet.getColumnView(8);
+                cv.setSize(180 * 37);
+                sheet.setColumnView(8, cv);
+
+                cv = sheet.getColumnView(9);
+                cv.setSize(120 * 37);
+                sheet.setColumnView(9, cv);
+                
+                cv = sheet.getColumnView(10);
+                cv.setSize(300 * 37);
+                sheet.setColumnView(10, cv);
+
+                cv = sheet.getColumnView(11);
+                cv.setSize(180 * 37);
+                sheet.setColumnView(11, cv);
+
+                cv = sheet.getColumnView(12);
+                cv.setSize(300 * 37);
+                sheet.setColumnView(12, cv);
+
+            } catch (RowsExceededException e) {
+                e.printStackTrace();
+            } catch (WriteException e) {
+                e.printStackTrace();
+            }
+
+            /*     cv = sheet.getColumnView(9);
+            cv.setSize(180 * 37);
+            sheet.setColumnView(9, cv);
+
+            cv = sheet.getColumnView(10);
+            cv.setSize(180 * 37);
+            sheet.setColumnView(10, cv);
+
+            cv = sheet.getColumnView(11);
+            cv.setSize(180 * 37);
+            sheet.setColumnView(11, cv);*/
+            //    sheetAutoFitColumns(sheet);
+        } catch (IOException e) {
+            // TODO Автоматически созданный блок catch
+            e.printStackTrace();
+        }
+
+        try {
+            workbook.write();
+            workbook.close();
+        } catch (IOException e) {
+            // TODO Автоматически созданный блок catch
+            e.printStackTrace();
+        } catch (WriteException e) {
+            // TODO Автоматически созданный блок catch
+            e.printStackTrace();
+        }
+    }
+
     /*    private static void sheetAutoFitColumns(WritableSheet sheet) {            
         for (int i = 0; i < sheet.getColumns(); i++) {
             Cell[] cells = sheet.getColumn(i);

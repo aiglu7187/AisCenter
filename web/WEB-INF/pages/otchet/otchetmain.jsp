@@ -31,10 +31,7 @@
                 </td>
                 <td onclick="window.open('otchet?id=age', '_blank')">
                     Отчет по возрасту детей
-                </td> 
-                <%--    <td onclick="window.open('otchet?id=consultage', '_blank')">
-                    Отчет по консультированию законных представителей (с учётом возраста детей)
-                </td> --%>
+                </td>                 
             </tr>            
         </table>      
         <h3>Реестры</h3>
@@ -42,12 +39,17 @@
             <tr>
                 <td onclick="window.open('otchet?id=reestrusl', '_blank')">
                     Список клиентов по услуге со специалистами
-                </td>     
-             <%--    <td onclick="window.open('otchet?id=consultagereestr', '_blank')">
-                    Реестр законных представителей (по консультированию с учётом возраста детей)
-                </td>--%>
+                </td>  
             </tr>            
-        </table>      
+        </table>
+        <h3>Ранний возраст</h3>
+        <table class="puptab">
+            <tr>
+                <td onclick="window.open('otchet?id=ranniy', '_blank')">
+                    Реестры и статистика
+                </td>                  
+            </tr>            
+        </table>
     </c:if>
     </body>
 </html>

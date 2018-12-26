@@ -177,4 +177,16 @@ public class PriyomSubjectFacade extends AbstractFacade<PriyomSubject> {
         }
         return count;
     }
+    
+    public List<PriyomSubject> findBySubjectAndDate(Children childId, Date date1, Date date2) {
+        String ql = "SELECT p FROM PriyomSubject p, Priyom pr WHERE p.childId = :childId "
+                + "AND pr = p.priyomId AND pr.priyomDate >= :date1 AND pr.priyomDate <= :date2 "
+                + "ORDER BY pr.priyomDate";
+        TypedQuery<PriyomSubject> query = em.createQuery(ql, PriyomSubject.class)
+                .setParameter("childId", childId)
+                .setParameter("date1", date1)
+                .setParameter("date2", date2);
+        List<PriyomSubject> result = query.getResultList();
+        return result;
+    }
 }

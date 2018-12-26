@@ -9,6 +9,7 @@ import Entities.Children;
 import Entities.Pmpk;
 import Entities.Priyom;
 import Entities.PriyomClient;
+import java.util.Date;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -81,6 +82,21 @@ public class PmpkFacade extends AbstractFacade<Pmpk> {
         String qlString = "SELECT pk FROM Pmpk pk ";
         TypedQuery<Pmpk> query = em.createQuery(qlString, Pmpk.class);
         query.setMaxResults(50);
+        List<Pmpk> result = query.getResultList();
+        return result;
+    }
+    
+    public List<Pmpk> findPmpkByChildAndDate(Children child, Date date1, Date date2){
+        String qlString = "SELECT pk "
+                + "FROM Pmpk pk, PriyomClient pc, Priyom p, SprUsl u "
+                + "WHERE pk.prclId = pc AND pc.priyomId = p AND p.spruslId = u "
+                + "AND u.spruslPmpk = 1 AND pc.clientId = :clientId AND pc.prclKatcl = :kat "
+                + "AND p.priyomDate >= :date1 AND p.priyomDate <= :date2 ";
+        TypedQuery<Pmpk> query = em.createQuery(qlString, Pmpk.class)
+                .setParameter("clientId", child.getChildId())
+                .setParameter("kat", "children")
+                .setParameter("date1", date1)
+                .setParameter("date2", date2);
         List<Pmpk> result = query.getResultList();
         return result;
     }
