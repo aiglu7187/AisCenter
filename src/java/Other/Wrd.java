@@ -1132,7 +1132,7 @@ public class Wrd {
         String dateFormat2 = ipra.getFormat2Date(date);
         String[] dateV = dateFormat2.split("\\.");
         String y = dateV[2].substring(2);   // год (2 цифры)
-        
+
         Map<String[], List<String>> conditionsMap = new HashMap<>();  // условия обучения
         String isp = "Образовательная организация";
         Set<String[]> keySet = new HashSet<>();
@@ -1365,8 +1365,11 @@ public class Wrd {
         FIO fioRod = new FIO(child.getChildFam(), child.getChildName(), child.getChildPatr(), child.getChildPol());
         String inFioRod = fioRod.changeToRod().getFamInic(); // фамилия + инициалы в родильном падеже        
         String prDateFormat2 = ipra.getFormat2Date(prikaz.getIpra18prikazDoD());    // дата приказа ДО
-        String[] prDateV = prDateFormat2.split("\\.");
-        String prDate = prDateV[0] + " " + monthNomToString(prDateV[1]) + " " + prDateV[2];
+        String prDate = "";
+        if (!prDateFormat2.equals("")) {
+            String[] prDateV = prDateFormat2.split("\\.");
+            prDate = prDateV[0] + " " + monthNomToString(prDateV[1]) + " " + prDateV[2];
+        }
         String prNom = "";
         try {
             prNom = prikaz.getIpra18prikazDoN();
@@ -1375,7 +1378,7 @@ public class Wrd {
         String fioRodS = fioRod.getFullFIO(); //фамилия, имя, отчество полностью в родительном падеже
         FIO sotr = new FIO(user.getSotrudId().getSotrudFam(), user.getSotrudId().getSotrudName(),
                 user.getSotrudId().getSotrudPatr(), null);
-        
+
         String pD = ""; // дата письма
         try {
             pD = ipra.getFormat2Date(prikaz.getIpra18prikazOtchcenter());
@@ -1415,7 +1418,7 @@ public class Wrd {
         insertAtBookmark(paraList, "in_fio_rod2", inFioRod, 14, font, "");
         insertAtBookmark(paraList, "fio_rod", fioRodS, 14, font, "");
         insertAtBookmark(paraList, "sort_iof_in", sotr.getInicFam(), 12, font, "");
-        
+
         // вставляем в закладки в TextBox (надпись)
         insertAtBookmarkAtTextbox(paraList, "pnomdate", pD + " № " + pN, 8, "Arial", "underline");
 
@@ -1439,7 +1442,7 @@ public class Wrd {
         String fioRodS = fioRod.getFullFIO(); //фамилия, имя, отчество полностью в родильном падеже
         FIO sotr = new FIO(user.getSotrudId().getSotrudFam(), user.getSotrudId().getSotrudName(),
                 user.getSotrudId().getSotrudPatr(), null);
-        
+
         String pD = ""; // дата письма
         try {
             pD = ipra.getFormat2Date(ipra.getIpraOtchcenter());
@@ -1479,7 +1482,7 @@ public class Wrd {
         insertAtBookmark(paraList, "in_fio_rod2", inFioRod, 14, font, "");
         insertAtBookmark(paraList, "fio_rod", fioRodS, 14, font, "");
         insertAtBookmark(paraList, "sort_iof_in", sotr.getInicFam(), 12, font, "");
-        
+
         // вставляем в закладки в TextBox (надпись)
         insertAtBookmarkAtTextbox(paraList, "pnomdate", pD + " № " + pN, 8, "Arial", "underline");
 
@@ -1769,8 +1772,11 @@ public class Wrd {
         String dr = drV[0] + " " + monthNomToString(drV[1]) + " " + drV[2]; // дата рождения
 
         String prDateFormat2 = ipra.getFormat2Date(prikaz.getIpra18prikazDoD());
-        String[] prDateV = prDateFormat2.split("\\.");
-        String prDate = prDateV[0] + " " + monthNomToString(prDateV[1]) + " " + prDateV[2]; // дата приказа ДО
+        String prDate = "";
+        if (!prDateFormat2.equals("")) {
+            String[] prDateV = prDateFormat2.split("\\.");
+            prDate = prDateV[0] + " " + monthNomToString(prDateV[1]) + " " + prDateV[2]; // дата приказа ДО
+        }
         String prNom = "";  // номер приказа ДО
         try {
             prNom = prikaz.getIpra18prikazDoN();
@@ -1909,12 +1915,12 @@ public class Wrd {
         doc.close();
     }
 
-    public static void printIpra18ReqTpmpk(ServletOutputStream os, List<Children> children, 
+    public static void printIpra18ReqTpmpk(ServletOutputStream os, List<Children> children,
             List<SprOmsu> omsuList, SprOtherPmpk tpmpk, Date date, String nomer)
             throws FileNotFoundException, IOException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         String reqDate = dateFormat.format(date);
-        FIO chief_fio = new FIO(tpmpk.getSprotherpmpkChiefFam(), tpmpk.getSprotherpmpkChiefName(), 
+        FIO chief_fio = new FIO(tpmpk.getSprotherpmpkChiefFam(), tpmpk.getSprotherpmpkChiefName(),
                 tpmpk.getSprotherpmpkChiefPatr(), null);
         String chief_dat = chief_fio.changeToDat().getInicFam();
         List<String> childrenList = new ArrayList();
@@ -1943,7 +1949,7 @@ public class Wrd {
                 omsu += ", " + sprOmsu.getSpromsuNameRod();
             }
         }
-        
+
         String path = "templates//Запрос в ТПМПК.docx";
         File file = null;
         FileInputStream fis = null;
@@ -1973,7 +1979,7 @@ public class Wrd {
         insertAtBookmark(paraList, "omsu", omsu, 14, font, "");
         insertAtBookmark(paraList, "tpmpk_shname2", tpmpk.getSprotherpmpkShname(), 14, font, "");
         multiInsertAtBookmark(paraList, "spisok", childrenList, 14);
-        
+
         // вставляем в закладки в TextBox (надпись)
         insertAtBookmarkAtTextbox(paraList, "pnomdate", reqDate + " № " + nomer, 8, "Arial", "underline");
 
