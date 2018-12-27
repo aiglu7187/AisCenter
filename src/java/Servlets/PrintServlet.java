@@ -2424,8 +2424,11 @@ public class PrintServlet extends HttpServlet {
                 }
                 if (ipra18 != null) {
                     prikaz = ipra18PrikazFacade.findByIpra(ipra18);
-                    perechen = ipraPerechenFacade.findByIpra18(ipra18);
-                    conditions = ipraEduConditionFacade.findByIpraPerechen(perechen);
+                    try {
+                        perechen = ipraPerechenFacade.findByIpra18(ipra18);
+                        conditions = ipraEduConditionFacade.findByIpraPerechen(perechen);
+                    } catch (Exception ex) {
+                    }
                 }
             }
             if ((ipra18 != null) || (ipra != null)) {
