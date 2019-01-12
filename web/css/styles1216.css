@@ -484,3 +484,21 @@ dialog.smallDlg{
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     border-radius: 10px;
 }
+
+input{
+    height: 20px;
+}
+
+select{
+    height: 20px;
+}
+
+h3{
+    color: #009933;    
+}
+
+dialog.alertDlg{
+    box-shadow: 0 0 3px rgba(0, 0, 0, .5);
+    border-radius: 10px;
+    border-color: grey;
+}

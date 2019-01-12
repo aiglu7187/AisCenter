@@ -14,6 +14,14 @@
         <title>ПМПК</title>
     </head>
     <body>
+        <h3>ПМПК</h3>
+        <table class="puptab">
+                <tr>
+                    <td onclick="window.open('pmpk?action=addpmpk', '_blank')">
+                        Новое заседание ПМПК
+                    </td>                         
+                </tr>            
+            </table>
         <c:if test="${user.getRoleId().getRoleName().equals('administrator')}">
             <h3>Отчеты</h3>
             <table class="puptab">
@@ -65,7 +73,7 @@
                     <td onclick="window.open('otchet?id=pmpkrek', '_blank')">
                         Реестр детей с рекомендациями
                     </td>
-                    <td onclick="window.open('pmpksearch', '_blank')">
+                    <td onclick="window.open('pmpk?action=pmpksearch', '_blank')">
                         Поиск по ПМПК
                     </td>
                 </tr>            

@@ -49,6 +49,16 @@ public class SotrudDolgnFacade extends AbstractFacade<SotrudDolgn> {
         List<SotrudDolgn> result = query.getResultList();
         return result;
     }
+    
+    public List<SotrudDolgn> findByDolgnSotrAct(SprDolgn dolgn) {
+        String qlString = "SELECT s FROM SotrudDolgn s, Sotrud sotr "
+                + "WHERE s.sprdolgnId = :sprdolgnId AND sotr = s.sotrudId "
+                + "AND sotr.sotrudActive = 1 ";
+        TypedQuery<SotrudDolgn> query = em.createQuery(qlString, SotrudDolgn.class)
+                .setParameter("sprdolgnId", dolgn);
+        List<SotrudDolgn> result = query.getResultList();
+        return result;
+    }
 
     public List<SotrudDolgn> findActSotrudByDolgnAct(SprDolgn dolgn) {
         String qlString = "SELECT sd FROM SotrudDolgn sd, Sotrud s "

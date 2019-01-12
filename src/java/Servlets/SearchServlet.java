@@ -16,12 +16,16 @@ import Entities.Pmpk;
 import Entities.Sotrud;
 import Entities.SotrudDolgn;
 import Entities.SprDolgn;
+import Entities.SprDolgnType;
 import Entities.SprOmsu;
 import Entities.SprParentType;
 import Entities.SprRegion;
+import Entities.SprUsl;
 import Entities.Users;
+import Entities.UslDolgntype;
 import Other.Ipra18NBaseComparator;
 import Other.Ipra18NFIOComparator;
+import Other.SotrudDolgnComparator;
 import Other.UsersComparator;
 import Sessions.ChildrenFacade;
 import Sessions.FamilyFacade;
@@ -37,7 +41,9 @@ import Sessions.SprDolgnFacade;
 import Sessions.SprOmsuFacade;
 import Sessions.SprParentTypeFacade;
 import Sessions.SprRegionFacade;
+import Sessions.SprUslFacade;
 import Sessions.UsersFacade;
+import Sessions.UslDolgntypeFacade;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -107,6 +113,10 @@ public class SearchServlet extends HttpServlet {
     Ipra18NFacade ipra18NFacade = new Ipra18NFacade();
     @EJB
     SprOmsuFacade sprOmsuFacade = new SprOmsuFacade();
+    @EJB
+    UslDolgntypeFacade uslDolgntypeFacade = new UslDolgntypeFacade();
+    @EJB
+    SprUslFacade sprUslFacade = new SprUslFacade();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -902,9 +912,9 @@ public class SearchServlet extends HttpServlet {
                 sb.append("</regions>");
                 itsOk = true;
             }
-        } else if (type.equals("omsu")){    // поиск по справочнику ОМСУ
+        } else if (type.equals("omsu")) {    // поиск по справочнику ОМСУ
             List<SprOmsu> omsuList = sprOmsuFacade.findAllSprOmsu();
-            if (!omsuList.isEmpty()){
+            if (!omsuList.isEmpty()) {
                 sb.append("<spromsu>");
                 for (SprOmsu omsu : omsuList) {
                     sb.append("<omsu>");
@@ -915,7 +925,7 @@ public class SearchServlet extends HttpServlet {
                 sb.append("</spromsu>");
                 itsOk = true;
             }
-        } else if (type.equals("ipradlg")){  // поиск по ИПРА для выбора в диалоговом окне
+        } else if (type.equals("ipradlg")) {  // поиск по ИПРА для выбора в диалоговом окне
             // параметры поискового запроса
             String fam = request.getParameter("fam");   // фамилия
             String name = request.getParameter("name"); // имя
@@ -935,7 +945,7 @@ public class SearchServlet extends HttpServlet {
                 patr = patr.trim();
             } else {
                 patr = "";
-            }            
+            }
             // статус ИПРА 1 - в работе, 0 - в архиве
             Integer status = 1;
 
@@ -971,12 +981,99 @@ public class SearchServlet extends HttpServlet {
                     Date dr = ipra.getChildId().getChildDr();
                     sb.append("<dr>").append(regularDateFormat.format(dr)).append("</dr>");
                     sb.append("<reg>").append(ipra.getChildId().getSprregId().getSprregName()).append("</reg>");
-                    sb.append("<nipra>").append(ipra.getIpra18N()).append("</nipra>");                    
+                    sb.append("<nipra>").append(ipra.getIpra18N()).append("</nipra>");
                     sb.append("</ipra>");
                 }
             }
             sb.append("</iprasdlg>");
             itsOk = true;
+        } else if (type.equals("regions")) {   // весь список районов проведения мероприятий (наши)
+            List<SprRegion> regions = sprRegionFacade.findNoOther();
+            if (!regions.isEmpty()) {
+                sb.append("<regions>");
+                for (SprRegion reg : regions) {
+                    sb.append("<region>");
+                    sb.append("<id>").append(reg.getSprregId()).append("</id>");
+                    sb.append("<name>").append(reg.getSprregName()).append("</name>");
+                    sb.append("</region>");
+                }
+                sb.append("</regions>");
+                itsOk = true;
+            }
+        } else if (type.equals("dolgn")) {   // список должностей
+            List<SprDolgn> dolgnList = sprDolgnFacade.findAllDolgn();
+            String n = request.getParameter("n");
+            if (n == null) {
+                n = "0";
+            }
+            if (!dolgnList.isEmpty()) {
+                sb.append("<dolgns>");
+                for (SprDolgn dolgn : dolgnList) {
+                    sb.append("<dolgn>");
+                    sb.append("<n>").append(n).append("</n>");
+                    sb.append("<id>").append(dolgn.getSprdolgnId()).append("</id>");
+                    sb.append("<name>").append(dolgn.getSprdolgnName()).append("</name>");
+                    sb.append("</dolgn>");
+                }
+                sb.append("</dolgns>");
+                itsOk = true;
+            }
+        } else if (type.equals("usldolgn")) {   // список должностей для услуги
+            String uslId = request.getParameter("usl");
+            SprUsl usl = sprUslFacade.findById(Integer.parseInt(uslId));
+            List<UslDolgntype> uslDolgntype = uslDolgntypeFacade.findByUsl(usl);
+            List<SprDolgn> dolgnList = new ArrayList();
+            if (!uslDolgntype.isEmpty()) {
+                for (UslDolgntype uslDolgn : uslDolgntype) {
+                    List<SprDolgn> dolgns = sprDolgnFacade.findByType(uslDolgn.getSprdolgntypeId());
+                    for (SprDolgn d : dolgns) {
+                        dolgnList.add(d);
+                    }
+                }
+            }
+            String n = request.getParameter("n");
+            if (n == null) {
+                n = "0";
+            }
+            if (!dolgnList.isEmpty()) {
+                sb.append("<dolgns>");
+                for (SprDolgn dolgn : dolgnList) {
+                    sb.append("<dolgn>");
+                    sb.append("<n>").append(n).append("</n>");
+                    sb.append("<id>").append(dolgn.getSprdolgnId()).append("</id>");
+                    sb.append("<name>").append(dolgn.getSprdolgnName()).append("</name>");
+                    sb.append("</dolgn>");
+                }
+                sb.append("</dolgns>");
+                itsOk = true;
+            }
+        } else if (type.equals("dolgnsotr")) {  // поиск сотрудников по должности
+            String dolgnIdS = request.getParameter("dolgn");
+            String n = request.getParameter("n");
+            SprDolgn dolgn = null;
+            try {
+                dolgn = sprDolgnFacade.findById(Integer.parseInt(dolgnIdS));
+            } catch (Exception ex) {
+            }
+            List<SotrudDolgn> sotrudList = null;
+            if (dolgn != null){
+                sotrudList = sotrudDolgnFacade.findByDolgnSotrAct(dolgn);
+            }
+            Collections.sort(sotrudList, new SotrudDolgnComparator());
+            if (sotrudList != null){
+                if (!sotrudList.isEmpty()){
+                    sb.append("<sotruds>");
+                for (SotrudDolgn sotr : sotrudList) {
+                    sb.append("<sotrud>");
+                    sb.append("<n>").append(n).append("</n>");
+                    sb.append("<id>").append(sotr.getSotruddolgnId()).append("</id>");
+                    sb.append("<name>").append(sotr.getSotrudId().getSotrudFIO()).append("</name>");
+                    sb.append("</sotrud>");
+                }
+                sb.append("</sotruds>");
+                itsOk = true;
+                }
+            }
         }
         // если всё нормально - передаём клиенту
         if (itsOk) {

@@ -14,26 +14,27 @@
         <title>АИС "Сопровождение"</title>
     </head>
     <body>
-    <c:if test="${user != null}">
-        <div>
-            <p>Добро пожаловать, <c:out value="${sotr_io}" /></p>
-            <a class="main" href="pup" target="_blank">Сопровождение</a>            
-            <c:if test="${rolesRight.isVologda()}">
-                <c:if test="${user.getRoleId().getRoleName().equals('ipra') || user.getRoleId().getRoleName().equals('administrator')}">
-                    <a class="main" href="ipra" target="_blank">ИПРА</a>
-                </c:if>
-            </c:if>
-            <c:if test="${user.getRoleId().getRoleName().equals('administrator')}">
+        <c:if test="${user != null}">
+            <div>
+                <p>Добро пожаловать, <c:out value="${sotr_io}" /></p>
+                <a class="main" href="pup" target="_blank">Сопровождение</a>            
                 <c:if test="${rolesRight.isVologda()}">
-                    <a class="main" href="pay" target="_blank">Платные услуги</a>
+                    <c:if test="${user.getRoleId().getRoleName().equals('ipra') || user.getRoleId().getRoleName().equals('administrator')}">
+                        <a class="main" href="ipra" target="_blank">ИПРА</a>
+                    </c:if>
                 </c:if>
-                <br>
-                <br><br>
-                <a class="main" href="tootchet" target="_blank">Отчеты</a>
-                <a class="main" href="admin" target="_blank">Администрирование</a>
-                <a class="main" href="pmpk" target="_blank">Отчеты и реестры ПМПК</a>
-            </c:if>
-        </div>
-    </c:if>
+                <a class="main" href="pmpk?action=main" target="_blank">ПМПК</a>
+                <c:if test="${user.getRoleId().getRoleName().equals('administrator')}">
+                    <c:if test="${rolesRight.isVologda()}">
+                        <a class="main" href="pay" target="_blank">Платные услуги</a>
+                    </c:if>
+                    <br>
+                    <br>
+                    <br>
+                    <a class="main" href="tootchet" target="_blank">Отчеты</a>
+                    <a class="main" href="admin" target="_blank">Администрирование</a>                    
+                </c:if>
+            </div>
+        </c:if>
     </body>
 </html>

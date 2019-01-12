@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <script type="text/javascript" src="pmpk.js" charset="utf-8"></script>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="css/styles1216.css" rel="stylesheet" type="text/css">
+        <title>Новое заседание ПМПК</title>
+    </head>
+    <body>
+        <h3>Заседание психолого-медико-педагогической комиссии</h3>
+        <div id="sved">
+            <input type="hidden" id="change" value="0">
+            <table class="noborder" id="svedTbl">
+                <tr>
+                    <td><strong>Дата проведения:</strong></td>
+                    <td>
+                        <input class="required" type="date" id="prDate" name="prDate" style="width: 150px;" onkeyup="change()">
+                    </td>
+                    <td></td>
+
+                    <td><strong>Место проведения:</strong></td>
+                    <td>
+                        <select id="regSel" name="regSel" onchange="change()"></select>
+                    </td>         
+                    <td></td>    
+                </tr>
+            </table>
+            <br>
+            <table class="noborder" id="sostavTbl">
+                <tr>
+                    <td><strong>Председатель комиссии:</strong></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>                    
+                    <td>
+                        <select id="dolgnSel0" name="dolgnSel0"></select>  
+                    </td>
+                    <td>
+                        <select id="sotrSel0" name="sotrSel0"></select>
+                    </td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td><strong>Состав комиссии:</strong></td>
+                    <td></td>
+                    <td></td>
+                </tr>                                
+            </table>
+            <img class="btn" id="plusSotr" src="img/plus.png" width="18" alt="Добавить сотрудника в состав" title="Добавить сотрудника в состав" onclick="addSotr()">
+            <br>
+            <br>
+            <br>
+        </div>
+        <div id="divBtn">
+            <a class="greybtn" id="saveAddBtn" name="saveAddBtn" onclick="saveAdd()">
+                <img id="saveImg" alt="Сохранить" src="img/save.png" width="17" style="padding-right: 1px;">
+                Сохранить
+            </a> 
+        </div>
+        <!--    <div class="tabs">
+                <input id="tab1" type="radio" name="tabs" checked>
+                <label for="tab1" title="Ребёнок1">Ребёнок1</label>
+                <input id="tab2" type="radio" name="tabs">                       
+                <label for="tab2" title="Добавить"><img src="img/plus.png" width="16" alt="Добавить"></label>
+                <section id="content-tab1">
+                    <div>
+                        Ребёнок1
+                    </div>
+                </section>
+                <section id="content-tab2">
+                    <div>
+                        Ребёнок2
+                    </div>
+                </section>
+            </div>-->
+        <dialog id="noContentToSave" class="alertDlg">
+            Нет изменений для сохранения
+        </dialog>
+        <dialog id="goodSave" class="alertDlg">
+            Данные сохранены
+        </dialog>
+        <dialog id="verify" class="alertDlg">
+            <div style="text-align: center">
+                Проверьте данные в полях, отмеченных <span style="color: red">красным цветом </span>
+                <br>(проверяется заполнение, корректность и количество символов)
+            </div>
+            <br>
+            <div style="text-align: center">
+                <a class="greybtn" id="verifyDlgBtn" name="okDlgBtn" onclick="closeVerify()">                
+                    ОК
+                </a> 
+            </div>
+        </dialog>
+        <dialog id="connectError" class="alertDlg">
+            <div style="text-align: center">
+                Ошибка подключения к серверу
+                <br>Данные не были сохранены
+            </div>
+            <br>
+            <div style="text-align: center">
+                <a class="greybtn" id="connectErrorDlgBtn" name="okDlgBtn" onclick="closeConnectError()">                
+                    ОК
+                </a> 
+            </div>
+        </dialog>    
+        <dialog id="serverError" class="alertDlg">
+            <div style="text-align: center">
+                Ошибка сервера. Данные не были сохранены. 
+                <br>Обратитесь к администратору
+            </div>
+            <br>
+            <div style="text-align: center">
+                <a class="greybtn" id="serverErrorDlgBtn" name="okDlgBtn" onclick="closeServerError()">                
+                    ОК
+                </a> 
+            </div>
+        </dialog>  
+        <dialog id="saveError" class="alertDlg">
+            <div style="text-align: center">
+                Данные не были сохранены. Проверьте заполнение полей и попробуйте ещё раз.
+                <br>Если ошибка повторяется, обратитесь к администратору
+            </div>
+            <br>
+            <div style="text-align: center">
+                <a class="greybtn" id="saveErrorDlgBtn" name="okDlgBtn" onclick="closeSaveError()">                
+                    ОК
+                </a> 
+            </div>
+        </dialog>
+        <script type="text/javascript">
+            initAdd();
+        </script> 
+    </body>       
+</html>
