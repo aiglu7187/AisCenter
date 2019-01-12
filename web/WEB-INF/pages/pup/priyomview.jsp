@@ -1141,9 +1141,9 @@
         Выберите услугу:
         <br>
         <select id="selUsl">
-            <c:forEach var="usl" items="${uslList}">
-                <option value="${usl.getSpruslId()}">
-                    <c:out value="${usl.getSpruslName()}" />
+            <c:forEach var="usl1" items="${uslList}">
+                <option value="${usl1.getSpruslId()}">
+                    <c:out value="${usl1.getSpruslName()}" />
                 </option>
             </c:forEach>
         </select>

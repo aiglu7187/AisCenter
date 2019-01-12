@@ -209,6 +209,10 @@ public class PriyomEditServlet extends HttpServlet {
             } catch (Exception ex) {
             }
             try {
+                session.removeAttribute("usl");
+            } catch (Exception ex) {
+            }
+            try {
                 session.removeAttribute("sotruds");
             } catch (Exception ex) {
             }
@@ -331,6 +335,9 @@ public class PriyomEditServlet extends HttpServlet {
             session.setAttribute("priyom", priyom);
             session.setAttribute("sotruds", prSotrud);
             session.setAttribute("problems", prProblem);
+            
+            SprUsl usl = priyom.getSpruslId();
+            session.setAttribute("usl", usl);
 
             Boolean copy = Boolean.FALSE;
             session.setAttribute("copy", copy);
