@@ -231,8 +231,6 @@ function copyPriyom() {
     if (dialog != null) {
         dialog.showModal();
     }
-
-
 }
 
 function okCopy() {
@@ -241,7 +239,11 @@ function okCopy() {
     if (sel != null) {
         uslId = sel.value;
     }
-    var url = "copypriyom?uslid=" + uslId;
-    document.location.href = url;
+    var priyomId = document.getElementById("priyomId");
+    var url = "copypriyom?priyomid=" + priyomId.value + "&uslid=" + uslId;
+    var copyPriyomDialog = document.getElementById("copyPriyomDialog");
+    copyPriyomDialog.close();
+    window.open(url, "_blank");
+    
 }
 

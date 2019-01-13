@@ -209,10 +209,6 @@ public class PriyomEditServlet extends HttpServlet {
             } catch (Exception ex) {
             }
             try {
-                session.removeAttribute("usl");
-            } catch (Exception ex) {
-            }
-            try {
                 session.removeAttribute("sotruds");
             } catch (Exception ex) {
             }
@@ -335,9 +331,6 @@ public class PriyomEditServlet extends HttpServlet {
             session.setAttribute("priyom", priyom);
             session.setAttribute("sotruds", prSotrud);
             session.setAttribute("problems", prProblem);
-            
-            SprUsl usl = priyom.getSpruslId();
-            session.setAttribute("usl", usl);
 
             Boolean copy = Boolean.FALSE;
             session.setAttribute("copy", copy);
@@ -620,8 +613,12 @@ public class PriyomEditServlet extends HttpServlet {
             }
             session.setAttribute("pmpkRek", pmpkRekList);
 
-            List<SprUsl> uslList = sprUslFacade.findAllUsl();
-            session.setAttribute("uslList", uslList);
+            List<SprUsl> uslList = new ArrayList<>();
+            SprUsl usl1 = sprUslFacade.findByName("Групповое консультирование");
+            SprUsl usl2 = sprUslFacade.findByName("Групповое обследование");
+            uslList.add(usl1);
+            uslList.add(usl2);
+            session.setAttribute("uslList", uslList);            
 
             userPath = "/pup/priyomview";
         } else {

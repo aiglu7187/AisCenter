@@ -67,4 +67,12 @@ public class SprUslFacade extends AbstractFacade<SprUsl> {
         result = query.getResultList();
         return result;
     }
+    
+    public SprUsl findByName(String uslName) {
+        TypedQuery <SprUsl> query = 
+                em.createNamedQuery("SprUsl.findBySpruslName", SprUsl.class).setParameter("spruslName", uslName);
+        SprUsl result;
+        result = query.getSingleResult();
+        return result;
+    }
 }
