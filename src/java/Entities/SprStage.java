@@ -33,7 +33,8 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
     @NamedQuery(name = "SprStage.findAll", query = "SELECT s FROM SprStage s ORDER BY s.sprstageName"),
     @NamedQuery(name = "SprStage.findBySprstageId", query = "SELECT s FROM SprStage s WHERE s.sprstageId = :sprstageId"),
-    @NamedQuery(name = "SprStage.findBySprstageName", query = "SELECT s FROM SprStage s WHERE s.sprstageName = :sprstageName")})
+    @NamedQuery(name = "SprStage.findBySprstageName", query = "SELECT s FROM SprStage s WHERE s.sprstageName = :sprstageName"),
+    @NamedQuery(name = "SprStage.findBySprstageSpr", query = "SELECT s FROM SprStage s WHERE s.sprstageSpr = :sprstageSpr ORDER BY s.sprstageName")})
 public class SprStage implements Serializable {
 
     @OneToMany(mappedBy = "sprstageId")
@@ -45,14 +46,16 @@ public class SprStage implements Serializable {
     @Basic(optional = false)
     @NotNull
     @Column(name = "SPRSTAGE_ID")
-    @SequenceGenerator(name = "SEQ_SPR_STAGE", sequenceName = "SEQ_SPR_STAGE", allocationSize=1)
-    @GeneratedValue(strategy=GenerationType.IDENTITY, generator="SEQ_SPR_STAGE")
+    @SequenceGenerator(name = "SEQ_SPR_STAGE", sequenceName = "SEQ_SPR_STAGE", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "SEQ_SPR_STAGE")
     private Integer sprstageId;
     @Size(max = 50)
     @Column(name = "SPRSTAGE_NAME")
     private String sprstageName;
     @OneToMany(mappedBy = "sprstageId")
     private Collection<ChildEduplace> childEduplaceCollection;
+    @Column(name = "SPRSTAGE_SPR")
+    private Integer sprstageSpr;
 
     public SprStage() {
     }
@@ -75,6 +78,14 @@ public class SprStage implements Serializable {
 
     public void setSprstageName(String sprstageName) {
         this.sprstageName = sprstageName;
+    }
+
+    public Integer getSprstageSpr() {
+        return sprstageSpr;
+    }
+
+    public void setSprstageSpr(Integer sprstageSpr) {
+        this.sprstageSpr = sprstageSpr;
     }
 
     @XmlTransient
@@ -119,5 +130,5 @@ public class SprStage implements Serializable {
     public void setChildrenEducondCollection(Collection<ChildrenEducond> childrenEducondCollection) {
         this.childrenEducondCollection = childrenEducondCollection;
     }
-    
+
 }

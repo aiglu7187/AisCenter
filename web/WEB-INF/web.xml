@@ -265,11 +265,7 @@
     <servlet>
         <servlet-name>Ipra2018NewServlet</servlet-name>
         <servlet-class>Servlets.Ipra2018NewServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>TestServlet</servlet-name>
-        <servlet-class>Servlets.TestServlet</servlet-class>
-    </servlet>
+    </servlet>    
     <servlet-mapping>
         <servlet-name>CGIServlet</servlet-name>
         <url-pattern>/cgi-bin/*</url-pattern>
@@ -535,11 +531,7 @@
     <servlet-mapping>
         <servlet-name>Ipra2018NewServlet</servlet-name>
         <url-pattern>/ipra2018new</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>TestServlet</servlet-name>
-        <url-pattern>/test</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>    
     <session-config>
         <session-timeout>
             300

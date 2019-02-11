@@ -6,6 +6,7 @@
 package Sessions;
 
 import Entities.SprObrType;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -34,6 +35,12 @@ public class SprObrTypeFacade extends AbstractFacade<SprObrType> {
         TypedQuery <SprObrType> query = em.createNamedQuery("SprObrType.findBySprobrtypeId", SprObrType.class)
                 .setParameter("sprobrtypeId", id);
         SprObrType result = query.getSingleResult();
+        return result;
+    }
+    
+    public List<SprObrType> findAllSprObrType(){
+        TypedQuery<SprObrType> query = em.createNamedQuery("SprObrType.findAll", SprObrType.class);
+        List<SprObrType> result = query.getResultList();
         return result;
     }
     

@@ -486,11 +486,26 @@ dialog.smallDlg{
 }
 
 input{
+    height: 18px;
+}
+
+input[type="date"]{
     height: 20px;
 }
 
+input[type="checkbox"]{
+    height: 13px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
+
+input[type="radio"]{
+    height: 13px;
+    margin-right: 5px;
+    margin-left: 5px;
+}
 select{
-    height: 20px;
+    height: 24px;
 }
 
 h3{
@@ -501,4 +516,94 @@ dialog.alertDlg{
     box-shadow: 0 0 3px rgba(0, 0, 0, .5);
     border-radius: 10px;
     border-color: grey;
+}
+
+#jstabs{
+    min-width: 1000px;
+    padding: 0px;
+    margin: 0 auto;
+}
+#jstabs .jstab{
+    display: inline-block;
+    margin: 0 0 -1px;
+    padding: 10px 15px;
+    font-weight: 600;
+    text-align: center;
+    color: #aaa;
+    border: 0px solid #ddd;
+    border-width: 1px 1px 1px 1px;
+    background: #f1f1f1;
+    border-radius: 3px 3px 0 0;
+    cursor: pointer;
+}
+
+#jstabs .active{
+    color: #555;
+    border-top: 2px solid #009933;
+    border-left: 1px solid #009933;
+    border-right: 1px solid #009933;
+    border-bottom: 1px solid #fff;
+    background: #fff;
+
+}
+
+#jstabs .jstabContent{
+    display: none;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ddd;
+    margin: 0px;
+}
+
+#jstabs .hide{
+    display: none;
+}
+
+#jstabs .show{
+    display: block;
+}
+
+div.lineonbot{
+    border-bottom: 1px solid #ddd;    
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 0px;
+}
+
+td.leftborder{
+    border-left: 1px solid #ddd;
+    padding-left: 20px;    
+}
+
+td.toleftborder{   
+    padding-right: 20px;    
+}
+
+table.maintbl td{
+    vertical-align: top; 
+    /*width: 33%;*/
+}
+
+div.searchDiv{
+    display: block;
+    position: absolute;
+    background-color: whitesmoke;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);    
+    padding: 15px;
+}
+
+div.contentwithlines{
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;    
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 0px;
+    text-align: center;
+}
+
+div.content{
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 0px;
+    text-align: center;
 }

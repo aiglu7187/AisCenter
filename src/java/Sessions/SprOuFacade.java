@@ -57,4 +57,9 @@ public class SprOuFacade extends AbstractFacade<SprOu> {
         return result;
     }
     
+    public List<SprOu> findAllOu(){
+        TypedQuery<SprOu> query = em.createNamedQuery("SprOu.findAll", SprOu.class);
+        List<SprOu> result = query.getResultList();
+        return result;
+    }
 }

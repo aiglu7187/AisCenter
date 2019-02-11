@@ -37,6 +37,13 @@ public class SprStageFacade extends AbstractFacade<SprStage> {
         return result;              
     }
     
+    public List<SprStage> findAllStagesForSpr(){
+        TypedQuery<SprStage> query = em.createNamedQuery("SprStage.findBySprstageSpr", SprStage.class)
+                .setParameter("sprstageSpr", 1);
+        List<SprStage> result = query.getResultList();
+        return result;              
+    }
+    
     public SprStage findById(Integer id){
         TypedQuery<SprStage> query = em.createNamedQuery("SprStage.findBySprstageId", SprStage.class)
                 .setParameter("sprstageId", id);

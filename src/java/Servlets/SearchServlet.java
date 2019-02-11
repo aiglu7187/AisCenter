@@ -667,6 +667,9 @@ public class SearchServlet extends HttpServlet {
             List<SprParentType> sprParentTypes = sprParentTypeFacade.findAllSprParentType();
             String n = request.getParameter("n");
             String typeCl = request.getParameter("typecl");
+            if (typeCl == null){
+                typeCl = " ";
+            }
             if (!sprParentTypes.isEmpty()) {
                 sb.append("<parenttypes>");
                 for (SprParentType pt : sprParentTypes) {
@@ -987,17 +990,17 @@ public class SearchServlet extends HttpServlet {
             }
             sb.append("</iprasdlg>");
             itsOk = true;
-        } else if (type.equals("regions")) {   // весь список районов проведения мероприятий (наши)
+        } else if (type.equals("uslregions")) {   // весь список районов проведения мероприятий (наши)
             List<SprRegion> regions = sprRegionFacade.findNoOther();
             if (!regions.isEmpty()) {
-                sb.append("<regions>");
+                sb.append("<uslregions>");
                 for (SprRegion reg : regions) {
                     sb.append("<region>");
                     sb.append("<id>").append(reg.getSprregId()).append("</id>");
                     sb.append("<name>").append(reg.getSprregName()).append("</name>");
                     sb.append("</region>");
                 }
-                sb.append("</regions>");
+                sb.append("</uslregions>");
                 itsOk = true;
             }
         } else if (type.equals("dolgn")) {   // список должностей
@@ -1056,25 +1059,48 @@ public class SearchServlet extends HttpServlet {
             } catch (Exception ex) {
             }
             List<SotrudDolgn> sotrudList = null;
-            if (dolgn != null){
+            if (dolgn != null) {
                 sotrudList = sotrudDolgnFacade.findByDolgnSotrAct(dolgn);
             }
             Collections.sort(sotrudList, new SotrudDolgnComparator());
-            if (sotrudList != null){
-                if (!sotrudList.isEmpty()){
+            if (sotrudList != null) {
+                if (!sotrudList.isEmpty()) {
                     sb.append("<sotruds>");
-                for (SotrudDolgn sotr : sotrudList) {
-                    sb.append("<sotrud>");
-                    sb.append("<n>").append(n).append("</n>");
-                    sb.append("<id>").append(sotr.getSotruddolgnId()).append("</id>");
-                    sb.append("<name>").append(sotr.getSotrudId().getSotrudFIO()).append("</name>");
-                    sb.append("</sotrud>");
-                }
-                sb.append("</sotruds>");
-                itsOk = true;
+                    for (SotrudDolgn sotr : sotrudList) {
+                        sb.append("<sotrud>");
+                        sb.append("<n>").append(n).append("</n>");
+                        sb.append("<id>").append(sotr.getSotruddolgnId()).append("</id>");
+                        sb.append("<name>").append(sotr.getSotrudId().getSotrudFIO()).append("</name>");
+                        sb.append("</sotrud>");
+                    }
+                    sb.append("</sotruds>");
+                    itsOk = true;
                 }
             }
-        }
+        } else if (type.equals("clregions")) {   // весь список районов проживания (для ПМПК)
+            List<SprRegion> regions = sprRegionFacade.findNoCenter();
+            String n = request.getParameter("n");
+            if (n == null) {
+                n = "0";
+            }
+            String typeCl = request.getParameter("typecl");
+            if (typeCl == null) {
+                typeCl = "none";
+            }
+            if (!regions.isEmpty()) {
+                sb.append("<regions>");
+                sb.append("<type>").append(typeCl).append("</type>");
+                sb.append("<n>").append(n).append("</n>");
+                for (SprRegion reg : regions) {
+                    sb.append("<region>");
+                    sb.append("<id>").append(reg.getSprregId()).append("</id>");
+                    sb.append("<name>").append(reg.getSprregName()).append("</name>");
+                    sb.append("</region>");
+                }
+                sb.append("</regions>");
+                itsOk = true;
+            }
+        } 
         // если всё нормально - передаём клиенту
         if (itsOk) {
             response.setContentType("text/xml; charset=windows-1251");

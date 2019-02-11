@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 @Table(name = "SPR_OBR_TYPE")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "SprObrType.findAll", query = "SELECT s FROM SprObrType s"),
+    @NamedQuery(name = "SprObrType.findAll", query = "SELECT s FROM SprObrType s ORDER BY s.sprobrtypeId "),
     @NamedQuery(name = "SprObrType.findBySprobrtypeId", query = "SELECT s FROM SprObrType s WHERE s.sprobrtypeId = :sprobrtypeId"),
     @NamedQuery(name = "SprObrType.findBySprobrtypeName", query = "SELECT s FROM SprObrType s WHERE s.sprobrtypeName = :sprobrtypeName")})
 public class SprObrType implements Serializable {

@@ -31,23 +31,9 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "SprStat.findAll", query = "SELECT s FROM SprStat s"),
     @NamedQuery(name = "SprStat.findBySprstatId", query = "SELECT s FROM SprStat s WHERE s.sprstatId = :sprstatId"),
     @NamedQuery(name = "SprStat.findBySprstatName", query = "SELECT s FROM SprStat s WHERE s.sprstatName = :sprstatName"),
-    @NamedQuery(name = "SprStat.findBySprstatV", query = "SELECT s FROM SprStat s WHERE s.sprstatV = :sprstatV ORDER BY s.sprstatId ")})
+    @NamedQuery(name = "SprStat.findBySprstatV", query = "SELECT s FROM SprStat s WHERE s.sprstatV = :sprstatV ORDER BY s.sprstatId "),
+    @NamedQuery(name = "SprStat.findBySprstatMain", query = "SELECT s FROM SprStat s WHERE s.sprstatMain = :sprstatMain ORDER BY s.sprstatId ")})
 public class SprStat implements Serializable {
-
-    @Column(name = "SPRSTAT_V")
-    private Integer sprstatV;
-    @Column(name = "SPRSTAT_N")
-    private Integer sprstatN;
-    @Column(name = "SPRSTAT_INV")
-    private Integer sprstatInv;
-    
-    @OneToMany(mappedBy = "sprstatId")
-    private Collection<ChildStatus> childStatusCollection;
-    @OneToMany(mappedBy = "sprstatIdMain")
-    private Collection<SprStatPod> sprStatPodCollection;
-    @OneToMany(mappedBy = "sprstatIdPod")
-    private Collection<SprStatPod> sprStatPodCollection1;
-
     private static final long serialVersionUID = 1L;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
@@ -57,9 +43,29 @@ public class SprStat implements Serializable {
     private Integer sprstatId;
     @Size(max = 50)
     @Column(name = "SPRSTAT_NAME")
-    private String sprstatName;
+    private String sprstatName;    
+    @Column(name = "SPRSTAT_V")
+    private Integer sprstatV;
+    @Column(name = "SPRSTAT_N")
+    private Integer sprstatN;
+    @Column(name = "SPRSTAT_INV")
+    private Integer sprstatInv;
+    @Column(name = "SPRSTAT_OVZ")
+    private Integer sprstatOvz;
+    @Column(name = "SPRSTAT_MAIN")
+    private Integer sprstatMain;
+    @Size(max = 200)
+    @Column(name = "SPRSTAT_FULLNAME")
+    private String sprstatFullname;
+    
     @OneToMany(mappedBy = "sprstatId")
     private Collection<ChildStat> childStatCollection;
+    @OneToMany(mappedBy = "sprstatId")
+    private Collection<ChildStatus> childStatusCollection;
+    @OneToMany(mappedBy = "sprstatIdMain")
+    private Collection<SprStatPod> sprStatPodCollection;
+    @OneToMany(mappedBy = "sprstatIdPod")
+    private Collection<SprStatPod> sprStatPodCollection1;
 
     public SprStat() {
     }
@@ -91,7 +97,7 @@ public class SprStat implements Serializable {
     public void setSprstatV(Integer sprstatV) {
         this.sprstatV = sprstatV;
     }
-    
+
     public Integer getSprstatN() {
         return sprstatN;
     }
@@ -99,13 +105,37 @@ public class SprStat implements Serializable {
     public void setSprstatN(Integer sprstatN) {
         this.sprstatN = sprstatN;
     }
-    
+
     public Integer getSprstatInv() {
         return sprstatInv;
     }
 
     public void setSprstatInv(Integer sprstatInv) {
         this.sprstatInv = sprstatInv;
+    }
+    
+    public Integer getSprstatOvz() {
+        return sprstatOvz;
+    }
+
+    public void setSprstatOvz(Integer sprstatOvz) {
+        this.sprstatOvz = sprstatOvz;
+    }
+    
+    public Integer getSprstatMain() {
+        return sprstatMain;
+    }
+
+    public void setSprstatMain(Integer sprstatMain) {
+        this.sprstatMain = sprstatMain;
+    }
+    
+    public String getSprstatFullname() {
+        return sprstatFullname;
+    }
+
+    public void setSprstatFullname(String sprstatFullname) {
+        this.sprstatFullname = sprstatFullname;
     }
 
     @XmlTransient
@@ -168,5 +198,5 @@ public class SprStat implements Serializable {
     public void setChildStatusCollection(Collection<ChildStatus> childStatusCollection) {
         this.childStatusCollection = childStatusCollection;
     }
-    
+
 }

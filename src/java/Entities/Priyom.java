@@ -81,6 +81,9 @@ public class Priyom implements Serializable {
     @JoinColumn(name = "SPRREG_ID", referencedColumnName = "SPRREG_ID")
     @ManyToOne
     private SprRegion sprregId;
+    @JoinColumn(name = "SPRPLACE_ID", referencedColumnName = "SPRPLACE_ID")
+    @ManyToOne
+    private SprPlaces sprplaceId;
 
     public Priyom() {
     }
@@ -119,6 +122,14 @@ public class Priyom implements Serializable {
 
     public void setSprregId(SprRegion sprregId) {
         this.sprregId = sprregId;
+    }
+    
+    public SprPlaces getSprplaceId() {
+        return sprplaceId;
+    }
+
+    public void setSprplaceId(SprPlaces sprplaceId) {
+        this.sprplaceId = sprplaceId;
     }
 
     @Override

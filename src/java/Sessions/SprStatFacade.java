@@ -6,6 +6,7 @@
 package Sessions;
 
 import Entities.SprStat;
+import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -47,4 +48,27 @@ public class SprStatFacade extends AbstractFacade<SprStat> {
         result = query.getSingleResult();
         return result;
     }    
+    
+    public List<SprStat> findAllStat(){
+        String qlString = "SELECT s FROM SprStat s "
+                + "WHERE s.sprstatMain IS NULL AND s.sprstatV <> :v ";
+        TypedQuery<SprStat> query = em.createQuery(qlString, SprStat.class)
+                .setParameter("v", 4);
+        List<SprStat> mainStat = query.getResultList();
+        List<SprStat> result = new ArrayList<>();
+        // выстраиваем список в нужном порядке 
+        for (SprStat stat : mainStat) {
+            result.add(stat);
+            List<SprStat> podStat = findByMain(stat.getSprstatId());
+            result.addAll(podStat);            
+        }
+        return result;
+    }
+    
+    public List<SprStat> findByMain(Integer mainId){
+        TypedQuery<SprStat> query = em.createNamedQuery("SprStat.findBySprstatMain", SprStat.class)
+                .setParameter ("sprstatMain", mainId);
+        List<SprStat> result = query.getResultList();
+        return result;
+    }
 }

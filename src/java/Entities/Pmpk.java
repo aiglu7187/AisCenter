@@ -48,32 +48,10 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Pmpk.findByPmpkSogl", query = "SELECT p FROM Pmpk p WHERE p.pmpkSogl = :pmpkSogl"),
     @NamedQuery(name = "Pmpk.findByPrclId", query = "SELECT p FROM Pmpk p WHERE p.prclId = :prclId")})
 public class Pmpk implements Serializable {
-
-    @Column(name = "PMPK_OU")
-    private Integer pmpkOu;
-    @Column(name = "PMPK_TPMPK")
-    private Integer pmpkTpmpk;
-    @Column(name = "PMPK_GIA")
-    private Integer pmpkGia;
-    @Column(name = "PMPK_DOP")
-    private Integer pmpkDop;
-    @Column(name = "PMPK_IPR")
-    private Integer pmpkIpr;
-    @Column(name = "PMPK_SOGL")
-    private Integer pmpkSogl;
-    @Column(name = "PMPK_FIRST_OVZ")
-    private Integer pmpkFirstOvz;
-    @OneToMany(mappedBy = "pmpkId")
-    private Collection<PmpkParent> pmpkParentCollection;
-    @OneToMany(mappedBy = "pmpkId")
-    private Collection<MonitoringData> monitoringDataCollection;
-    @OneToMany(mappedBy = "pmpkId")
-    private Collection<PmpkRek> pmpkRekCollection;
-    @Column(name = "PMPK_DATEK")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date pmpkDatek;
-
     private static final long serialVersionUID = 1L;
+    public static final Integer NOT_STUDY = 0;
+    public static final Integer STUDY_IN_OO = 1;
+    public static final Integer STUDY_OUT_OO = 2;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Id
     @Basic(optional = false)
@@ -94,6 +72,42 @@ public class Pmpk implements Serializable {
     @JoinColumn(name = "SPROBRVAR_ID", referencedColumnName = "SPROBRVAR_ID")
     @ManyToOne
     private SprObrVar sprobrvarId;
+    @Column(name = "PMPK_OU")
+    private Integer pmpkOu;
+    @Column(name = "PMPK_TPMPK")
+    private Integer pmpkTpmpk;
+    @Column(name = "PMPK_GIA")
+    private Integer pmpkGia;
+    @Column(name = "PMPK_DOP")
+    private Integer pmpkDop;
+    @Column(name = "PMPK_IPR")
+    private Integer pmpkIpr;
+    @Column(name = "PMPK_SOGL")
+    private Integer pmpkSogl;
+    @Column(name = "PMPK_FIRST_OVZ")
+    private Integer pmpkFirstOvz;
+    @Column(name = "PMPK_FIRST")
+    private Integer pmpkFirst;
+    @JoinColumn(name = "SPRINICIATOR_ID", referencedColumnName = "SPRINICIATOR_ID")
+    @ManyToOne
+    private SprIniciator spriniciatorId;
+    @Size(max = 500)
+    @Column(name = "PMPK_INICIATOR_NAME")
+    private String pmpkIniciatorName;
+    @Column(name = "PMPK_DOC_REQ")
+    private Integer pmpkDocReq;
+    @Column(name = "PMPK_STUDY")
+    private Integer pmpkStudy;      // признак - не обучается / обучается в ОО / обучается вне ОО (0 / 1 / 2)
+    
+    @OneToMany(mappedBy = "pmpkId")
+    private Collection<PmpkParent> pmpkParentCollection;
+    @OneToMany(mappedBy = "pmpkId")
+    private Collection<MonitoringData> monitoringDataCollection;
+    @OneToMany(mappedBy = "pmpkId")
+    private Collection<PmpkRek> pmpkRekCollection;
+    @Column(name = "PMPK_DATEK")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date pmpkDatek;
 
     public Pmpk() {
     }
@@ -204,6 +218,46 @@ public class Pmpk implements Serializable {
 
     public void setPmpkDatek(Date pmpkDatek) {
         this.pmpkDatek = pmpkDatek;
+    }
+    
+    public Integer getPmpkFirst() {
+        return pmpkFirst;
+    }
+
+    public void setPmpkFirst(Integer pmpkFirst) {
+        this.pmpkFirst = pmpkFirst;
+    }
+    
+    public Integer getPmpkDocReq() {
+        return pmpkDocReq;
+    }
+
+    public void setPmpkDocReq(Integer pmpkDocReq) {
+        this.pmpkDocReq = pmpkDocReq;
+    }
+    
+    public String getPmpkIniciatorName() {
+        return pmpkIniciatorName;
+    }
+
+    public void setPmpkIniciatorName(String pmpkIniciatorName) {
+        this.pmpkIniciatorName = pmpkIniciatorName;
+    }
+    
+    public SprIniciator getSpriniciatorId() {
+        return spriniciatorId;
+    }
+
+    public void setSpriniciatorId(SprIniciator spriniciatorId) {
+        this.spriniciatorId = spriniciatorId;
+    }
+    
+    public Integer getPmpkStudy() {
+        return pmpkStudy;
+    }
+
+    public void setPmpkStudy(Integer pmpkStudy) {
+        this.pmpkStudy = pmpkStudy;
     }
     
     public String getFormatDatek(){

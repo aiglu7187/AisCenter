@@ -22,15 +22,14 @@ and open the template in the editor.
                         <input class="required" type="date" id="prDate" name="prDate" style="width: 150px;" onkeyup="change()">
                     </td>
                     <td></td>
-
                     <td><strong>Место проведения:</strong></td>
                     <td>
-                        <select id="regSel" name="regSel" onchange="change()"></select>
+                        <select id="regSel" name="regSel" onchange="changeReg()"></select>
                     </td>         
-                    <td></td>    
+                    <td><select id="placeSel" name="placeSel" onchange="change()"></select></td>    
                 </tr>
             </table>
-            <br>
+            <br>            
             <table class="noborder" id="sostavTbl">
                 <tr>
                     <td><strong>Председатель комиссии:</strong></td>
@@ -63,22 +62,12 @@ and open the template in the editor.
                 Сохранить
             </a> 
         </div>
-        <!--    <div class="tabs">
-                <input id="tab1" type="radio" name="tabs" checked>
-                <label for="tab1" title="Ребёнок1">Ребёнок1</label>
-                <input id="tab2" type="radio" name="tabs">                       
-                <label for="tab2" title="Добавить"><img src="img/plus.png" width="16" alt="Добавить"></label>
-                <section id="content-tab1">
-                    <div>
-                        Ребёнок1
-                    </div>
-                </section>
-                <section id="content-tab2">
-                    <div>
-                        Ребёнок2
-                    </div>
-                </section>
-            </div>-->
+        <div id="content" style="margin-top: 20px;"></div>  
+        
+        <div id="searchOo" style="display: none;">                        
+            <div id="otherregions"></div>
+        </div>        
+        
         <dialog id="noContentToSave" class="alertDlg">
             Нет изменений для сохранения
         </dialog>
@@ -92,7 +81,18 @@ and open the template in the editor.
             </div>
             <br>
             <div style="text-align: center">
-                <a class="greybtn" id="verifyDlgBtn" name="okDlgBtn" onclick="closeVerify()">                
+                <a class="greybtn" id="verifyDlgBtn" name="okDlgBtn">                
+                    ОК
+                </a> 
+            </div>
+        </dialog>
+        <dialog id="someTrouble" class="alertDlg">
+            <div style="text-align: center">
+                Данные сохранены частично, <br>рекомендуется проверить полноту сохранённой информации
+            </div>
+            <br>
+            <div style="text-align: center">
+                <a class="greybtn" id="someTroubleDlgBtn" name="okDlgBtn">                
                     ОК
                 </a> 
             </div>
@@ -100,23 +100,21 @@ and open the template in the editor.
         <dialog id="connectError" class="alertDlg">
             <div style="text-align: center">
                 Ошибка подключения к серверу
-                <br>Данные не были сохранены
             </div>
             <br>
             <div style="text-align: center">
-                <a class="greybtn" id="connectErrorDlgBtn" name="okDlgBtn" onclick="closeConnectError()">                
+                <a class="greybtn" id="connectErrorDlgBtn" name="okDlgBtn">                
                     ОК
                 </a> 
             </div>
         </dialog>    
         <dialog id="serverError" class="alertDlg">
             <div style="text-align: center">
-                Ошибка сервера. Данные не были сохранены. 
-                <br>Обратитесь к администратору
+                Ошибка сервера. Обратитесь к администратору
             </div>
             <br>
             <div style="text-align: center">
-                <a class="greybtn" id="serverErrorDlgBtn" name="okDlgBtn" onclick="closeServerError()">                
+                <a class="greybtn" id="serverErrorDlgBtn" name="okDlgBtn">                
                     ОК
                 </a> 
             </div>
@@ -128,13 +126,14 @@ and open the template in the editor.
             </div>
             <br>
             <div style="text-align: center">
-                <a class="greybtn" id="saveErrorDlgBtn" name="okDlgBtn" onclick="closeSaveError()">                
+                <a class="greybtn" id="saveErrorDlgBtn" name="okDlgBtn">                
                     ОК
                 </a> 
             </div>
         </dialog>
         <script type="text/javascript">
             initAdd();
+            init();
         </script> 
     </body>       
 </html>

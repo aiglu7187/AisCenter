@@ -62,6 +62,8 @@ public class PriyomSotrud implements Serializable {
     @Column(name = "DATE_UPD")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateUpd;
+    @Column(name="PRSOTR_PMPK_CHM")
+    private Integer prsotrPmpkChm;
 
     public PriyomSotrud() {
     }
@@ -141,5 +143,13 @@ public class PriyomSotrud implements Serializable {
 
     public void setUserId(Users userId) {
         this.userId = userId;
+    }
+    
+     public Integer getPrsotrPmpkChm() {
+        return prsotrPmpkChm;
+    }
+
+    public void setPrsotrPmpkChm(Integer prsotrPmpkChm) {
+        this.prsotrPmpkChm = prsotrPmpkChm;
     }
 }
