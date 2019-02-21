@@ -865,6 +865,12 @@ function validateIpra() {
         inp[loop].classList.remove("wrong");
     }
 
+    var status = 1;
+    var ipraId = document.getElementById("ipraId");
+    if (ipraId != null) {
+        status = document.getElementById("status").value;
+    }
+
     for (loop = 0; loop < inp.length; loop++) {
         var id = inp[loop].id;
         var val = inp[loop].value;
@@ -903,223 +909,226 @@ function validateIpra() {
                 }
                 result = false;
             }
-        } else if (id == "ipraN") {
-            if ((val == "") || (val.length > nLimit)) {
-                inp[loop].className = "wrong";
-                result = false;
-            }
-        } else if (id == "ipraNexp") {
-            if ((val == "") || (val.length > nLimit)) {
-                inp[loop].className = "wrong";
-                result = false;
-            }
-        } else if (id == "expDate") {
-            if (val == "") {
-                inp[loop].className = "wrong";
-                result = false;
-            } else if (val.length > 10) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else {
-                var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
-                if (date.getTime() < dateLimit.getTime()) {
+        }
+        if (status == 1) {
+            if (id == "ipraN") {
+                if ((val == "") || (val.length > nLimit)) {
                     inp[loop].className = "wrong";
                     result = false;
                 }
-            }
-        } else if (id == "ipraDateOk") {
-            if (val == "") {
-                inp[loop].className = "wrong";
-                result = false;
-            } else if (val.length > 10) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else {
-                var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
-                if (date.getTime() < dateLimit.getTime()) {
+            } else if (id == "ipraNexp") {
+                if ((val == "") || (val.length > nLimit)) {
                     inp[loop].className = "wrong";
                     result = false;
                 }
-            }
-        } else if (id == "ishMseN") {
-            if ((val == "") || (val.length > nLimit)) {
-                inp[loop].className = "wrong";
-                result = false;
-            }
-        } else if (id == "ishMseD") {
-            if ((val == "") || (val.length > 10)) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else if (val != "") {
-                var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
-                if (date.getTime() < dateLimit.getTime()) {
+            } else if (id == "expDate") {
+                if (val == "") {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else if (val.length > 10) {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else {
+                    var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
+                    if (date.getTime() < dateLimit.getTime()) {
+                        inp[loop].className = "wrong";
+                        result = false;
+                    }
+                }
+            } else if (id == "ipraDateOk") {
+                if (val == "") {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else if (val.length > 10) {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else {
+                    var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
+                    if (date.getTime() < dateLimit.getTime()) {
+                        inp[loop].className = "wrong";
+                        result = false;
+                    }
+                }
+            } else if (id == "ishMseN") {
+                if ((val == "") || (val.length > nLimit)) {
                     inp[loop].className = "wrong";
                     result = false;
                 }
-            }
-        } else if (id == "vhDoN") {
-            if (val.length > nLimit) {
-                inp[loop].className = "wrong";
-                result = false;
-            }
-        } else if (id == "vhDoD") {
-            if (val == "") {
-                inp[loop].className = "wrong";
-                result = false;
-            } else if (val.length > 10) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else {
-                var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
-                if (date.getTime() < dateLimit.getTime()) {
+            } else if (id == "ishMseD") {
+                if ((val == "") || (val.length > 10)) {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else if (val != "") {
+                    var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
+                    if (date.getTime() < dateLimit.getTime()) {
+                        inp[loop].className = "wrong";
+                        result = false;
+                    }
+                }
+            } else if (id == "vhDoN") {
+                if (val.length > nLimit) {
                     inp[loop].className = "wrong";
                     result = false;
                 }
-            }
-        } else if (id == "chbOtkaz") {
-            if (!inp[loop].checked) {
-                for (loop2 = 0; loop2 < inp.length; loop2++) {
-                    var id2 = inp[loop2].id;
-                    var val2 = inp[loop2].value;
-                    if (id == "prikazDoN") {
-                        if (val2.length > nLimit) {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        }
-                    } else if (id2 == "prikazDoD") {
-                        if (val2 == "") {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else if (val2.length > 10) {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else {
-                            var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
-                            if (date.getTime() < dateLimit.getTime()) {
+            } else if (id == "vhDoD") {
+                if (val == "") {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else if (val.length > 10) {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else {
+                    var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
+                    if (date.getTime() < dateLimit.getTime()) {
+                        inp[loop].className = "wrong";
+                        result = false;
+                    }
+                }
+            } else if (id == "chbOtkaz") {
+                if (!inp[loop].checked) {
+                    for (loop2 = 0; loop2 < inp.length; loop2++) {
+                        var id2 = inp[loop2].id;
+                        var val2 = inp[loop2].value;
+                        if (id == "prikazDoN") {
+                            if (val2.length > nLimit) {
                                 inp[loop2].className = "wrong";
                                 result = false;
                             }
-                        }
-                    } else if (id2 == "omsuN") {
-                        if (val2.length > nLimit) {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        }
-                    } else if (id2 == "omsuD") {
-                        if (val2 == "") {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else if (val2.length > 10) {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else {
-                            var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
-                            if (date.getTime() < dateLimit.getTime()) {
+                        } else if (id2 == "prikazDoD") {
+                            if (val2 == "") {
+                                inp[loop2].className = "wrong";
+                                result = false;
+                            } else if (val2.length > 10) {
+                                inp[loop2].className = "wrong";
+                                result = false;
+                            } else {
+                                var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
+                                if (date.getTime() < dateLimit.getTime()) {
+                                    inp[loop2].className = "wrong";
+                                    result = false;
+                                }
+                            }
+                        } else if (id2 == "omsuN") {
+                            if (val2.length > nLimit) {
                                 inp[loop2].className = "wrong";
                                 result = false;
                             }
-                        }
-                    } else if (id2 == "prOmsuD") {
-                        if (val2 == "") {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else if (val2.length > 10) {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else {
-                            var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
-                            if (date.getTime() < dateLimit.getTime()) {
+                        } else if (id2 == "omsuD") {
+                            if (val2 == "") {
                                 inp[loop2].className = "wrong";
                                 result = false;
+                            } else if (val2.length > 10) {
+                                inp[loop2].className = "wrong";
+                                result = false;
+                            } else {
+                                var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
+                                if (date.getTime() < dateLimit.getTime()) {
+                                    inp[loop2].className = "wrong";
+                                    result = false;
+                                }
                             }
-                        }
-                    } else if (id2 == "oznakD") {
-                        if (val2 == "") {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else if (val2.length > 10) {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else {
-                            var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
-                            if (date.getTime() < dateLimit.getTime()) {
+                        } else if (id2 == "prOmsuD") {
+                            if (val2 == "") {
                                 inp[loop2].className = "wrong";
                                 result = false;
+                            } else if (val2.length > 10) {
+                                inp[loop2].className = "wrong";
+                                result = false;
+                            } else {
+                                var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
+                                if (date.getTime() < dateLimit.getTime()) {
+                                    inp[loop2].className = "wrong";
+                                    result = false;
+                                }
                             }
-                        }
-                    } else if (id2 == "tpmpkD") {
-                        if (val2.length > 10) {
-                            inp[loop2].className = "wrong";
-                            result = false;
-                        } else if (val2 != "") {
-                            var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
-                            if (date.getTime() < dateLimit.getTime()) {
+                        } else if (id2 == "oznakD") {
+                            if (val2 == "") {
                                 inp[loop2].className = "wrong";
                                 result = false;
+                            } else if (val2.length > 10) {
+                                inp[loop2].className = "wrong";
+                                result = false;
+                            } else {
+                                var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
+                                if (date.getTime() < dateLimit.getTime()) {
+                                    inp[loop2].className = "wrong";
+                                    result = false;
+                                }
                             }
-                        } else if (val2 == "") {
-                            if (!inp[loop2].disabled) {
+                        } else if (id2 == "tpmpkD") {
+                            if (val2.length > 10) {
                                 inp[loop2].className = "wrong";
                                 result = false;
+                            } else if (val2 != "") {
+                                var date = new Date(1 * val2.substr(0, 4), 1 * val2.substr(5, 2) - 1, 1 * val2.substr(8));
+                                if (date.getTime() < dateLimit.getTime()) {
+                                    inp[loop2].className = "wrong";
+                                    result = false;
+                                }
+                            } else if (val2 == "") {
+                                if (!inp[loop2].disabled) {
+                                    inp[loop2].className = "wrong";
+                                    result = false;
+                                }
                             }
                         }
                     }
                 }
-            }
-        } else if (id == "otchOmsu") {
-            if (val == "") {
-                inp[loop].className = "wrong";
-                result = false;
-            } else if (val.length > 10) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else {
-                var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
-                if (date.getTime() < dateLimit.getTime()) {
+            } else if (id == "otchOmsu") {
+                if (val == "") {
                     inp[loop].className = "wrong";
                     result = false;
+                } else if (val.length > 10) {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else {
+                    var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
+                    if (date.getTime() < dateLimit.getTime()) {
+                        inp[loop].className = "wrong";
+                        result = false;
+                    }
                 }
-            }
-        } else if (id == "otchCenter") {
-            if (val == "") {
-                inp[loop].className = "wrong";
-                result = false;
-            } else if (val.length > 10) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else {
-                var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
-                if (date.getTime() < dateLimit.getTime()) {
+            } else if (id == "otchCenter") {
+                if (val == "") {
                     inp[loop].className = "wrong";
                     result = false;
+                } else if (val.length > 10) {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else {
+                    var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
+                    if (date.getTime() < dateLimit.getTime()) {
+                        inp[loop].className = "wrong";
+                        result = false;
+                    }
                 }
-            }
-        } else if (id == "otchDo") {
-            if (val == "") {
-                inp[loop].className = "wrong";
-                result = false;
-            } else if (val.length > 10) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else {
-                var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
-                if (date.getTime() < dateLimit.getTime()) {
+            } else if (id == "otchDo") {
+                if (val == "") {
                     inp[loop].className = "wrong";
                     result = false;
+                } else if (val.length > 10) {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else {
+                    var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
+                    if (date.getTime() < dateLimit.getTime()) {
+                        inp[loop].className = "wrong";
+                        result = false;
+                    }
                 }
-            }
-        } else if (id == "omsuReqD") {
-            if (val == "") {
-                inp[loop].className = "wrong";
-                result = false;
-            } else if (val.length > 10) {
-                inp[loop].className = "wrong";
-                result = false;
-            } else {
-                var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
-                if (date.getTime() < dateLimit.getTime()) {
+            } else if (id == "omsuReqD") {
+                if (val == "") {
                     inp[loop].className = "wrong";
                     result = false;
+                } else if (val.length > 10) {
+                    inp[loop].className = "wrong";
+                    result = false;
+                } else {
+                    var date = new Date(1 * val.substr(0, 4), 1 * val.substr(5, 2) - 1, 1 * val.substr(8));
+                    if (date.getTime() < dateLimit.getTime()) {
+                        inp[loop].className = "wrong";
+                        result = false;
+                    }
                 }
             }
         }

@@ -1091,6 +1091,14 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                 ipraPrikaz = ipra18PrikazFacade.findByIpra(ipra);
             }
 
+            String statusS = "";
+            Integer status = 1;
+            try {
+                statusS = params.get("status")[0];
+                status = Integer.parseInt(statusS);
+            } catch (Exception ex) {
+            }
+
             String childIdS = null;
             try {
                 childIdS = params.get("childId")[0];
@@ -1150,235 +1158,235 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                 childrenFacade.create(child);
             }
             ipra.setChildId(child);
-
-            // номер ИПРА
-            String ipraN = params.get("ipraN")[0];
-            ipra.setIpra18N(ipraN);
-            // номер экспертизы
-            String ipraNexp = params.get("ipraNexp")[0];
-            ipra.setIpra18Nexp(ipraNexp);
-            // дата экспертизы
-            String ipraDateexpS = params.get("expDate")[0];
-            Date ipraDateexp = null;
-            try {
-                ipraDateexp = format.parse(ipraDateexpS);
-
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (ipraDateexp != null) {
-                ipra.setIpra18Dateexp(ipraDateexp);
-            }
-            // дата окончания ИПРА
-            String ipraDateokS = params.get("ipraDateOk")[0];
-            Date ipraDateok = null;
-            try {
-                ipraDateok = format.parse(ipraDateokS);
-
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (ipraDateok != null) {
-                ipra.setIpra18Dateok(ipraDateok);
-            }
-            // бюро МСЭ    
-            String mseIdS = params.get("mseId")[0];
-            Integer mseId = 0;
-            try {
-                mseId = Integer.parseInt(mseIdS);
-            } catch (Exception ex) {
-            }
-            SprMse sprMse = null;
-            if (mseId != 0) {
-                sprMse = sprMseFacade.findById(mseId);
-            }
-            if (sprMse != null) {
-                ipra.setSprmseId(sprMse);
-            }
-            // исходящее письмо МСЭ номер
-            String ipraIshmseN = params.get("ishMseN")[0];
-            ipra.setIpra18IshmseN(ipraIshmseN);
-            // исходящее письмо МСЭ дата
-            String ipraIshmseDS = params.get("ishMseD")[0];
-            Date ipraIshmseD = null;
-            try {
-                ipraIshmseD = format.parse(ipraIshmseDS);
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (ipraIshmseD != null) {
-                ipra.setIpra18IshmseD(ipraIshmseD);
-            }
-            // входящее письмо ДО номер
-            String ipraVhdoN = null;
-            try {
-                ipraVhdoN = params.get("vhDoN")[0];
-                ipra.setIpra18VhdoN(ipraVhdoN);
-            } catch (Exception ex) {
-            }
-            // входящее письмо ДО дата
-            String ipraVhdoDS = "";
-            try {
-                ipraVhdoDS = params.get("vhDoD")[0];
-            } catch (Exception ex) {
-            }
-            Date ipraVhdoD = null;
-            try {
-                ipraVhdoD = format.parse(ipraVhdoDS);
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (ipraVhdoD != null) {
-                ipra.setIpra18VhdoD(ipraVhdoD);
-            }
-
-            // приказ ДО номер
-            String prikazDoN = "";
-            try {
-                prikazDoN = params.get("prikazDoN")[0];
-                ipraPrikaz.setIpra18prikazDoN(prikazDoN);
-            } catch (Exception ex) {
-            }
-            // приказ ДО дата
-            String prikazDoDS = "";
-            try {
-                prikazDoDS = params.get("prikazDoD")[0];
-            } catch (Exception ex) {
-            }
-            Date prikazDoD = null;
-            try {
-                prikazDoD = format.parse(prikazDoDS);
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (prikazDoD != null) {
-                ipraPrikaz.setIpra18prikazDoD(prikazDoD);
-            }
-            // ТПМПК
-            String tpmpkIdS = "";
-            try {
-                tpmpkIdS = params.get("tpmpkId")[0];
-            } catch (Exception ex) {
-            }
-            Integer tpmpkId = 0;
-            try {
-                tpmpkId = Integer.parseInt(tpmpkIdS);
-            } catch (Exception ex) {
-            }
-            SprOtherPmpk tpmpk = null;
-            if (tpmpkId != 0) {
+            if (status == 1) {
+                // номер ИПРА
+                String ipraN = params.get("ipraN")[0];
+                ipra.setIpra18N(ipraN);
+                // номер экспертизы
+                String ipraNexp = params.get("ipraNexp")[0];
+                ipra.setIpra18Nexp(ipraNexp);
+                // дата экспертизы
+                String ipraDateexpS = params.get("expDate")[0];
+                Date ipraDateexp = null;
                 try {
-                    tpmpk = sprOtherPmpkFacade.findById(tpmpkId);
+                    ipraDateexp = format.parse(ipraDateexpS);
+
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (ipraDateexp != null) {
+                    ipra.setIpra18Dateexp(ipraDateexp);
+                }
+                // дата окончания ИПРА
+                String ipraDateokS = params.get("ipraDateOk")[0];
+                Date ipraDateok = null;
+                try {
+                    ipraDateok = format.parse(ipraDateokS);
+
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (ipraDateok != null) {
+                    ipra.setIpra18Dateok(ipraDateok);
+                }
+                // бюро МСЭ    
+                String mseIdS = params.get("mseId")[0];
+                Integer mseId = 0;
+                try {
+                    mseId = Integer.parseInt(mseIdS);
                 } catch (Exception ex) {
                 }
-            }
-            ipraPrikaz.setSprotherpmpkId(tpmpk);
-            // дата запроса в ТПМПК
-            String tpmpkDS = "";
-            try {
-                tpmpkDS = params.get("tpmpkD")[0];
-            } catch (Exception ex) {
-            }
-            Date tpmpkD = null;
-            try {
-                tpmpkD = format.parse(tpmpkDS);
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (tpmpkD != null) {
-                ipraPrikaz.setIpra18prikazTpmpkD(tpmpkD);
-            }
-            // номер письма в ТПМПК
-            String tpmpkN = "";
-            try {
-                tpmpkN = params.get("tpmpkN")[0];
-                ipraPrikaz.setIpra18prikazTpmpkN(tpmpkN);
-            } catch (Exception ex) {
-            }
-
-            // ОМСУ
-            String omsuIdS = "";
-            try {
-                omsuIdS = params.get("omsuId")[0];
-            } catch (Exception ex) {
-            }
-            Integer omsuId = 0;
-            try {
-                omsuId = Integer.parseInt(omsuIdS);
-            } catch (Exception ex) {
-            }
-            SprOmsu omsu = null;
-            if (omsuId != 0) {
+                SprMse sprMse = null;
+                if (mseId != 0) {
+                    sprMse = sprMseFacade.findById(mseId);
+                }
+                if (sprMse != null) {
+                    ipra.setSprmseId(sprMse);
+                }
+                // исходящее письмо МСЭ номер
+                String ipraIshmseN = params.get("ishMseN")[0];
+                ipra.setIpra18IshmseN(ipraIshmseN);
+                // исходящее письмо МСЭ дата
+                String ipraIshmseDS = params.get("ishMseD")[0];
+                Date ipraIshmseD = null;
                 try {
-                    omsu = sprOmsuFacade.findById(omsuId);
+                    ipraIshmseD = format.parse(ipraIshmseDS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (ipraIshmseD != null) {
+                    ipra.setIpra18IshmseD(ipraIshmseD);
+                }
+                // входящее письмо ДО номер
+                String ipraVhdoN = null;
+                try {
+                    ipraVhdoN = params.get("vhDoN")[0];
+                    ipra.setIpra18VhdoN(ipraVhdoN);
                 } catch (Exception ex) {
                 }
-            }
-            if (omsu != null) {
-                ipraPrikaz.setSpromsuId(omsu);
-            }
-
-            String chbOtkaz = null;
-            try {
-                chbOtkaz = params.get("chbOtkaz")[0];
-            } catch (Exception ex) {
-            }
-            if (chbOtkaz != null){
-                if (chbOtkaz.equals("on")){
-                    ipraPrikaz.setIpra18prikazOtkaz(1);
+                // входящее письмо ДО дата
+                String ipraVhdoDS = "";
+                try {
+                    ipraVhdoDS = params.get("vhDoD")[0];
+                } catch (Exception ex) {
                 }
-            } else {
-                ipraPrikaz.setIpra18prikazOtkaz(0);
-            }
+                Date ipraVhdoD = null;
+                try {
+                    ipraVhdoD = format.parse(ipraVhdoDS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (ipraVhdoD != null) {
+                    ipra.setIpra18VhdoD(ipraVhdoD);
+                }
 
-            // номер запроса из ОМСУ
-            String omsuReqN = "";
-            try {
-                omsuReqN = params.get("omsuReqN")[0];
-                ipraPrikaz.setIpra18prikazReqN(omsuReqN);
-            } catch (Exception ex) {
-            }
+                // приказ ДО номер
+                String prikazDoN = "";
+                try {
+                    prikazDoN = params.get("prikazDoN")[0];
+                    ipraPrikaz.setIpra18prikazDoN(prikazDoN);
+                } catch (Exception ex) {
+                }
+                // приказ ДО дата
+                String prikazDoDS = "";
+                try {
+                    prikazDoDS = params.get("prikazDoD")[0];
+                } catch (Exception ex) {
+                }
+                Date prikazDoD = null;
+                try {
+                    prikazDoD = format.parse(prikazDoDS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (prikazDoD != null) {
+                    ipraPrikaz.setIpra18prikazDoD(prikazDoD);
+                }
+                // ТПМПК
+                String tpmpkIdS = "";
+                try {
+                    tpmpkIdS = params.get("tpmpkId")[0];
+                } catch (Exception ex) {
+                }
+                Integer tpmpkId = 0;
+                try {
+                    tpmpkId = Integer.parseInt(tpmpkIdS);
+                } catch (Exception ex) {
+                }
+                SprOtherPmpk tpmpk = null;
+                if (tpmpkId != 0) {
+                    try {
+                        tpmpk = sprOtherPmpkFacade.findById(tpmpkId);
+                    } catch (Exception ex) {
+                    }
+                }
+                ipraPrikaz.setSprotherpmpkId(tpmpk);
+                // дата запроса в ТПМПК
+                String tpmpkDS = "";
+                try {
+                    tpmpkDS = params.get("tpmpkD")[0];
+                } catch (Exception ex) {
+                }
+                Date tpmpkD = null;
+                try {
+                    tpmpkD = format.parse(tpmpkDS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (tpmpkD != null) {
+                    ipraPrikaz.setIpra18prikazTpmpkD(tpmpkD);
+                }
+                // номер письма в ТПМПК
+                String tpmpkN = "";
+                try {
+                    tpmpkN = params.get("tpmpkN")[0];
+                    ipraPrikaz.setIpra18prikazTpmpkN(tpmpkN);
+                } catch (Exception ex) {
+                }
 
-            // дата запроса из ОМСУ
-            String omsuReqDS = "";
-            try {
-                omsuReqDS = params.get("omsuReqD")[0];
-            } catch (Exception ex) {
-            }
-            Date omsuReqD = null;
-            try {
-                omsuReqD = format.parse(omsuReqDS);
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (omsuReqD != null) {
-                ipraPrikaz.setIpra18prikazReqD(omsuReqD);
-            }
-            // дата письма в ОМСУ
-            String omsuDS = "";
-            try {
-                omsuDS = params.get("omsuD")[0];
-            } catch (Exception ex) {
-            }
-            Date omsuD = null;
-            try {
-                omsuD = format.parse(omsuDS);
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (omsuD != null) {
-                ipraPrikaz.setIpra18prikazPerechD(omsuD);
-            }
-            // номер письма в ОМСУ
-            String omsuN = "";
-            try {
-                omsuN = params.get("omsuN")[0];
-            } catch (Exception ex) {
-            }
-            if (omsuN != null) {
-                ipraPrikaz.setIpra18prikazPerechN(omsuN);
-            }
-            /*    // дата приказа ОМСУ
+                // ОМСУ
+                String omsuIdS = "";
+                try {
+                    omsuIdS = params.get("omsuId")[0];
+                } catch (Exception ex) {
+                }
+                Integer omsuId = 0;
+                try {
+                    omsuId = Integer.parseInt(omsuIdS);
+                } catch (Exception ex) {
+                }
+                SprOmsu omsu = null;
+                if (omsuId != 0) {
+                    try {
+                        omsu = sprOmsuFacade.findById(omsuId);
+                    } catch (Exception ex) {
+                    }
+                }
+                if (omsu != null) {
+                    ipraPrikaz.setSpromsuId(omsu);
+                }
+
+                String chbOtkaz = null;
+                try {
+                    chbOtkaz = params.get("chbOtkaz")[0];
+                } catch (Exception ex) {
+                }
+                if (chbOtkaz != null) {
+                    if (chbOtkaz.equals("on")) {
+                        ipraPrikaz.setIpra18prikazOtkaz(1);
+                    }
+                } else {
+                    ipraPrikaz.setIpra18prikazOtkaz(0);
+                }
+
+                // номер запроса из ОМСУ
+                String omsuReqN = "";
+                try {
+                    omsuReqN = params.get("omsuReqN")[0];
+                    ipraPrikaz.setIpra18prikazReqN(omsuReqN);
+                } catch (Exception ex) {
+                }
+
+                // дата запроса из ОМСУ
+                String omsuReqDS = "";
+                try {
+                    omsuReqDS = params.get("omsuReqD")[0];
+                } catch (Exception ex) {
+                }
+                Date omsuReqD = null;
+                try {
+                    omsuReqD = format.parse(omsuReqDS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (omsuReqD != null) {
+                    ipraPrikaz.setIpra18prikazReqD(omsuReqD);
+                }
+                // дата письма в ОМСУ
+                String omsuDS = "";
+                try {
+                    omsuDS = params.get("omsuD")[0];
+                } catch (Exception ex) {
+                }
+                Date omsuD = null;
+                try {
+                    omsuD = format.parse(omsuDS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (omsuD != null) {
+                    ipraPrikaz.setIpra18prikazPerechD(omsuD);
+                }
+                // номер письма в ОМСУ
+                String omsuN = "";
+                try {
+                    omsuN = params.get("omsuN")[0];
+                } catch (Exception ex) {
+                }
+                if (omsuN != null) {
+                    ipraPrikaz.setIpra18prikazPerechN(omsuN);
+                }
+                /*    // дата приказа ОМСУ
             String prOmsuDS = params.get("prOmsuD")[0];
             Date prOmsuD = null;
             try {
@@ -1400,70 +1408,63 @@ public class Ipra2018SpisokServlet extends HttpServlet {
             if (oznakD != null) {
                 ipraPrikaz.setIpra18prikazOznakD(oznakD);
             }
-             */
-            // дата отчёта ОМСУ
-            String otchOmsuS = "";
-            try {
-                otchOmsuS = params.get("otchOmsu")[0];
-            } catch (Exception ex) {
-            }
-            Date otchOmsu = null;
-            try {
-                otchOmsu = format.parse(otchOmsuS);
+                 */
+                // дата отчёта ОМСУ
+                String otchOmsuS = "";
+                try {
+                    otchOmsuS = params.get("otchOmsu")[0];
+                } catch (Exception ex) {
+                }
+                Date otchOmsu = null;
+                try {
+                    otchOmsu = format.parse(otchOmsuS);
 
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (otchOmsu != null) {
-                ipraPrikaz.setIpra18prikazOtchomsu(otchOmsu);
-            }
-            // дата отчёта ОЦППМСП
-            String otchCenterS = "";
-            try {
-                otchCenterS = params.get("otchCenter")[0];
-            } catch (Exception ex) {
-            }
-            Date otchCenter = null;
-            try {
-                otchCenter = format.parse(otchCenterS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (otchOmsu != null) {
+                    ipraPrikaz.setIpra18prikazOtchomsu(otchOmsu);
+                }
+                // дата отчёта ОЦППМСП
+                String otchCenterS = "";
+                try {
+                    otchCenterS = params.get("otchCenter")[0];
+                } catch (Exception ex) {
+                }
+                Date otchCenter = null;
+                try {
+                    otchCenter = format.parse(otchCenterS);
 
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (otchCenter != null) {
-                ipraPrikaz.setIpra18prikazOtchcenter(otchCenter);
-            }
-            // номер сопроводительного письма к отчёту ОЦППМСП в ДО
-            String otchCenterN = "";
-            try {
-                otchCenterN = params.get("otchCenterN")[0];
-            } catch (Exception ex) {
-            }
-            if (otchCenterN != null) {
-                ipraPrikaz.setIpra18prikazOtchcenterN(otchCenterN);
-            }
-            // дата отчёта ДО
-            String otchDoS = "";
-            try {
-                otchDoS = params.get("otchDo")[0];
-            } catch (Exception ex) {
-            }
-            Date otchDo = null;
-            try {
-                otchDo = format.parse(otchDoS);
-            } catch (ParseException ex) {
-                Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            if (otchDo != null) {
-                ipra.setIpra18Otchdo(otchDo);
-            }
-
-            String statusS = "";
-            Integer status = 1;
-            try {
-                statusS = params.get("status")[0];
-                status = Integer.parseInt(statusS);
-            } catch (Exception ex) {
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (otchCenter != null) {
+                    ipraPrikaz.setIpra18prikazOtchcenter(otchCenter);
+                }
+                // номер сопроводительного письма к отчёту ОЦППМСП в ДО
+                String otchCenterN = "";
+                try {
+                    otchCenterN = params.get("otchCenterN")[0];
+                } catch (Exception ex) {
+                }
+                if (otchCenterN != null) {
+                    ipraPrikaz.setIpra18prikazOtchcenterN(otchCenterN);
+                }
+                // дата отчёта ДО
+                String otchDoS = "";
+                try {
+                    otchDoS = params.get("otchDo")[0];
+                } catch (Exception ex) {
+                }
+                Date otchDo = null;
+                try {
+                    otchDo = format.parse(otchDoS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(Ipra2018SpisokServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if (otchDo != null) {
+                    ipra.setIpra18Otchdo(otchDo);
+                }
             }
             ipra.setIpra18Status(status);
             ipra.setUserId(user);
