@@ -51,7 +51,8 @@ public class SprStatFacade extends AbstractFacade<SprStat> {
     
     public List<SprStat> findAllStat(){
         String qlString = "SELECT s FROM SprStat s "
-                + "WHERE s.sprstatMain IS NULL AND s.sprstatV <> :v ";
+                + "WHERE s.sprstatMain IS NULL AND s.sprstatV <> :v "
+                + "ORDER BY s.sprstatV, s.sprstatName ";
         TypedQuery<SprStat> query = em.createQuery(qlString, SprStat.class)
                 .setParameter("v", 4);
         List<SprStat> mainStat = query.getResultList();

@@ -1216,49 +1216,146 @@ function appendTab(client) {  // добавление вкладки с клие
     // вставляем таблицу в контент
     tabContent.appendChild(mainTbl);
 
+    var divLine = document.createElement("div");
+    divLine.classList.add("lineonbot");
+    tabContent.appendChild(divLine);
+    // таблица для результатов и рекомендаций
+    var resrekTbl = document.createElement("table");
+    var resrekTr = document.createElement("tr");
+    var resrekTd1 = document.createElement("td");
+    var resrekTd2 = document.createElement("td");
+    resrekTbl.classList.add("maintbl");
+    resrekTd1.classList.add("toleftborder");
+    resrekTd2.classList.add("leftborder");
     // результаты обследования
     var divResult = document.createElement("div");
     divResult.id = "divResult" + max;
-    divResult.classList.add("contentwithlines");
-    var titleResult = document.createElement("strong");
+    var titleResult = document.createElement("h4");
     titleResult.appendChild(document.createTextNode("Результаты обследования"));
     divResult.appendChild(titleResult);
-    divResult.appendChild(document.createElement("br"));
     divResult.appendChild(document.createTextNode("Номер протокола: "));
     var nPr = "";
     if (npr.childNodes[0].nodeValue != "") {
         nPr = npr.childNodes[0].nodeValue;
     }
     var inpNPr = createTextInput("inpNPr" + max, nPr);
+    inpNPr.style = "width: 120px;";
     divResult.appendChild(inpNPr);
     // статусы
     var tblStatus = document.createElement("table");
     var statusList = statuses.getElementsByTagName("status");
-    for (var i = 1; i < statusList.length; i++) {
+    for (var i = 0; i < statusList.length; i++) {
         var status = statusList[i];
         if (status.getElementsByTagName("statusmain")[0].childNodes[0].nodeValue == " ") {
             var trStat = document.createElement("tr");
+            trStat.name = status.getElementsByTagName("statusv")[0].childNodes[0].nodeValue;
             var tdStat1 = document.createElement("td");
-            tdStat1.appendChild(document.createTextNode(status.getElementsByTagName("statusname")[0].childNodes[0].nodeValue));
+            var tdStat2 = document.createElement("td");
+            tdStat2.id = "podstat" + max + "_" + status.getElementsByTagName("statusid")[0].childNodes[0].nodeValue;
+            tdStat2.style = "display : none;";
+            var lblStat = createCheckbox("stat" + max + "_" + status.getElementsByTagName("statusid")[0].childNodes[0].nodeValue,
+                    status.getElementsByTagName("statusid")[0].childNodes[0].nodeValue, status.getElementsByTagName("statusname")[0].childNodes[0].nodeValue);
+            lblStat.title = status.getElementsByTagName("statusfullname")[0].childNodes[0].nodeValue;
+            if (status.getElementsByTagName("statuspr")[0].childNodes[0].nodeValue != " ") {
+                lblStat.childNodes[0].name = status.getElementsByTagName("statuspr")[0].childNodes[0].nodeValue;
+            }
+            if (status.getElementsByTagName("statuschecked")[0].childNodes[0].nodeValue == 1) {
+                lblStat.childNodes[0].checked = "checked";
+            }
+            tdStat1.appendChild(lblStat);
             trStat.appendChild(tdStat1);
+            trStat.appendChild(tdStat2);
+            if (status.getElementsByTagName("statusv")[0].childNodes[0].nodeValue > 1) {
+                trStat.style = "display : none;";
+            }
+            lblStat.childNodes[0].onclick = function () {
+                if (this.checked) {
+                    this.parentNode.parentNode.parentNode.childNodes[1].style = "";
+                    if (this.parentNode.parentNode.parentNode.name == "1") {
+                        if (this.name != "norma") {
+                            var trs = this.parentNode.parentNode.parentNode.parentNode.getElementsByTagName("tr");
+                            for (var k = 0; k < trs.length; k++) {
+                                trs[k].style = "";
+                            }
+                        } else {
+                            var trs = this.parentNode.parentNode.parentNode.parentNode.getElementsByTagName("tr");
+                            for (var k = 0; k < trs.length; k++) {
+                                if (trs[k] != this.parentNode.parentNode.parentNode) {
+                                    trs[k].style = "display: none";
+                                    clear(trs[k]);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    this.parentNode.parentNode.parentNode.childNodes[1].style = "display: none";
+                    if (this.parentNode.parentNode.parentNode.name == "1") {
+                        if (this.name != "norma") {
+                            var trs = this.parentNode.parentNode.parentNode.parentNode.getElementsByTagName("tr");
+                            var flag = false;
+                            for (var k = 0; k < trs.length; k++) {
+                                if (trs[k].name == 1) {
+                                    if (trs[k].childNodes[0].childNodes[0].childNodes[0].checked) {
+                                        flag = true;
+                                    }
+                                }
+                            }
+                            if (!flag) {
+                                for (var k = 0; k < trs.length; k++) {
+                                    if (trs[k].name != 1) {
+                                        trs[k].style = "display: none";
+                                        clear(trs[k]);
+                                    }
+                                }
+                            }
+                        } else {
+                            var trs = this.parentNode.parentNode.parentNode.parentNode.getElementsByTagName("tr");
+                            for (var k = 0; k < trs.length; k++) {
+                                if (trs[k].name == 1) {
+                                    trs[k].style = "";
+                                }
+                            }
+                        }
+                    }
+                }
+            };
             tblStatus.appendChild(trStat);
         }
     }
-
     divResult.appendChild(tblStatus);
-    tabContent.appendChild(divResult);
+    resrekTd1.appendChild(divResult)
 
     // рекомендовано
     var divRecomend = document.createElement("div");
     divRecomend.id = "divRecomend" + max;
     divRecomend.classList.add("content");
-    var titleRecomend = document.createElement("strong");
+    var titleRecomend = document.createElement("h4");
     titleRecomend.appendChild(document.createTextNode("Рекомендации"));
     divRecomend.appendChild(titleRecomend);
-    tabContent.appendChild(divRecomend);
+    resrekTd2.appendChild(divRecomend)
+    resrekTr.appendChild(resrekTd1);
+    resrekTr.appendChild(resrekTd2);
+    resrekTbl.appendChild(resrekTr);
+    // вставляем таблицу в контент
+    tabContent.appendChild(resrekTbl);
 
     tabs.insertBefore(tab, tabPlus); // вставляем новую вкладку перед плюсом
     tabs.appendChild(tabContent);
+
+    // подстатусы
+    for (var i = 0; i < statusList.length; i++) {
+        var status = statusList[i];
+        if (status.getElementsByTagName("statusmain")[0].childNodes[0].nodeValue != " ") {
+            var tdPodstat = document.getElementById("podstat" + max + "_" + status.getElementsByTagName("statusmain")[0].childNodes[0].nodeValue);
+            var lblStat = createCheckbox("stat" + max + "_" + status.getElementsByTagName("statusid")[0].childNodes[0].nodeValue,
+                    status.getElementsByTagName("statusid")[0].childNodes[0].nodeValue, status.getElementsByTagName("statusname")[0].childNodes[0].nodeValue);
+            lblStat.title = status.getElementsByTagName("statusfullname")[0].childNodes[0].nodeValue;
+            if (status.getElementsByTagName("statuschecked")[0].childNodes[0].nodeValue == 1) {
+                lblStat.childNodes[0].checked = "checked";
+            }
+            tdPodstat.appendChild(lblStat);
+        }
+    }
     selInic.onchange();
     selObrType.onchange();
     tab.onclick();
@@ -1273,7 +1370,7 @@ function clear(div) {
         if (inps[k].type == "text") {
             inps[k].value = "";
         } else if (inps[k].type == "checkbox") {
-            inps[k].checked = "0";
+            inps[k].checked = 0;
         }
     }
     var sels = div.getElementsByTagName("select");
@@ -1382,9 +1479,9 @@ function createCheckbox(id, value, text) {  // создание чекбокса
 function sirotaCheck() {    // обработка отметки "Сирота"
     if (this.childNodes[0].checked) {
         this.parentNode.childNodes[2].style = "";
-        this.parentNode.childNodes[2].checked = "0";
+        this.parentNode.childNodes[2].checked = 0;
         this.parentNode.childNodes[3].style = "";
-        this.parentNode.childNodes[3].checked = "0";
+        this.parentNode.childNodes[3].checked = 0;
     } else {
         try {
             this.parentNode.childNodes[2].style = "display: none";

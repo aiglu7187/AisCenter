@@ -578,11 +578,11 @@ public class PmpkServlet extends HttpServlet {
                                     }
                                     sb.append("<statusmain>").append(main).append("</statusmain>");
                                     String pr = " ";
-                                    if (stat.getSprstatInv() != null) {
+                                    if (stat.getSprstatInv().equals(1)) {
                                         pr = "inv";
-                                    } else if (stat.getSprstatN() != null) {
+                                    } else if (stat.getSprstatN().equals(1)) {
                                         pr = "norma";
-                                    } else if (stat.getSprstatOvz() != null) {
+                                    } else if (stat.getSprstatOvz().equals(1)) {
                                         pr = "ovz";
                                     }
                                     sb.append("<statuspr>").append(pr).append("</statuspr>");
@@ -622,11 +622,11 @@ public class PmpkServlet extends HttpServlet {
                                     }
                                     sb.append("<statusmain>").append(main).append("</statusmain>");
                                     String pr = " ";
-                                    if (stat.getSprstatInv() != null) {
+                                    if (stat.getSprstatInv().equals(1)) {
                                         pr = "inv";
-                                    } else if (stat.getSprstatN() != null) {
+                                    } else if (stat.getSprstatN().equals(1)) {
                                         pr = "norma";
-                                    } else if (stat.getSprstatOvz() != null) {
+                                    } else if (stat.getSprstatOvz().equals(1)) {
                                         pr = "ovz";
                                     }
                                     sb.append("<statuspr>").append(pr).append("</statuspr>");
@@ -760,11 +760,11 @@ public class PmpkServlet extends HttpServlet {
                         }
                         sb.append("<statusmain>").append(main).append("</statusmain>");
                         String pr = " ";
-                        if (stat.getSprstatInv() != null) {
+                        if (stat.getSprstatInv().equals(1)) {
                             pr = "inv";
-                        } else if (stat.getSprstatN() != null) {
+                        } else if (stat.getSprstatN().equals(1)) {
                             pr = "norma";
-                        } else if (stat.getSprstatOvz() != null) {
+                        } else if (stat.getSprstatOvz().equals(1)) {
                             pr = "ovz";
                         }
                         sb.append("<statuspr>").append(pr).append("</statuspr>");
