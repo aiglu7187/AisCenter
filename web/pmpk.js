@@ -483,10 +483,8 @@ function appendTab(client) {  // добавление вкладки с клие
     var iniciators = client.getElementsByTagName("iniciators")[0];
     var otheriniciator = client.getElementsByTagName("otheriniciator")[0];
     var reasons = client.getElementsByTagName("reasons")[0];
-    var otherreason = client.getElementsByTagName("otherreason")[0];
     var pmpkfirst = client.getElementsByTagName("pmpkfirst")[0];
     var docs = client.getElementsByTagName("docs")[0];
-    var otherdoc = client.getElementsByTagName("otherdoc")[0];
     var obuchenie = client.getElementsByTagName("obuchenie")[0];
     var obrs = obuchenie.getElementsByTagName("obrs")[0];
     var vars = obuchenie.getElementsByTagName("vars")[0];
@@ -850,7 +848,6 @@ function appendTab(client) {  // добавление вкладки с клие
     var titleReason = document.createElement("strong");
     titleReason.appendChild(document.createTextNode("Причины обращения:"));
     divReason.appendChild(titleReason);
-    divReason.appendChild(document.createElement("br"));
     var reasonList = reasons.getElementsByTagName("reason");
     for (var i = 0; i < reasonList.length; i++) {
         var reason = reasonList[i];
@@ -860,26 +857,31 @@ function appendTab(client) {  // добавление вкладки с клие
         if (reason.getElementsByTagName("reasonchecked")[0].childNodes[0].nodeValue == "1") {
             chbReason.childNodes[0].checked = "checked";
         }
+        var inpOthReason = null;
         if (reason.getElementsByTagName("reasonoth")[0].childNodes[0].nodeValue == "1") {
             chbReason.onclick = function () {
-                if (this.childNodes[0].checked) {
-                    document.getElementById("inpOthReason" + max).style = "margin-left: 10px;";
+                var sinp2 = this.getElementsByTagName("input");
+                if (sinp2[0].checked) {
+                    document.getElementById("inpOthReason" + sinp2[0].id.substring(9)).style = "margin-left: 10px;";
                 } else {
-                    document.getElementById("inpOthReason" + max).style = "display: none;";
-                    document.getElementById("inpOthReason" + max).value = "";
+                    document.getElementById("inpOthReason" + sinp2[0].id.substring(9)).style = "display: none;";
+                    document.getElementById("inpOthReason" + sinp2[0].id.substring(9)).value = "";
                 }
             }
+            var othreason = "";
+            if (reason.getElementsByTagName("otherreason")[0].childNodes[0].nodeValue != " ") {
+                othreason = reason.getElementsByTagName("otherreason")[0].childNodes[0].nodeValue;
+            }
+            inpOthReason = createTextInput("inpOthReason" + max + "_" + reason.getElementsByTagName("reasonid")[0].childNodes[0].nodeValue, othreason);
+            inpOthReason.style = "display: none;";
         }
+        divReason.appendChild(document.createElement("br"));
         divReason.appendChild(chbReason);
+        if (inpOthReason != null){
+            divReason.appendChild(inpOthReason);
+        }
     }
-    // другая причина
-    var othreason = "";
-    if (otherreason.childNodes[0].nodeValue != " ") {
-        othreason = otherreason.childNodes[0].nodeValue;
-    }
-    var inpOthReason = createTextInput("inpOthReason" + max, othreason);
-    inpOthReason.style = "display: none;";
-    divReason.appendChild(inpOthReason);
+   
     mainTd2.appendChild(divReason);
 
     // впервые/повторно на ПМПК
@@ -916,21 +918,32 @@ function appendTab(client) {  // добавление вкладки с клие
         if (doc.getElementsByTagName("docchecked")[0].childNodes[0].nodeValue == "1") {
             chbDoc.childNodes[0].checked = "checked";
         }
+        if (i < 5) {
+            chbDoc.childNodes[0].checked = "checked";
+        }
         if (doc.getElementsByTagName("docmain")[0].childNodes[0].nodeValue != "0") {
             chbDoc.style = "display: none;";
             chbDoc.childNodes[0].name = "doc" + max + "_" + doc.getElementsByTagName("docmain")[0].childNodes[0].nodeValue;   // фиксируем в имени родительский пункт справочника
         } else {
             divDoc.appendChild(document.createElement("br"));
         }
+        var inpOthDoc = null;
         if (doc.getElementsByTagName("docoth")[0].childNodes[0].nodeValue == "1") {
             chbDoc.onclick = function () {
-                if (this.childNodes[0].checked) {
-                    document.getElementById("inpOthDoc" + max).style = "margin-left: 10px;";
+                var sinp = this.getElementsByTagName("input");
+                if (sinp[0].checked) {
+                    document.getElementById("inpOthDoc" + sinp[0].id.substring(6)).style = "margin-left: 10px;";
                 } else {
-                    document.getElementById("inpOthDoc" + max).style = "display: none;";
-                    document.getElementById("inpOthDoc" + max).lastChild.value = "";
+                    document.getElementById("inpOthDoc" + sinp[0].id.substring(6)).style = "display: none;";
+                    document.getElementById("inpOthDoc" + sinp[0].id.substring(6)).value = "";
                 }
             }
+            var othdoc = "";
+            if (doc.getElementsByTagName("otherdoc")[0].childNodes[0].nodeValue != " ") {
+                othdoc = doc.getElementsByTagName("otherdoc")[0].childNodes[0].nodeValue;
+            }
+            inpOthDoc = createTextInput("inpOthDoc" + max + "_" + doc.getElementsByTagName("docid")[0].childNodes[0].nodeValue, othdoc);
+            inpOthDoc.style = "display: none;";
         } else {
             chbDoc.onclick = function () {
                 var chb = document.getElementsByName("doc" + this.childNodes[0].id.substring(6));
@@ -951,15 +964,11 @@ function appendTab(client) {  // добавление вкладки с клие
             }
         }
         divDoc.appendChild(chbDoc);
+        if (inpOthDoc != null) {
+            divDoc.appendChild(inpOthDoc);
+        }
     }
-    // другой документ
-    var othdoc = "";
-    if (otherdoc.childNodes[0].nodeValue != " ") {
-        othdoc = otherdoc.childNodes[0].nodeValue;
-    }
-    var inpOthDoc = createTextInput("inpOthDoc" + max, othdoc);
-    inpOthDoc.style = "display: none;";
-    divDoc.appendChild(inpOthDoc);
+
     mainTd3.appendChild(divDoc);
 
     // образовательное учреждение

@@ -6,9 +6,11 @@
 package Sessions;
 
 import Entities.SprReason;
+import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -29,4 +31,9 @@ public class SprReasonFacade extends AbstractFacade<SprReason> {
         super(SprReason.class);
     }
     
+    public List<SprReason> findAllReasons(){
+        TypedQuery<SprReason> query = em.createNamedQuery("SprReason.findAll", SprReason.class);
+        List<SprReason> result = query.getResultList();
+        return result;
+    }    
 }

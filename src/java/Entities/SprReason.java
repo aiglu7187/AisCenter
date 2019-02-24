@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @Table(name = "SPR_REASON")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "SprReason.findAll", query = "SELECT s FROM SprReason s"),
+    @NamedQuery(name = "SprReason.findAll", query = "SELECT s FROM SprReason s ORDER BY s.sprreasonOth, s.sprreasonId"),
     @NamedQuery(name = "SprReason.findBySprreasonId", query = "SELECT s FROM SprReason s WHERE s.sprreasonId = :sprreasonId"),
     @NamedQuery(name = "SprReason.findBySprreasonName", query = "SELECT s FROM SprReason s WHERE s.sprreasonName = :sprreasonName"),
     @NamedQuery(name = "SprReason.findBySprreasonOth", query = "SELECT s FROM SprReason s WHERE s.sprreasonOth = :sprreasonOth")})

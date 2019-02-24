@@ -236,7 +236,7 @@ public class PmpkServlet extends HttpServlet {
             // справочник типов зак.представителей
             List<SprParentType> parenttypes = sprParentTypeFacade.findAllSprParentType();
             // справочник причин обращения
-            List<SprReason> reasonList = sprReasonFacade.findAll();
+            List<SprReason> reasonList = sprReasonFacade.findAllReasons();
             // справочник документов
             List<SprDoc> docList = sprDocFacade.findAllDoc();
             // справочник ступеней
@@ -334,10 +334,14 @@ public class PmpkServlet extends HttpServlet {
                                 sb.append("<reason>");
                                 sb.append("<reasonchecked>");
                                 boolean flag = false;
+                                String otherreason = " ";
                                 for (PmpkReason r : reasons) {
                                     if (r.getSprreasonId().equals(reason)) {
                                         sb.append("1");
                                         flag = true;
+                                        if (r.getPmpkreasonName() != null) {
+                                            otherreason = r.getPmpkreasonName();
+                                        }
                                     }
                                 }
                                 if (!flag) {
@@ -347,19 +351,10 @@ public class PmpkServlet extends HttpServlet {
                                 sb.append("<reasonid>").append(reason.getSprreasonId()).append("</reasonid>");
                                 sb.append("<reasonname>").append(reason.getSprreasonName()).append("</reasonname>");
                                 sb.append("<reasonoth>").append(reason.getSprreasonOth()).append("</reasonoth>");
+                                sb.append("<otherreason>").append(otherreason).append("</otherreason>");
                                 sb.append("</reason>");
                             }
                             sb.append("</reasons>");
-                            // другая причина обращения
-                            sb.append("<otherreason>");
-                            String otherreason = " ";
-                            for (PmpkReason r : reasons) {
-                                if (r.getPmpkreasonName() != null) {
-                                    otherreason = r.getPmpkreasonName();
-                                }
-                            }
-                            sb.append(otherreason);
-                            sb.append("</otherreason>");
                             // впервые/повторно на ПМПК
                             Integer first = 1;
                             if (pmpk.get(0).getPmpkFirst() != null) {
@@ -375,10 +370,14 @@ public class PmpkServlet extends HttpServlet {
                                 sb.append("<doc>");
                                 sb.append("<docchecked>");
                                 boolean flag = false;
+                                String otherdoc = " ";
                                 for (PmpkDoc d : docs) {
                                     if (d.getSprdocId().equals(doc)) {
                                         sb.append("1");
                                         flag = true;
+                                        if ((d.getPmpkdocName() != null) && (!d.getPmpkdocName().equals(""))) {
+                                            otherdoc = d.getPmpkdocName();
+                                        }
                                     }
                                 }
                                 if (!flag) {
@@ -393,17 +392,10 @@ public class PmpkServlet extends HttpServlet {
                                 }
                                 sb.append("<docmain>").append(main).append("</docmain>");
                                 sb.append("<docoth>").append(doc.getSprdocOth()).append("</docoth>");
+                                sb.append("<otherdoc>").append(otherdoc).append("</otherdoc>");
                                 sb.append("</doc>");
                             }
                             sb.append("</docs>");
-                            // другие документы
-                            String otherdoc = " ";
-                            for (PmpkDoc d : docs) {
-                                if (d.getPmpkdocName() != null) {
-                                    otherdoc = d.getPmpkdocName();
-                                }
-                            }
-                            sb.append("<otherdoc>").append(otherdoc).append("</otherdoc>");
                             // обучается/нет
                             Integer o = pmpk.get(0).getPmpkStudy();
                             sb.append("<obuchenie>");
@@ -669,11 +661,10 @@ public class PmpkServlet extends HttpServlet {
                         sb.append("<reasonid>").append(reason.getSprreasonId()).append("</reasonid>");
                         sb.append("<reasonname>").append(reason.getSprreasonName()).append("</reasonname>");
                         sb.append("<reasonoth>").append(reason.getSprreasonOth()).append("</reasonoth>");
+                        sb.append("<otherreason>").append(" ").append("</otherreason>");
                         sb.append("</reason>");
                     }
-                    sb.append("</reasons>");
-                    // другая причина обращения
-                    sb.append("<otherreason>").append(" ").append("</otherreason>");
+                    sb.append("</reasons>");                   
                     // впервые/повторно на ПМПК
                     sb.append("<pmpkfirst>").append("0").append("</pmpkfirst>");
                     // документы
@@ -689,11 +680,10 @@ public class PmpkServlet extends HttpServlet {
                         }
                         sb.append("<docmain>").append(main).append("</docmain>");
                         sb.append("<docoth>").append(doc.getSprdocOth()).append("</docoth>");
+                        sb.append("<otherdoc>").append(" ").append("</otherdoc>");
                         sb.append("</doc>");
                     }
-                    sb.append("</docs>");
-                    // другой документ
-                    sb.append("<otherdoc>").append(" ").append("</otherdoc>");
+                    sb.append("</docs>");                    
                     // обучается или нет
                     sb.append("<obuchenie>");
                     sb.append("<ob>").append(0).append("</ob>");
