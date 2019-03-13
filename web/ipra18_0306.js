@@ -615,15 +615,18 @@ function appendIpra(divInfoChild) {
         divIpra.appendChild(omsuReqD);
         divIpra.appendChild(document.createElement("br"));
         divIpra.appendChild(document.createElement("br"));
-        // галочка "Отказ"
-        var lblOtkaz = document.createElement("label");
-        var chbOtkaz = document.createElement("input");
-        chbOtkaz.type = "checkbox";
-        chbOtkaz.id = "chbOtkaz";
-        chbOtkaz.name = "chbOtkaz";
-        lblOtkaz.appendChild(chbOtkaz);
-        lblOtkaz.appendChild(document.createTextNode("отказ"));
-        divIpra.appendChild(lblOtkaz);
+        // выбор отказ или запрос
+        var selOtkaz = document.createElement("select");
+        selOtkaz.id = "selOtkaz";
+        var optOtkaz1 = document.createElement("option");
+        optOtkaz1.value = "0";
+        optOtkaz1.appendChild(document.createTextNode("запрос"));
+        var optOtkaz2 = document.createElement("option");
+        optOtkaz2.value = "1";
+        optOtkaz2.appendChild(document.createTextNode("отказ"));
+        selOtkaz.appendChild(optOtkaz1);
+        selOtkaz.appendChild(optOtkaz2);
+        divIpra.appendChild(selOtkaz);
         divIpra.appendChild(document.createElement("br"));
         divIpra.appendChild(document.createElement("br"));
 

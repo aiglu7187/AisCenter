@@ -11,7 +11,7 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <script type="text/javascript" src="priyomview0113.js" charset="utf-8"></script>
-        <script type="text/javascript" src="addpriyom1129.js" charset="utf-8"></script>
+        <script type="text/javascript" src="addpriyom0310.js" charset="utf-8"></script>
         <link href="css/styles1216.css" rel="stylesheet" type="text/css">
         <title>
             <c:if test="${!copy}">

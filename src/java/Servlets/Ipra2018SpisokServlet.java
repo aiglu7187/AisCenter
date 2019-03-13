@@ -1325,14 +1325,14 @@ public class Ipra2018SpisokServlet extends HttpServlet {
                 if (omsu != null) {
                     ipraPrikaz.setSpromsuId(omsu);
                 }
-
-                String chbOtkaz = null;
+                // отказ
+                String selOtkaz = null;
                 try {
-                    chbOtkaz = params.get("chbOtkaz")[0];
+                    selOtkaz = params.get("selOtkaz")[0];
                 } catch (Exception ex) {
                 }
-                if (chbOtkaz != null) {
-                    if (chbOtkaz.equals("on")) {
+                if (selOtkaz != null) {
+                    if (selOtkaz.equals("1")) {
                         ipraPrikaz.setIpra18prikazOtkaz(1);
                     }
                 } else {

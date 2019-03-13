@@ -791,12 +791,7 @@ function regSelect() {   // реакция на выбор района
     var idR = this.value;
     document.getElementById("regId").value = idR;
     var subj = document.getElementById("subj").value;
-    if ((subj == 1) && (idR != 1)) {
-        var div = document.getElementById("divSubjects");
-        div.innerHTML = "";
-        var divPl = document.getElementById("divPlusSubj");
-        divPl.innerHTML = "";
-    } else if ((subj == 1) && (idR == 1)) {
+    if (subj == 1) {
         var divs = document.getElementById("divSubjects").getElementsByTagName("div");
         if (divs.length == 0) {
             appendDivSubj();

@@ -9,7 +9,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <script type="text/javascript" src="ipra18_0221.js" charset="utf-8"></script>
+        <script type="text/javascript" src="ipra18_0306.js" charset="utf-8"></script>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link href="css/styles1216.css" rel="stylesheet" type="text/css">
         <title>ИПРА - ${ipra.getChildId().getChildFam()} ${ipra.getChildId().getChildName()} ${ipra.getChildId().getChildPatr()}</title>
@@ -131,16 +131,17 @@
                                     дата: 
                                     <input type = "date" id = "omsuReqD" name = "omsuReqD" value="${ipra.getFormatDate(ipraPrikaz.getIpra18prikazReqD())}" >
                                     <br>
-                                    <br>
-                                    <label>
+                                    <br>                                      
+                                    <select id="selOtkaz">
                                         <c:if test="${(ipraPrikaz.getIpra18prikazOtkaz() == 0) || (ipraPrikaz.getIpra18prikazOtkaz() == null)}">
-                                            <input type = "checkbox" id = "chbOtkaz" name = "chbOtkaz">
-                                        </c:if>
+                                            <option value ="0" selected>запрос</option>                                        
+                                            <option value ="1">отказ</option>    
+                                        </c:if>                                        
                                         <c:if test="${ipraPrikaz.getIpra18prikazOtkaz() == 1}">
-                                            <input checked type = "checkbox" id = "chbOtkaz" name = "chbOtkaz">
+                                            <option  value ="0">запрос</option>                                                                                
+                                            <option  value ="1" selected>отказ</option>
                                         </c:if>
-                                        <strong>Отказ</strong>
-                                    </label>  
+                                    </select>
                                     <br>
                                     <br>
                                     <strong>Входящее письмо в ДО из ОМСУ</strong>
