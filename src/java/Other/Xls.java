@@ -2859,17 +2859,20 @@ public class Xls {
             tnr12ptFormatLeft.setBorder(Border.ALL, BorderLineStyle.THIN);
 
             try {
-                sheet.mergeCells(0, 0, 8, 0);
+                sheet.mergeCells(0, 0, 11, 0);
                 sheet.addCell(new Label(0, 0, "Реестр ИПРА с ближайшими сроками на " + dateFormat.format(curDate), tnr12ptBoldFormat));
                 sheet.addCell(new Label(0, 3, "№ п/п", tnr12ptFormat));
                 sheet.addCell(new Label(1, 3, "ФИО ребенка", tnr12ptFormat));
                 sheet.addCell(new Label(2, 3, "Дата рождения", tnr12ptFormat));
                 sheet.addCell(new Label(3, 3, "Район", tnr12ptFormat));
-                sheet.addCell(new Label(4, 3, "№ приказа", tnr12ptFormat));
-                sheet.addCell(new Label(5, 3, "Дата приказа", tnr12ptFormat));
-                sheet.addCell(new Label(6, 3, "Дата отчета ОМСУ", tnr12ptFormat));
-                sheet.addCell(new Label(7, 3, "Дата отчета ОЦППМСП", tnr12ptFormat));
-                sheet.addCell(new Label(8, 3, "Дата отчета ДО", tnr12ptFormat));
+                sheet.addCell(new Label(4, 3, "№ ИПРА", tnr12ptFormat));
+                sheet.addCell(new Label(5, 3, "№ протокола", tnr12ptFormat));
+                sheet.addCell(new Label(6, 3, "Дата протокола", tnr12ptFormat));
+                sheet.addCell(new Label(7, 3, "№ приказа", tnr12ptFormat));
+                sheet.addCell(new Label(8, 3, "Дата приказа", tnr12ptFormat));
+                sheet.addCell(new Label(9, 3, "Дата отчета ОМСУ", tnr12ptFormat));
+                sheet.addCell(new Label(10, 3, "Дата отчета ОЦППМСП", tnr12ptFormat));
+                sheet.addCell(new Label(11, 3, "Дата отчета ДО", tnr12ptFormat));
             } catch (RowsExceededException e) {
                 e.printStackTrace();
             } catch (WriteException e) {
@@ -2886,11 +2889,14 @@ public class Xls {
                     sheet.addCell(new Label(1, j, ipra.getChildId().getFIO(), tnr12ptFormatLeft));
                     sheet.addCell(new Label(2, j, ipra.getChildId().getFormat2Dr(), tnr12ptFormat));
                     sheet.addCell(new Label(3, j, ipra.getChildId().getSprregId().getSprregName(), tnr12ptFormat));
-                    sheet.addCell(new Label(4, j, ipra.getIpraPrikazN(), tnr12ptFormat));
-                    sheet.addCell(new Label(5, j, ipra.getFormat2Date(ipra.getIpraPrikazD()), tnr12ptFormat));
-                    sheet.addCell(new Label(6, j, ipra.getFormat2Date(ipra.getIpraOtchomsu()), tnr12ptFormat));
-                    sheet.addCell(new Label(7, j, ipra.getFormat2Date(ipra.getIpraOtchcenter()), tnr12ptFormat));
-                    sheet.addCell(new Label(8, j, ipra.getFormat2Date(ipra.getIpraOtchdo()), tnr12ptFormat));
+                    sheet.addCell(new Label(4, j, ipra.getIpraN(), tnr12ptFormat));
+                    sheet.addCell(new Label(5, j, ipra.getIpraNexp(), tnr12ptFormat));
+                    sheet.addCell(new Label(6, j, ipra.getFormat2Date(ipra.getIpraDateexp()), tnr12ptFormat));
+                    sheet.addCell(new Label(7, j, ipra.getIpraPrikazN(), tnr12ptFormat));
+                    sheet.addCell(new Label(8, j, ipra.getFormat2Date(ipra.getIpraPrikazD()), tnr12ptFormat));
+                    sheet.addCell(new Label(9, j, ipra.getFormat2Date(ipra.getIpraOtchomsu()), tnr12ptFormat));
+                    sheet.addCell(new Label(10, j, ipra.getFormat2Date(ipra.getIpraOtchcenter()), tnr12ptFormat));
+                    sheet.addCell(new Label(11, j, ipra.getFormat2Date(ipra.getIpraOtchdo()), tnr12ptFormat));
                 } catch (RowsExceededException e) {
                     e.printStackTrace();
                 } catch (WriteException e) {
@@ -2914,13 +2920,13 @@ public class Xls {
             cv = sheet.getColumnView(3);
             cv.setSize(100 * 37);
             sheet.setColumnView(3, cv);
-
+            
             cv = sheet.getColumnView(4);
-            cv.setSize(70 * 37);
+            cv.setSize(130 * 37);
             sheet.setColumnView(4, cv);
 
             cv = sheet.getColumnView(5);
-            cv.setSize(85 * 37);
+            cv.setSize(130 * 37);
             sheet.setColumnView(5, cv);
 
             cv = sheet.getColumnView(6);
@@ -2928,16 +2934,24 @@ public class Xls {
             sheet.setColumnView(6, cv);
 
             cv = sheet.getColumnView(7);
-            cv.setSize(85 * 37);
-            sheet.setColumnView(7, cv);
-
-            cv = sheet.getColumnView(7);
-            cv.setSize(85 * 37);
+            cv.setSize(70 * 37);
             sheet.setColumnView(7, cv);
 
             cv = sheet.getColumnView(8);
             cv.setSize(85 * 37);
             sheet.setColumnView(8, cv);
+
+            cv = sheet.getColumnView(9);
+            cv.setSize(85 * 37);
+            sheet.setColumnView(9, cv);
+
+            cv = sheet.getColumnView(10);
+            cv.setSize(85 * 37);
+            sheet.setColumnView(10, cv);
+
+            cv = sheet.getColumnView(11);
+            cv.setSize(85 * 37);
+            sheet.setColumnView(11, cv);
 
             //    sheetAutoFitColumns(sheet);
         } catch (IOException e) {
@@ -3006,17 +3020,20 @@ public class Xls {
             tnr12ptFormatLeft.setBorder(Border.ALL, BorderLineStyle.THIN);
 
             try {
-                sheet.mergeCells(0, 0, 8, 0);
+                sheet.mergeCells(0, 0, 11, 0);
                 sheet.addCell(new Label(0, 0, "Реестр ИПРА с ближайшими сроками на " + dateFormat.format(curDate), tnr12ptBoldFormat));
                 sheet.addCell(new Label(0, 3, "№ п/п", tnr12ptFormat));
                 sheet.addCell(new Label(1, 3, "ФИО ребенка", tnr12ptFormat));
                 sheet.addCell(new Label(2, 3, "Дата рождения", tnr12ptFormat));
                 sheet.addCell(new Label(3, 3, "Район", tnr12ptFormat));
-                sheet.addCell(new Label(4, 3, "№ приказа", tnr12ptFormat));
-                sheet.addCell(new Label(5, 3, "Дата приказа", tnr12ptFormat));
-                sheet.addCell(new Label(6, 3, "Дата отчета ОМСУ", tnr12ptFormat));
-                sheet.addCell(new Label(7, 3, "Дата отчета ОЦППМСП", tnr12ptFormat));
-                sheet.addCell(new Label(8, 3, "Дата отчета ДО", tnr12ptFormat));
+                sheet.addCell(new Label(4, 3, "№ ИПРА", tnr12ptFormat));
+                sheet.addCell(new Label(5, 3, "№ протокола", tnr12ptFormat));
+                sheet.addCell(new Label(6, 3, "Дата протокола", tnr12ptFormat));
+                sheet.addCell(new Label(7, 3, "№ приказа", tnr12ptFormat));
+                sheet.addCell(new Label(8, 3, "Дата приказа", tnr12ptFormat));
+                sheet.addCell(new Label(9, 3, "Дата отчета ОМСУ", tnr12ptFormat));
+                sheet.addCell(new Label(10, 3, "Дата отчета ОЦППМСП", tnr12ptFormat));
+                sheet.addCell(new Label(11, 3, "Дата отчета ДО", tnr12ptFormat));
             } catch (RowsExceededException e) {
                 e.printStackTrace();
             } catch (WriteException e) {
@@ -3039,11 +3056,14 @@ public class Xls {
                     sheet.addCell(new Label(1, j, ipra.getChildId().getFIO(), tnr12ptFormatLeft));
                     sheet.addCell(new Label(2, j, ipra.getChildId().getFormat2Dr(), tnr12ptFormat));
                     sheet.addCell(new Label(3, j, ipra.getChildId().getSprregId().getSprregName(), tnr12ptFormat));
-                    sheet.addCell(new Label(4, j, prikaz.getIpra18prikazDoN(), tnr12ptFormat));
-                    sheet.addCell(new Label(5, j, ipra.getFormat2Date(prikaz.getIpra18prikazDoD()), tnr12ptFormat));
-                    sheet.addCell(new Label(6, j, ipra.getFormat2Date(prikaz.getIpra18prikazOtchomsu()), tnr12ptFormat));
-                    sheet.addCell(new Label(7, j, ipra.getFormat2Date(prikaz.getIpra18prikazOtchcenter()), tnr12ptFormat));
-                    sheet.addCell(new Label(8, j, ipra.getFormat2Date(ipra.getIpra18Otchdo()), tnr12ptFormat));
+                    sheet.addCell(new Label(4, j, ipra.getIpra18N(), tnr12ptFormat));
+                    sheet.addCell(new Label(5, j, ipra.getIpra18Nexp(), tnr12ptFormat));
+                    sheet.addCell(new Label(6, j, ipra.getFormat2Date(ipra.getIpra18Dateexp()), tnr12ptFormat));
+                    sheet.addCell(new Label(7, j, prikaz.getIpra18prikazDoN(), tnr12ptFormat));
+                    sheet.addCell(new Label(8, j, ipra.getFormat2Date(prikaz.getIpra18prikazDoD()), tnr12ptFormat));
+                    sheet.addCell(new Label(9, j, ipra.getFormat2Date(prikaz.getIpra18prikazOtchomsu()), tnr12ptFormat));
+                    sheet.addCell(new Label(10, j, ipra.getFormat2Date(prikaz.getIpra18prikazOtchcenter()), tnr12ptFormat));
+                    sheet.addCell(new Label(11, j, ipra.getFormat2Date(ipra.getIpra18Otchdo()), tnr12ptFormat));
                 } catch (RowsExceededException e) {
                     e.printStackTrace();
                 } catch (WriteException e) {
@@ -3067,13 +3087,13 @@ public class Xls {
             cv = sheet.getColumnView(3);
             cv.setSize(100 * 37);
             sheet.setColumnView(3, cv);
-
+            
             cv = sheet.getColumnView(4);
-            cv.setSize(70 * 37);
+            cv.setSize(130 * 37);
             sheet.setColumnView(4, cv);
 
             cv = sheet.getColumnView(5);
-            cv.setSize(85 * 37);
+            cv.setSize(130 * 37);
             sheet.setColumnView(5, cv);
 
             cv = sheet.getColumnView(6);
@@ -3081,16 +3101,24 @@ public class Xls {
             sheet.setColumnView(6, cv);
 
             cv = sheet.getColumnView(7);
-            cv.setSize(85 * 37);
-            sheet.setColumnView(7, cv);
-
-            cv = sheet.getColumnView(7);
-            cv.setSize(85 * 37);
+            cv.setSize(70 * 37);
             sheet.setColumnView(7, cv);
 
             cv = sheet.getColumnView(8);
             cv.setSize(85 * 37);
             sheet.setColumnView(8, cv);
+
+            cv = sheet.getColumnView(9);
+            cv.setSize(85 * 37);
+            sheet.setColumnView(9, cv);
+
+            cv = sheet.getColumnView(10);
+            cv.setSize(85 * 37);
+            sheet.setColumnView(10, cv);
+
+            cv = sheet.getColumnView(11);
+            cv.setSize(85 * 37);
+            sheet.setColumnView(11, cv);
 
             //    sheetAutoFitColumns(sheet);
         } catch (IOException e) {
@@ -3159,7 +3187,7 @@ public class Xls {
             tnr12ptFormatLeft.setBorder(Border.ALL, BorderLineStyle.THIN);
 
             try {
-                sheet.mergeCells(0, 0, 18, 0);
+                sheet.mergeCells(0, 0, 19, 0);
                 sheet.addCell(new Label(0, 0, "Сводный реестр ИПРА", tnr12ptBoldFormat));
                 sheet.mergeCells(0, 3, 0, 4);
                 sheet.addCell(new Label(0, 3, "№ п/п", tnr12ptFormat));
@@ -3179,26 +3207,28 @@ public class Xls {
                 sheet.addCell(new Label(7, 4, "дата", tnr12ptFormat));
                 sheet.mergeCells(8, 3, 8, 4);
                 sheet.addCell(new Label(8, 3, "№ ИПРА", tnr12ptFormat));
-                sheet.mergeCells(9, 3, 9, 4);
-                sheet.addCell(new Label(9, 3, "Дата протокола", tnr12ptFormat));
-                sheet.mergeCells(10, 3, 10, 4);
-                sheet.addCell(new Label(10, 3, "Письмо в ОМСУ", tnr12ptFormat));
-                sheet.mergeCells(11, 3, 12, 3);
-                sheet.addCell(new Label(11, 3, "Запрос от ОМСУ", tnr12ptFormat));
-                sheet.addCell(new Label(11, 4, "№", tnr12ptFormat));
-                sheet.addCell(new Label(12, 4, "дата", tnr12ptFormat));
-                sheet.mergeCells(13, 3, 14, 3);
-                sheet.addCell(new Label(13, 3, "Перечень мероприятий", tnr12ptFormat));
-                sheet.addCell(new Label(13, 4, "№", tnr12ptFormat));
-                sheet.addCell(new Label(14, 4, "дата", tnr12ptFormat));
-                sheet.mergeCells(15, 3, 16, 3);
-                sheet.addCell(new Label(15, 3, "Входящее письмо в ДО из ОМСУ", tnr12ptFormat));
-                sheet.addCell(new Label(15, 4, "№", tnr12ptFormat));
-                sheet.addCell(new Label(16, 4, "дата", tnr12ptFormat));
-                sheet.mergeCells(17, 3, 18, 3);
-                sheet.addCell(new Label(17, 3, "Приказ", tnr12ptFormat));
-                sheet.addCell(new Label(17, 4, "№", tnr12ptFormat));
-                sheet.addCell(new Label(18, 4, "дата", tnr12ptFormat));
+                sheet.mergeCells(9, 3, 10, 3);
+                sheet.addCell(new Label(9, 3, "Протокол экспертизы", tnr12ptFormat));
+                sheet.addCell(new Label(9, 4, "№", tnr12ptFormat));
+                sheet.addCell(new Label(10, 4, "дата", tnr12ptFormat));
+                sheet.mergeCells(11, 3, 11, 4);
+                sheet.addCell(new Label(11, 3, "Письмо в ОМСУ", tnr12ptFormat));
+                sheet.mergeCells(12, 3, 13, 3);
+                sheet.addCell(new Label(12, 3, "Запрос от ОМСУ", tnr12ptFormat));
+                sheet.addCell(new Label(12, 4, "№", tnr12ptFormat));
+                sheet.addCell(new Label(13, 4, "дата", tnr12ptFormat));
+                sheet.mergeCells(14, 3, 15, 3);
+                sheet.addCell(new Label(14, 3, "Перечень мероприятий", tnr12ptFormat));
+                sheet.addCell(new Label(14, 4, "№", tnr12ptFormat));
+                sheet.addCell(new Label(15, 4, "дата", tnr12ptFormat));
+                sheet.mergeCells(16, 3, 17, 3);
+                sheet.addCell(new Label(16, 3, "Входящее письмо в ДО из ОМСУ", tnr12ptFormat));
+                sheet.addCell(new Label(16, 4, "№", tnr12ptFormat));
+                sheet.addCell(new Label(17, 4, "дата", tnr12ptFormat));
+                sheet.mergeCells(18, 3, 19, 3);
+                sheet.addCell(new Label(18, 3, "Приказ", tnr12ptFormat));
+                sheet.addCell(new Label(18, 4, "№", tnr12ptFormat));
+                sheet.addCell(new Label(19, 4, "дата", tnr12ptFormat));
             } catch (RowsExceededException e) {
                 e.printStackTrace();
             } catch (WriteException e) {
@@ -3226,16 +3256,17 @@ public class Xls {
                     sheet.addCell(new Label(6, j, ipra.getIpra18IshmseN(), tnr12ptFormat));
                     sheet.addCell(new Label(7, j, ipra.getFormat2Date(ipra.getIpra18IshmseD()), tnr12ptFormat));
                     sheet.addCell(new Label(8, j, ipra.getIpra18N(), tnr12ptFormat));
-                    sheet.addCell(new Label(9, j, ipra.getFormat2Date(ipra.getIpra18Dateexp()), tnr12ptFormat));
-                    sheet.addCell(new Label(10, j, "+", tnr12ptFormat));
-                    sheet.addCell(new Label(11, j, prikaz.getIpra18prikazReqN(), tnr12ptFormat));
-                    sheet.addCell(new Label(12, j, ipra.getFormat2Date(prikaz.getIpra18prikazReqD()), tnr12ptFormat));
-                    sheet.addCell(new Label(13, j, prikaz.getIpra18prikazPerechN(), tnr12ptFormat));
-                    sheet.addCell(new Label(14, j, ipra.getFormat2Date(prikaz.getIpra18prikazPerechD()), tnr12ptFormat));
-                    sheet.addCell(new Label(15, j, ipra.getIpra18VhdoN(), tnr12ptFormat));
-                    sheet.addCell(new Label(16, j, ipra.getFormat2Date(ipra.getIpra18VhdoD()), tnr12ptFormat));
-                    sheet.addCell(new Label(17, j, prikaz.getIpra18prikazDoN(), tnr12ptFormat));
-                    sheet.addCell(new Label(18, j, ipra.getFormat2Date(prikaz.getIpra18prikazDoD()), tnr12ptFormat));
+                    sheet.addCell(new Label(9, j, ipra.getIpra18Nexp(), tnr12ptFormat));
+                    sheet.addCell(new Label(10, j, ipra.getFormat2Date(ipra.getIpra18Dateexp()), tnr12ptFormat));
+                    sheet.addCell(new Label(11, j, "+", tnr12ptFormat));
+                    sheet.addCell(new Label(12, j, prikaz.getIpra18prikazReqN(), tnr12ptFormat));
+                    sheet.addCell(new Label(13, j, ipra.getFormat2Date(prikaz.getIpra18prikazReqD()), tnr12ptFormat));
+                    sheet.addCell(new Label(14, j, prikaz.getIpra18prikazPerechN(), tnr12ptFormat));
+                    sheet.addCell(new Label(15, j, ipra.getFormat2Date(prikaz.getIpra18prikazPerechD()), tnr12ptFormat));
+                    sheet.addCell(new Label(16, j, ipra.getIpra18VhdoN(), tnr12ptFormat));
+                    sheet.addCell(new Label(17, j, ipra.getFormat2Date(ipra.getIpra18VhdoD()), tnr12ptFormat));
+                    sheet.addCell(new Label(18, j, prikaz.getIpra18prikazDoN(), tnr12ptFormat));
+                    sheet.addCell(new Label(19, j, ipra.getFormat2Date(prikaz.getIpra18prikazDoD()), tnr12ptFormat));
                 } catch (RowsExceededException e) {
                     e.printStackTrace();
                 } catch (WriteException e) {
@@ -3276,20 +3307,16 @@ public class Xls {
             cv.setSize(90 * 37);
             sheet.setColumnView(7, cv);
 
-            cv = sheet.getColumnView(7);
-            cv.setSize(130 * 37);
-            sheet.setColumnView(7, cv);
-
             cv = sheet.getColumnView(8);
             cv.setSize(140 * 37);
             sheet.setColumnView(8, cv);
-
+            
             cv = sheet.getColumnView(9);
-            cv.setSize(90 * 37);
+            cv.setSize(140 * 37);
             sheet.setColumnView(9, cv);
 
             cv = sheet.getColumnView(10);
-            cv.setSize(130 * 37);
+            cv.setSize(90 * 37);
             sheet.setColumnView(10, cv);
 
             cv = sheet.getColumnView(11);
@@ -3297,7 +3324,7 @@ public class Xls {
             sheet.setColumnView(11, cv);
 
             cv = sheet.getColumnView(12);
-            cv.setSize(90 * 37);
+            cv.setSize(130 * 37);
             sheet.setColumnView(12, cv);
 
             cv = sheet.getColumnView(13);
@@ -3309,20 +3336,24 @@ public class Xls {
             sheet.setColumnView(14, cv);
 
             cv = sheet.getColumnView(15);
-            cv.setSize(80 * 37);
+            cv.setSize(90 * 37);
             sheet.setColumnView(15, cv);
 
             cv = sheet.getColumnView(16);
-            cv.setSize(90 * 37);
+            cv.setSize(80 * 37);
             sheet.setColumnView(16, cv);
 
             cv = sheet.getColumnView(17);
-            cv.setSize(60 * 37);
+            cv.setSize(90 * 37);
             sheet.setColumnView(17, cv);
 
             cv = sheet.getColumnView(18);
-            cv.setSize(90 * 37);
+            cv.setSize(60 * 37);
             sheet.setColumnView(18, cv);
+
+            cv = sheet.getColumnView(19);
+            cv.setSize(90 * 37);
+            sheet.setColumnView(19, cv);
 
             //    sheetAutoFitColumns(sheet);
         } catch (IOException e) {
