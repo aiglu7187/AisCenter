@@ -31,7 +31,10 @@
                 </td>
                 <td onclick="window.open('otchet?id=age', '_blank')">
                     Отчет по возрасту детей
-                </td>                 
+                </td>         
+                <td onclick="window.open('otchet?id=consultpar', '_blank')">
+                    Отчет по консультированию родителей (категории)
+                </td>
             </tr>            
         </table>      
         <h3>Реестры</h3>

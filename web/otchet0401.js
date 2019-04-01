@@ -556,8 +556,8 @@ function printconsultagereestr() {
         window.open(url, '_blank');
     }
 }
-    
-function printstatuslkat(){
+
+function printstatuslkat() {
     var date1 = document.getElementById("date1");
     var d1 = "";
     if (date1 != null) {
@@ -575,7 +575,7 @@ function printstatuslkat(){
     }
 }
 
-function printranniy(){
+function printranniy() {
     var date1 = document.getElementById("date1");
     var d1 = "";
     if (date1 != null) {
@@ -589,6 +589,24 @@ function printranniy(){
 
     if (validotchet()) {
         var url = "print?type=ranniy&date1=" + d1 + "&date2=" + d2;
+        window.open(url, '_blank');
+    }
+}
+
+function printconsultpar() {
+    var date1 = document.getElementById("date1");
+    var d1 = "";
+    if (date1 != null) {
+        d1 = date1.value;
+    }
+    var date2 = document.getElementById("date2");
+    var d2 = "";
+    if (date2 != null) {
+        d2 = date2.value;
+    }
+
+    if (validotchet()) {
+        var url = "print?type=consultpar&date1=" + d1 + "&date2=" + d2;
         window.open(url, '_blank');
     }
 }

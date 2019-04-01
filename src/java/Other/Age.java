@@ -71,4 +71,16 @@ public class Age {
         }
         return result;
     }
+    
+    public Boolean older(Age age){
+        Boolean result = false;
+        if (this.years > age.years){
+            result = true;
+        } else if (this.years == age.years){
+            if (this.months >= age.months){
+                result = true;
+            }                 
+        }
+        return result;
+    }
 }

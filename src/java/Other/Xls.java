@@ -5548,6 +5548,121 @@ public class Xls {
             e.printStackTrace();
         }
     }
+    
+    public static void printOtchetConsultPar(ServletOutputStream os, Date date1, Date date2, int clients, 
+            int clients3, int clients37, int clientsInvOVZ, int clientsOp, int clientsZS) throws WriteException {
+        WorkbookSettings ws = new WorkbookSettings();
+        ws.setLocale(new Locale("ru", "RU"));
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat();
+            dateFormat.applyPattern("dd.MM.yyyy");
+
+            workbook = Workbook.createWorkbook(os, ws);
+            sheet = workbook.createSheet("Лист1", 0);
+
+            WritableCellFormat tnr12ptBoldFormat;
+            WritableCellFormat tnr12ptFormat;
+            WritableCellFormat tnr12ptBoldFormatLeft;
+            WritableCellFormat tnr12ptFormatLeft;
+            WritableCellFormat tnr12ptFormatNoBorder;
+            WritableCellFormat tnr12ptFormatLeftCenter;
+            WritableCellFormat tnr12ptFormatRight;
+
+            // жирный по центру
+            WritableFont tnr12ptBold = new WritableFont(WritableFont.TIMES, 12, WritableFont.BOLD);
+            tnr12ptBoldFormat = new WritableCellFormat(tnr12ptBold);
+            tnr12ptBoldFormat.setAlignment(Alignment.CENTRE);
+
+            // обычный по центру
+            WritableFont tnr12pt = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD);
+            tnr12ptFormat = new WritableCellFormat(tnr12pt);
+            tnr12ptFormat.setAlignment(Alignment.CENTRE);
+            tnr12ptFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
+
+            // обычный по центру без границ                
+            tnr12ptFormatNoBorder = new WritableCellFormat(tnr12pt);
+            tnr12ptFormatNoBorder.setAlignment(Alignment.LEFT);
+
+            // жирный влево
+            WritableFont tnr12ptBoldLeft = new WritableFont(WritableFont.TIMES, 12, WritableFont.BOLD);
+            tnr12ptBoldFormatLeft = new WritableCellFormat(tnr12ptBoldLeft);
+            tnr12ptBoldFormatLeft.setAlignment(Alignment.LEFT);
+
+            // обычный влево                
+            WritableFont tnr12ptLeft = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD);
+            tnr12ptFormatLeft = new WritableCellFormat(tnr12ptLeft);
+            tnr12ptFormatLeft.setAlignment(Alignment.LEFT);
+            tnr12ptFormatLeft.setBorder(Border.ALL, BorderLineStyle.THIN);
+            tnr12ptFormatLeft.setWrap(true);
+
+            // обычный вправо
+            WritableFont tnr12ptRight = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD);
+            tnr12ptFormatRight = new WritableCellFormat(tnr12ptRight);
+            tnr12ptFormatRight.setAlignment(Alignment.RIGHT);
+            tnr12ptFormatRight.setBorder(Border.ALL, BorderLineStyle.THIN);
+
+            // обычный влево по центру по вертикали                
+            WritableFont tnr12ptLeftCenter = new WritableFont(WritableFont.TIMES, 12, WritableFont.NO_BOLD);
+            tnr12ptFormatLeftCenter = new WritableCellFormat(tnr12ptLeftCenter);
+            tnr12ptFormatLeftCenter.setAlignment(Alignment.LEFT);
+            tnr12ptFormatLeftCenter.setVerticalAlignment(VerticalAlignment.CENTRE);
+            tnr12ptFormatLeftCenter.setBorder(Border.ALL, BorderLineStyle.THIN);
+            tnr12ptFormatLeftCenter.setWrap(true);
+
+            try {
+                sheet.mergeCells(0, 0, 1, 0);
+                sheet.addCell(new Label(0, 0, "Отчет по консультированию законных представителей (категории)", tnr12ptBoldFormat));
+                sheet.mergeCells(0, 1, 1, 1);
+                sheet.addCell(new Label(0, 1, "за период с " + dateFormat.format(date1) + " по " + dateFormat.format(date2), tnr12ptBoldFormat));
+                sheet.addCell(new Label(0, 3, "Категория", tnr12ptFormat));
+                sheet.addCell(new Label(1, 3, "Кол-во услуг", tnr12ptFormat));
+                sheet.addCell(new Label(0, 4, "Родители (законные представители) всего:", tnr12ptFormatLeft));
+                sheet.addCell(new Number(1, 4, clients, tnr12ptFormatRight));
+                sheet.addCell(new Label(0, 5, "а) родители (законные представители) с детьми в возрасте от 0 до 3 лет", tnr12ptFormatLeft));
+                sheet.addCell(new Number(1, 5, clients3, tnr12ptFormatRight));
+                sheet.addCell(new Label(0, 6, "б) родители (законные представители) с детьми в возрасте от 3 до 7 лет", tnr12ptFormatLeft));
+                sheet.addCell(new Number(1, 6, clients37, tnr12ptFormatRight));
+                sheet.addCell(new Label(0, 7, "в) родители (законные представители), обеспечивающие получение детьми дошкольного образования в форме семейного обучения", tnr12ptFormatLeft));
+                sheet.addCell(new Number(1, 7, 0, tnr12ptFormatRight));
+                sheet.addCell(new Label(0, 8, "г) родители (законные представители), воспитывающие детей с ОВЗ и инвалидностью", tnr12ptFormatLeft));
+                sheet.addCell(new Number(1, 8, clientsInvOVZ, tnr12ptFormatRight));
+                sheet.addCell(new Label(0, 9, "д) родители (законные представители) с детьми, имеющими проблемы в социальной адаптации (с девиантным поведением)", tnr12ptFormatLeft));
+                sheet.addCell(new Number(1, 9, clientsOp, tnr12ptFormatRight));
+                sheet.addCell(new Label(0, 10, "е) родители (законные представители), имеющие приемных детей", tnr12ptFormatLeft));
+                sheet.addCell(new Number(1, 10, clientsZS, tnr12ptFormatRight));
+                sheet.addCell(new Label(0, 11, "ж) в том числе иные категории родителей (законных представителей) ", tnr12ptFormatLeft));
+                sheet.addCell(new Number(1, 11, 0, tnr12ptFormatRight));
+            } catch (RowsExceededException e) {
+                e.printStackTrace();
+            } catch (WriteException e) {
+                e.printStackTrace();
+            }
+
+            CellView cv = sheet.getColumnView(0);
+            cv.setSize(450 * 37);
+            sheet.setColumnView(0, cv);
+
+            cv = sheet.getColumnView(1);
+            cv.setSize(100 * 37);
+            sheet.setColumnView(1, cv);
+            
+        } catch (IOException e) {
+            // TODO Автоматически созданный блок catch
+            e.printStackTrace();
+        }
+
+        try {
+            workbook.write();
+            workbook.close();
+        } catch (IOException e) {
+            // TODO Автоматически созданный блок catch
+            e.printStackTrace();
+        } catch (WriteException e) {
+            // TODO Автоматически созданный блок catch
+            e.printStackTrace();
+        }
+    }
 
     /*    private static void sheetAutoFitColumns(WritableSheet sheet) {            
         for (int i = 0; i < sheet.getColumns(); i++) {

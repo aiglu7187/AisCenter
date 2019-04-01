@@ -26,6 +26,7 @@ import Count.Gz;
 import Count.OtchetStatPmpk;
 import Count.StandartCount;
 import Count.Statistic;
+import Entities.ChildStatus;
 import Entities.Children;
 import Entities.Ipra;
 import Entities.Ipra18;
@@ -3441,6 +3442,84 @@ public class PrintServlet extends HttpServlet {
                     Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+        } else if (type.equals("consultpar")) {  // отчёт по консультированию родителей (категории)
+            Date d1 = null;
+            Date d2 = null;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            if (date1 != null) {
+                try {
+                    d1 = dateFormat.parse(date1);
+                    d2 = dateFormat.parse(date2);
+                } catch (ParseException ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            if ((d1 != null) && (d2 != null)) {
+                // консультирование в период
+                String kat = "parents";
+                List<PriyomSubject> priyomSubj = priyomSubjectFacade.findByKatClientOnPeriod(kat, d1, d2);
+                // всего родителей
+                List<PriyomClient> clients = new ArrayList<>();
+                for (PriyomSubject ps : priyomSubj) {
+                    clients.addAll(priyomClientFacade.findByPriyom(ps.getPriyomId()));
+                }
+                // ранний возраст                
+                List<PriyomClient> clients3 = new ArrayList<>();
+                Age age = new Age(2, 11);   // 2 года 11 месяцев
+                for (PriyomSubject ps : priyomSubj) {
+                    if (ps.getChildId().getAgeOnDate(ps.getPriyomId().getPriyomDate()).younger(age)) {
+                        clients3.addAll(priyomClientFacade.findByPriyom(ps.getPriyomId()));
+                    }
+                }
+                // дети от 3 до 7 лет                
+                List<PriyomClient> clients37 = new ArrayList<>();
+                Age age2 = new Age(6, 11);  // 6 лет 11 месяцев
+                for (PriyomSubject ps : priyomSubj) {
+                    if ((ps.getChildId().getAgeOnDate(ps.getPriyomId().getPriyomDate()).older(age)) && (ps.getChildId().getAgeOnDate(ps.getPriyomId().getPriyomDate()).younger(age2))) {
+                        clients37.addAll(priyomClientFacade.findByPriyom(ps.getPriyomId()));
+                    }
+                }
+                // дети с ОВЗ и инвалидностью
+                List<PriyomClient> clientsInvOVZ = new ArrayList<>();
+                // дети с девиантным поведением
+                List<PriyomClient> clientsOp = new ArrayList<>();
+                // дети из замещающих семей
+                List<PriyomClient> clientsZS = new ArrayList<>();
+
+                for (PriyomSubject ps : priyomSubj) {
+                    List<ChildStatus> statList = childStatusFacade.findByChildActOnDate(ps.getChildId(), ps.getPriyomId().getPriyomDate());
+                    // проверка статусов
+                    for (ChildStatus cs : statList) {
+                        if (cs.getSprstatId().getSprstatName().equals("ДИ")) {
+                            clientsInvOVZ.addAll(priyomClientFacade.findByPriyom(ps.getPriyomId()));
+                        } else if (cs.getSprstatId().getSprstatName().equals("ОВЗ")) {
+                            clientsInvOVZ.addAll(priyomClientFacade.findByPriyom(ps.getPriyomId()));
+                        } else if (cs.getSprstatId().getSprstatName().equals("ОП")) {
+                            clientsOp.addAll(priyomClientFacade.findByPriyom(ps.getPriyomId()));
+                        } else if (cs.getSprstatId().getSprstatName().equals("ЗС")) {
+                            clientsZS.addAll(priyomClientFacade.findByPriyom(ps.getPriyomId()));
+                        }
+                    }
+                }
+                SimpleDateFormat curDateFormat = new SimpleDateFormat();
+                curDateFormat.applyPattern("ddMMyyyy");
+                long curTime = System.currentTimeMillis();
+                Date curDate = new Date(curTime);
+                String otchetDate = curDateFormat.format(curDate);
+                String fileName = otchetDate + "_consult" + date1 + "-" + date2 + ".xls";
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
+                try {
+                    Xls.printOtchetConsultPar(response.getOutputStream(), d1, d2, clients.size(), clients3.size(), clients37.size(),
+                            clientsInvOVZ.size(), clientsOp.size(), clientsZS.size());
+                } catch (Exception ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
