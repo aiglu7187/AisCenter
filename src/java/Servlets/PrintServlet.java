@@ -59,6 +59,7 @@ import Other.MySingleton;
 import Other.OvzFgos;
 import Other.ProblemTypeComparator;
 import Other.ReestrComparator;
+import Other.ReestrPmpkComparator;
 import Other.ReestrFullComparator;
 import Other.ReestrMonitComparator;
 import Other.RolesRight;
@@ -751,7 +752,7 @@ public class PrintServlet extends HttpServlet {
                 SprRegion region = sprRegionFacade.findById(regId);
                 reestr = priyomFacade.reestrChildrenReg(d1, d2, region);
             }
-            Collections.sort(reestr, new ReestrComparator());
+            Collections.sort(reestr, new ReestrPmpkComparator());
 
             if ((d1 != null) && (d2 != null)) {
                 SimpleDateFormat curDateFormat = new SimpleDateFormat();
@@ -3426,7 +3427,11 @@ public class PrintServlet extends HttpServlet {
                 regSet.addAll(parentsRegSet);
                 childrenUslSet.add("ПМПК");
                 childrenUslSet.add("Массаж");
-
+                Collections.sort(pmpkReestr, new ReestrComparator());
+                Collections.sort(massajReestr, new ReestrComparator());
+                Collections.sort(uslReestr, new ReestrComparator());
+                Collections.sort(consultReestr, new ReestrComparator());
+                
                 SimpleDateFormat curDateFormat = new SimpleDateFormat();
                 curDateFormat.applyPattern("ddMMyyyy");
                 long curTime = System.currentTimeMillis();

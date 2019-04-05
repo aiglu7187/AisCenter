@@ -5,20 +5,24 @@
  */
 package Other;
 
-import Reestr.ReestrPMPK;
+import Reestr.Reestr;
 import java.util.Comparator;
 
 /**
  *
- * @author admin_ai
+ * @author Aiglu
  */
 public class ReestrComparator implements Comparator {
     public int compare(Object obj1, Object obj2){
-        ReestrPMPK r1 = (ReestrPMPK)obj1;
-        ReestrPMPK r2 = (ReestrPMPK)obj2;
-        int result = r1.getFio().compareTo(r2.getFio());
+        Reestr r1 = (Reestr)obj1;
+        Reestr r2 = (Reestr)obj2;
+        int result = r1.getFam().compareTo(r2.getFam());
         if (result != 0) return (int)(result/Math.abs(result));
-        result = r1.getDatep().compareTo(r2.getDatep());
+        result = r1.getName().compareTo(r2.getName());
+        if (result != 0) return (int)(result/Math.abs(result));
+        result = r1.getPatr().compareTo(r2.getPatr());
+        if (result != 0) return (int)(result/Math.abs(result));
+        result = r1.getDate().compareTo(r2.getDate());
         return (result != 0) ? (int)(result/Math.abs(result)) : 0;
     }
 }
