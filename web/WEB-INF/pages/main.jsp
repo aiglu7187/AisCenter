@@ -33,6 +33,9 @@
                 <a class="main" href="admin" target="_blank">Администрирование</a>
                 <a class="main" href="pmpk" target="_blank">Отчеты и реестры ПМПК</a>
             </c:if>
+            <c:if test="${(user.getRoleId().getRoleName().equals('administrator'))||(user.getUserId() == 116)}">
+                <a class="main" href="otchet?id=ranniy" target="_blank">Отчеты службы ранней помощи</a>
+            </c:if>
         </div>
     </c:if>
     </body>

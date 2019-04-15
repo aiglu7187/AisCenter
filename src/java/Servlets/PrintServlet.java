@@ -51,6 +51,7 @@ import Entities.SprProblem;
 import Entities.SprProblemType;
 import Entities.SprRegion;
 import Entities.SprRekomend;
+import Entities.SprStat;
 import Entities.SprUsl;
 import Entities.Users;
 import Other.Age;
@@ -69,6 +70,7 @@ import Reestr.PMPKR;
 import Reestr.PMPKStatus;
 import Reestr.PMPKTer;
 import Reestr.Reestr;
+import Reestr.ReestrEnt;
 import Reestr.ReestrMonitPMPK;
 import Reestr.ReestrPMPK;
 import Reestr.ReestrPMPKFull;
@@ -105,6 +107,7 @@ import Sessions.SprProblemFacade;
 import Sessions.SprProblemTypeFacade;
 import Sessions.SprRegionFacade;
 import Sessions.SprRekomendFacade;
+import Sessions.SprStatFacade;
 import Sessions.SprUslFacade;
 import Sessions.UsersRegionFacade;
 import java.io.File;
@@ -223,6 +226,8 @@ public class PrintServlet extends HttpServlet {
     IpraPerechenFacade ipraPerechenFacade = new IpraPerechenFacade();
     @EJB
     IpraEduConditionFacade ipraEduConditionFacade = new IpraEduConditionFacade();
+    @EJB
+    SprStatFacade sprStatFacade = new SprStatFacade();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -3431,7 +3436,7 @@ public class PrintServlet extends HttpServlet {
                 Collections.sort(massajReestr, new ReestrComparator());
                 Collections.sort(uslReestr, new ReestrComparator());
                 Collections.sort(consultReestr, new ReestrComparator());
-                
+
                 SimpleDateFormat curDateFormat = new SimpleDateFormat();
                 curDateFormat.applyPattern("ddMMyyyy");
                 long curTime = System.currentTimeMillis();
@@ -3525,6 +3530,104 @@ public class PrintServlet extends HttpServlet {
                 } catch (Exception ex) {
                     Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+        } else if (type.equals("pmpkageondate")) {   // реестр ПМПК полный с возрастом на дату
+            Date d1 = null;
+            Date d2 = null;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            String dateageS = request.getParameter("dateage");
+            Date dateage = null;
+
+            if (date1 != null) {
+                try {
+                    d1 = dateFormat.parse(date1);
+                    d2 = dateFormat.parse(date2);
+                    dateage = dateFormat.parse(dateageS);
+                } catch (ParseException ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            String regIdS = request.getParameter("reg");
+            Integer regId = 0;
+            try {
+                regId = Integer.parseInt(regIdS);
+            } catch (Exception ex) {
+            }
+            SprRegion reg = null;
+            if (regId != 0) {
+                reg = sprRegionFacade.findById(regId);
+            }
+            if ((d1 != null) && (d2 != null) && (reg != null) && (dateage != null)) {
+                SprStat stat = sprStatFacade.findByName("ОВЗ");
+                List<ReestrEnt> reestrEnt = priyomFacade.reestrPmpkEnt(d1, d2, reg, stat);
+
+                List<ReestrPMPKFull> reestr = new ArrayList<>();
+                for (ReestrEnt re : reestrEnt) {
+                    ReestrPMPKFull r = new ReestrPMPKFull();
+                    r.setId(re.getChild().getChildId());
+                    r.setFio(re.getChild().getFIO());
+                    r.setDr(re.getChild().getChildDr());
+                    r.setReg(re.getChild().getSprregId().getSprregName());
+                    r.setDatep(re.getPriyom().getPriyomDate());
+                    if (re.getPmpk().getSprobrId() != null) {
+                        r.setObr(re.getPmpk().getSprobrId().getSprobrShname());
+                    } else {
+                        r.setObr("");
+                    }
+                    r.setDatek(re.getPmpk().getPmpkDatek());
+                    r.setAge(re.getChild().getAgeOnDate(dateage).getYears());
+                    r.setSex(re.getChild().getChildPol());
+                    List<PmpkRek> reks = pmpkRekFacade.findByPmpk(re.getPmpk());
+                    r.setAssist(Boolean.FALSE);
+                    r.setTutor(Boolean.FALSE);
+                    r.setPsy(Boolean.FALSE);
+                    r.setLogo(Boolean.FALSE);
+                    r.setDefolig(Boolean.FALSE);
+                    r.setDeftiflo(Boolean.FALSE);
+                    r.setDefsurdo(Boolean.FALSE);
+                    r.setSoc(Boolean.FALSE);
+
+                    for (PmpkRek rek : reks) {
+                        if (rek.getSprrekId().getSprrekName().equals("ассистент (помощник)")) {
+                            r.setAssist(Boolean.TRUE);
+                        } else if (rek.getSprrekId().getSprrekName().equals("тьютор")) {
+                            r.setTutor(Boolean.TRUE);
+                        } else if (rek.getSprrekId().getSprrekName().equals("занятия педагога-психолога")) {
+                            r.setPsy(Boolean.TRUE);
+                        } else if (rek.getSprrekId().getSprrekName().equals("занятия учителя-логопеда")) {
+                            r.setLogo(Boolean.TRUE);
+                        } else if (rek.getSprrekId().getSprrekName().equals("занятия учителя-дефектолога (олигофренопедагога)")) {
+                            r.setDefolig(Boolean.TRUE);
+                        } else if (rek.getSprrekId().getSprrekName().equals("занятия учителя-дефектолога (тифлопедагога)")) {
+                            r.setDeftiflo(Boolean.TRUE);
+                        } else if (rek.getSprrekId().getSprrekName().equals("занятия учителя-дефектолога (сурдопедагога)")) {
+                            r.setDefsurdo(Boolean.TRUE);
+                        } else if (rek.getSprrekId().getSprrekName().equals("занятия социального педагога")) {
+                            r.setSoc(Boolean.TRUE);
+                        }
+                    }
+                    reestr.add(r);
+                }
+
+                SimpleDateFormat curDateFormat = new SimpleDateFormat();
+                curDateFormat.applyPattern("ddMMyyyy");
+                long curTime = System.currentTimeMillis();
+                Date curDate = new Date(curTime);
+                String otchetDate = curDateFormat.format(curDate);
+                String fileName = otchetDate + "_reestr_PMPK_full_" + date1 + "-" + date2 + ".xls";
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
+                String pmpkShname = centerNameFacade.findById(1).getPmpkShname();
+                try {
+                    Xls.printReestrPMPKAgeOnDate(response.getOutputStream(), d1, d2, reestr, pmpkShname);
+                } catch (Exception ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
             } else {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }

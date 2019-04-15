@@ -46,5 +46,13 @@ public class SprStatFacade extends AbstractFacade<SprStat> {
         SprStat result;
         result = query.getSingleResult();
         return result;
-    }    
+    }   
+    
+    public SprStat findByName(String name){
+        TypedQuery<SprStat> query = 
+            em.createNamedQuery("SprStat.findBySprstatName", SprStat.class).setParameter("sprstatName", name);
+        SprStat result;
+        result = query.getSingleResult();
+        return result;
+    }  
 }

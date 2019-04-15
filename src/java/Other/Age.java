@@ -83,4 +83,8 @@ public class Age {
         }
         return result;
     }
+    
+    public Integer getYears(){
+        return years;
+    }
 }

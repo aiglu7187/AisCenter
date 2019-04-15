@@ -358,6 +358,21 @@ public class OtchetServlet extends HttpServlet {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        } else if (id.equals("rpmpkageondate")){
+            try {
+                session.removeAttribute("regions");
+            } catch (Exception ex) {
+            }
+            List<SprRegion> regions = sprRegionFacade.findNoCenter();
+            Collections.sort(regions, new RegionComparator());
+            session.setAttribute("regions", regions);
+            userPath = "/pmpk/reestrpmpkageondate";
+            url = "/WEB-INF/pages" + userPath + ".jsp";
+            try {
+                request.getRequestDispatcher(url).forward(request, response);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

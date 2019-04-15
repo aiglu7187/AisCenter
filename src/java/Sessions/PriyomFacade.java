@@ -13,15 +13,18 @@ import Count.CountStatusReg;
 import Entities.Children;
 import Entities.Parents;
 import Entities.Ped;
+import Entities.Pmpk;
 import Entities.Priyom;
 import Entities.SotrudDolgn;
 import Entities.SprOsnusl;
 import Entities.SprRegion;
+import Entities.SprStat;
 import Entities.SprUsl;
 import Reestr.ConsultReestr;
 import Reestr.PMPKR;
 import Reestr.PMPKStatus;
 import Reestr.PMPKTer;
+import Reestr.ReestrEnt;
 import Reestr.ReestrMonitPMPK;
 import Reestr.ReestrPMPK;
 import Reestr.ReestrPMPKFull;
@@ -2126,5 +2129,35 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             result.add(count);
         }
         return result;
-    }    
+    }
+
+    public List<ReestrEnt> reestrPmpkEnt(Date dateN, Date dateK, SprRegion region, SprStat stat) {    // реестр детей прошедших ПМПК (в виде энтити-классов)
+        String qlString = "SELECT c, p, pk "
+                + "FROM Children c, SprStat s, ChildStatus cs, Priyom p, PriyomClient pc, Pmpk pk "
+                + "WHERE cs.childId = c AND cs.sprstatId = s "
+                + "AND pc.clientId = c.childId AND pc.priyomId = p AND pk.prclId = pc "
+                + "AND pc.prclKatcl = :kat "
+                + "AND ((cs.childstatusDateN >= :dateN1 AND cs.childstatusDateN <= :dateK1) "
+                + "OR (cs.childstatusDateN <= :dateN2 AND (cs.childstatusDateK >= :dateN3 OR cs.childstatusDateK IS NULL))) "
+                + "AND p.priyomDate >= :dateN4 AND p.priyomDate <= :dateK2 "
+                + "AND (s = :stat) AND (c.sprregId = :region) ";
+        Query query = em.createQuery(qlString)
+                .setParameter("kat", "children")
+                .setParameter("dateN1", dateN)
+                .setParameter("dateN2", dateN)
+                .setParameter("dateN3", dateN)
+                .setParameter("dateN4", dateN)
+                .setParameter("dateK1", dateK)
+                .setParameter("dateK2", dateK)
+                .setParameter("stat", stat)
+                .setParameter("region", region);
+        List<Object> resultList = query.getResultList();
+        List<ReestrEnt> result = new ArrayList<>();
+        for (int i = 0; i < resultList.size(); i++) {
+            Object[] o = (Object[]) resultList.get(i);
+            ReestrEnt reestrEnt = new ReestrEnt((Children)o[0], (Priyom)o[1], (Pmpk)o[2]);
+            result.add(reestrEnt);
+        }
+        return result;
+    }
 }

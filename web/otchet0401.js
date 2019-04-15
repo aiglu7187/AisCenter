@@ -610,4 +610,24 @@ function printconsultpar() {
         window.open(url, '_blank');
     }
 }
-    
+
+function printrpmpkageondate() {
+    var date1 = document.getElementById("date1");
+    var d1 = "";
+    if (date1 != null) {
+        d1 = date1.value;
+    }
+    var date2 = document.getElementById("date2");
+    var d2 = "";
+    if (date2 != null) {
+        d2 = date2.value;
+    }
+
+    var reg = document.getElementById("selReg").value;
+    var dateage = document.getElementById("dateage").value;
+
+    if (validotchet()) {
+        var url = "print?type=pmpkageondate&date1=" + d1 + "&date2=" + d2 + "&reg=" + reg + "&dateage=" + dateage;
+        window.open(url, '_blank');
+    }
+}

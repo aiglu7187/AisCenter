@@ -43,6 +43,9 @@
                     <td onclick="window.open('otchet?id=rpmpkfull', '_blank')">
                         Реестр детей, прошедших ПМПК (полный, с возрастом, полом и рекомендациями)
                     </td> 
+                    <td onclick="window.open('otchet?id=rpmpkageondate', '_blank')">
+                        Реестр детей, прошедших ПМПК (полный, возраст на дату)
+                    </td> 
                     <td onclick="window.open('otchet?id=pmpkstatus', '_blank')">
                         Реестр детей по статусам
                     </td>
