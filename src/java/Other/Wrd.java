@@ -1530,7 +1530,7 @@ public class Wrd {
         } else if (child.getSprregId().getSprregIstown() == 1) {
             town = child.getSprregId().getSprregPrintname();
         }
-        String datek = ipra.getFormat2Date(ipra.getIpra18Dateok());  // дата исполнения мероприятий
+        String datek = "До " + ipra.getFormat2Date(ipra.getIpra18Dateok());  // дата исполнения мероприятий
         String dateFormat2 = ipra.getFormat2Date(date);
         String[] dateV = dateFormat2.split("\\.");
         String y = dateV[2].substring(2);   // год (2 цифры)
@@ -1658,7 +1658,7 @@ public class Wrd {
         } else if (child.getSprregId().getSprregIstown() == 1) {
             town = child.getSprregId().getSprregPrintname();
         }
-        String datek = ipra.getFormat2Date(ipra.getIpraDateok());  // дата исполнения мероприятий
+        String datek = "До " + ipra.getFormat2Date(ipra.getIpraDateok());  // дата исполнения мероприятий
         String dateFormat2 = ipra.getFormat2Date(date);
         String[] dateV = dateFormat2.split("\\.");
         String y = dateV[2].substring(2);   // год (2 цифры)
