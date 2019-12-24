@@ -68,6 +68,9 @@
                     <td onclick="window.open('otchet?id=pmpkrek', '_blank')">
                         Реестр детей с рекомендациями
                     </td>
+                    <td onclick="window.open('otchet?id=rpmpkconsult', '_blank')">
+                        Реестр родителей детей, прошедших ПМПК
+                    </td>
                     <td onclick="window.open('pmpksearch', '_blank')">
                         Поиск по ПМПК
                     </td>

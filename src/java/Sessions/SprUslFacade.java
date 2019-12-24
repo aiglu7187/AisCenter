@@ -75,4 +75,13 @@ public class SprUslFacade extends AbstractFacade<SprUsl> {
         result = query.getSingleResult();
         return result;
     }
+    
+    public List<SprUsl> findPmpk() {
+        String qlString = "SELECT u FROM SprUsl u WHERE u.spruslPmpk = 1";
+        TypedQuery <SprUsl> query = em.createQuery(qlString, SprUsl.class);
+        List<SprUsl> result;
+        result = query.getResultList();
+        return result;
+    }
+
 }

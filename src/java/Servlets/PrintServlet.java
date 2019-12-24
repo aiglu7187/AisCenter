@@ -37,9 +37,11 @@ import Entities.LoginLog;
 import Entities.Parents;
 import Entities.Ped;
 import Entities.Pmpk;
+import Entities.PmpkParent;
 import Entities.PmpkRek;
 import Entities.PriyomClient;
 import Entities.PriyomSubject;
+import Entities.Sotrud;
 import Entities.SotrudDolgn;
 import Entities.SprObr;
 import Entities.SprObrType;
@@ -74,6 +76,7 @@ import Reestr.ReestrEnt;
 import Reestr.ReestrMonitPMPK;
 import Reestr.ReestrPMPK;
 import Reestr.ReestrPMPKFull;
+import Reestr.ReestrPmpkParents;
 import Reestr.ReestrUsl;
 import Sessions.CenterNameFacade;
 import Sessions.ChildEduplaceFacade;
@@ -90,6 +93,7 @@ import Sessions.LoginLogFacade;
 import Sessions.ParentsFacade;
 import Sessions.PedFacade;
 import Sessions.PmpkFacade;
+import Sessions.PmpkParentFacade;
 import Sessions.PmpkRekFacade;
 import Sessions.PriyomClientFacade;
 import Sessions.PriyomFacade;
@@ -137,6 +141,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import jxl.write.WriteException;
+import static java.util.stream.Collectors.*;
 
 /**
  *
@@ -228,6 +233,8 @@ public class PrintServlet extends HttpServlet {
     IpraEduConditionFacade ipraEduConditionFacade = new IpraEduConditionFacade();
     @EJB
     SprStatFacade sprStatFacade = new SprStatFacade();
+    @EJB
+    PmpkParentFacade pmpkParentFacade = new PmpkParentFacade();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -268,12 +275,12 @@ public class PrintServlet extends HttpServlet {
 
         }
 
-        String type = request.getParameter("type");
-        String sotruddolgnIdS = null;
+        String type = request.getParameter("type");        
         String date1 = request.getParameter("date1");
         String date2 = request.getParameter("date2");
 
         if (type.equals("sotrud")) {    // отчёт сотрудника
+            String sotruddolgnIdS = null;
             sotruddolgnIdS = request.getParameter("id");
 
             Integer sotrdolgnId = null;
@@ -450,6 +457,7 @@ public class PrintServlet extends HttpServlet {
                 response.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }
         } else if (type.equals("sotrudBig")) {  // расширенный отчёт сотрудника
+            String sotruddolgnIdS = null;
             sotruddolgnIdS = request.getParameter("id");
 
             Integer sotrdolgnId = null;
@@ -3136,6 +3144,10 @@ public class PrintServlet extends HttpServlet {
                         rvChildren.add(child);
                     }
                 }
+                /*rvChildren = allChildren.stream()
+                        .filter( (Children c) -> { return c.getAgeOnDate(new Date()).younger(new Age(3, 0));} )
+                        .collect(toList());*/
+
                 // дети РВ прошедшие ПМПК                
                 List<Reestr> pmpkReestr = new ArrayList<>();
                 // дети РВ - массаж
@@ -3149,6 +3161,12 @@ public class PrintServlet extends HttpServlet {
                     for (Pmpk pmpk : pmpkList) {
                         // если ребёнок на момент приёма младше 3 лет
                         if (child.getAgeOnDate(pmpk.getPrclId().getPriyomId().getPriyomDate()).younger(age)) {
+                            List<ChildStatus> childStatusList
+                                    = childStatusFacade.findByChildActOnDate(child, pmpk.getPrclId().getPriyomId().getPriyomDate());
+                            Set<String> statusSet = new HashSet<>();
+                            for (ChildStatus cs : childStatusList) {
+                                statusSet.add(cs.getSprstatId().getSprstatName());
+                            }
                             // создаём запись для реестра
                             Reestr r = new Reestr();
                             r.setId(child.getChildId());
@@ -3159,6 +3177,7 @@ public class PrintServlet extends HttpServlet {
                             r.setReg(child.getSprregId().getSprregName());
                             r.setDate(pmpk.getPrclId().getPriyomId().getPriyomDate());  // дата ПМПК
                             r.setRegPr(pmpk.getPrclId().getPriyomId().getSprregId().getSprregName());   // место проведения ПМПК
+                            r.setStatusSet(statusSet);
                             pmpkReestr.add(r);
                         }
                     }
@@ -3166,6 +3185,12 @@ public class PrintServlet extends HttpServlet {
                     for (PriyomClient pc : priyomList) {
                         // если ребёнок на момент приёма младше 3 лет
                         if (child.getAgeOnDate(pc.getPriyomId().getPriyomDate()).younger(age)) {
+                            List<ChildStatus> childStatusList
+                                    = childStatusFacade.findByChildActOnDate(child, pc.getPriyomId().getPriyomDate());
+                            Set<String> statusSet = new HashSet<>();
+                            for (ChildStatus cs : childStatusList) {
+                                statusSet.add(cs.getSprstatId().getSprstatName());
+                            }
                             // если не ПМПК
                             if (pc.getPriyomId().getSpruslId().getSpruslId() > 1) {
                                 // создаём запись для реестра
@@ -3177,6 +3202,7 @@ public class PrintServlet extends HttpServlet {
                                 r.setDr(child.getChildDr());
                                 r.setReg(child.getSprregId().getSprregName());
                                 r.setDate(pc.getPriyomId().getPriyomDate());    // дата приёма
+                                r.setStatusSet(statusSet);
                                 // проверяем, массаж или другая услуга
                                 if (!pc.getPriyomId().getSpruslId().getSpruslName().equalsIgnoreCase("массаж")) {
                                     r.setRegPr(pc.getPriyomId().getSprregId().getSprregName()); // место проведения услуги
@@ -3208,6 +3234,12 @@ public class PrintServlet extends HttpServlet {
                             List<PriyomClient> pcList = priyomClientFacade.findByPriyom(subj.getPriyomId());
                             for (PriyomClient pc : pcList) {
                                 if (pc.getPrclKatcl().equals("parents")) {
+                                    List<ChildStatus> childStatusList
+                                            = childStatusFacade.findByChildActOnDate(child, pc.getPriyomId().getPriyomDate());
+                                    Set<String> statusSet = new HashSet<>();
+                                    for (ChildStatus cs : childStatusList) {
+                                        statusSet.add(cs.getSprstatId().getSprstatName());
+                                    }
                                     Reestr r = new Reestr();
                                     Parents parent = parentsFacade.findById(pc.getClientId());
                                     r.setIdPar(parent.getParentId());
@@ -3223,6 +3255,7 @@ public class PrintServlet extends HttpServlet {
                                     r.setDate(subj.getPriyomId().getPriyomDate());
                                     r.setRegPr(subj.getPriyomId().getSprregId().getSprregName()); // место проведения услуги
                                     r.setUsl(subj.getPriyomId().getSpruslId().getSpruslName());   // название услуги
+                                    r.setStatusSet(statusSet);
                                     // ищем сотрудников к приёму
                                     List<PriyomSotrud> sotrList = priyomSotrudFacade.findByPriyom(subj.getPriyomId());
                                     String sotrud = "";
@@ -3244,6 +3277,9 @@ public class PrintServlet extends HttpServlet {
                 // статистика
                 Map<List<String>, Integer> countChildren = new HashMap<>(); // кол-во детей
                 Map<List<String>, Integer> countParents = new HashMap<>();  // кол-во родителей
+                // статистика по статусам
+                Map<List<String>, Integer> countChildrenN = new HashMap<>(); // кол-во детей
+                Map<List<String>, Integer> countParentsN = new HashMap<>();  // кол-во родителей
                 // неповторяющиеся дети
                 Set<Integer> childrenSet = new HashSet<>();
                 // неповторяющиеся родители
@@ -3254,25 +3290,212 @@ public class PrintServlet extends HttpServlet {
                 // ... и услуги
                 Set<String> childrenUslSet = new TreeSet<>();
                 Set<String> parentsUslSet = new TreeSet<>();
+                // ...а ещё статусы
+                Set<String> childrenStatusSet = new TreeSet<>();
                 for (Reestr r : pmpkReestr) {
                     childrenSet.add(r.getId());
                     childrenRegSet.add(r.getReg());
+                    childrenStatusSet.addAll(r.getStatusSet());
                 }
                 for (Reestr r : massajReestr) {
                     childrenSet.add(r.getId());
                     childrenRegSet.add(r.getReg());
+                    childrenStatusSet.addAll(r.getStatusSet());
                 }
                 for (Reestr r : uslReestr) {
                     childrenSet.add(r.getId());
                     childrenRegSet.add(r.getReg());
                     childrenUslSet.add(r.getUsl());
+                    childrenStatusSet.addAll(r.getStatusSet());
                 }
                 for (Reestr r : consultReestr) {
                     parentsSet.add(r.getIdPar());
                     parentsRegSet.add(r.getReg());
                     parentsUslSet.add(r.getUsl());
+                    childrenStatusSet.addAll(r.getStatusSet());
                 }
 
+                // статистика по статусам
+                String vsegoN = "Всего";
+                String kolN = "количество";
+                String obrN = "обращения";
+                String keyChN = "Количество детей";
+                String keyParN = "Количество законных представителей";
+                String keyObrChN = "Количество обращений детей";
+                String keyObrParN = "Количество обращений законных представителей";
+                List<String> keyN1 = Arrays.asList(keyChN, kolN, vsegoN);
+                countChildrenN.put(keyN1, childrenSet.size());
+                List<String> keyN2 = Arrays.asList(keyObrChN, obrN, vsegoN);
+                countChildrenN.put(keyN2, pmpkReestr.size() + massajReestr.size() + uslReestr.size());
+                List<String> keyN3 = Arrays.asList(keyParN, kolN, vsegoN);
+                countParentsN.put(keyN3, parentsSet.size());
+                List<String> keyN4 = Arrays.asList(keyObrParN, obrN, vsegoN);
+                countParentsN.put(keyN4, consultReestr.size());
+                // по статусам дети                
+                for (String st : childrenStatusSet) {
+                    Set<Integer> chSet = new HashSet<>();
+                    Integer c = 0;
+                    for (Reestr r : pmpkReestr) {
+                        Set<String> stSet = r.getStatusSet();
+                        for (String s : stSet) {
+                            if (s.equals(st)) {
+                                chSet.add(r.getId());
+                                c++;
+                            }
+                        }
+                    }
+                    for (Reestr r : massajReestr) {
+                        Set<String> stSet = r.getStatusSet();
+                        for (String s : stSet) {
+                            if (s.equals(st)) {
+                                chSet.add(r.getId());
+                                c++;
+                            }
+                        }
+                    }
+                    for (Reestr r : uslReestr) {
+                        Set<String> stSet = r.getStatusSet();
+                        for (String s : stSet) {
+                            if (s.equals(st)) {
+                                chSet.add(r.getId());
+                                c++;
+                            }
+                        }
+                    }
+                    List<String> keyN5 = Arrays.asList(keyChN, kolN, st);
+                    countChildrenN.put(keyN5, chSet.size());
+                    List<String> keyN6 = Arrays.asList(keyObrChN, obrN, st);
+                    countChildrenN.put(keyN6, c);
+                }
+                // по районам родители
+                for (String st : childrenStatusSet) {
+                    Set<Integer> parSet = new HashSet<>();
+                    Integer c = 0;
+                    for (Reestr r : consultReestr) {
+                        Set<String> stSet = r.getStatusSet();
+                        for (String s : stSet) {
+                            if (s.equals(st)) {
+                                parSet.add(r.getId());
+                                c++;
+                            }
+                        }
+                    }
+                    List<String> keyN5 = Arrays.asList(keyParN, kolN, st);
+                    countParentsN.put(keyN5, parSet.size());
+                    List<String> keyN6 = Arrays.asList(keyObrParN, obrN, st);
+                    countParentsN.put(keyN6, c);
+                }
+                // по услугам и статусам дети
+                // ПМПК
+                Integer sObrN = 0;
+                Integer sKolN = 0;
+                for (String st : childrenStatusSet) {
+                    Set<Integer> chSet = new HashSet<>();
+                    Integer c = 0;
+                    for (Reestr r : pmpkReestr) {
+                        Set<String> stSet = r.getStatusSet();
+                        for (String s : stSet) {
+                            if (s.equals(st)) {
+                                chSet.add(r.getId());
+                                c++;
+                            }
+                        }
+                    }
+                    List<String> keyN5 = Arrays.asList("ПМПК", kolN, st);
+                    countChildrenN.put(keyN5, chSet.size());
+                    List<String> keyN6 = Arrays.asList("ПМПК", obrN, st);
+                    countChildrenN.put(keyN6, c);
+                    sKolN += chSet.size();
+                }
+                sObrN = pmpkReestr.size();
+                List<String> keyN9 = Arrays.asList("ПМПК", kolN, vsegoN);
+                countChildrenN.put(keyN9, sKolN);
+                List<String> keyN10 = Arrays.asList("ПМПК", obrN, vsegoN);
+                countChildrenN.put(keyN10, sObrN);
+                // Массаж
+                sKolN = 0;
+                for (String st : childrenStatusSet) {
+                    Set<Integer> chSet = new HashSet<>();
+                    Integer c = 0;
+                    for (Reestr r : massajReestr) {
+                        Set<String> stSet = r.getStatusSet();
+                        for (String s : stSet) {
+                            if (s.equals(st)) {
+                                chSet.add(r.getId());
+                                c++;
+                            }
+                        }
+                    }
+                    List<String> keyN5 = Arrays.asList("Массаж", kolN, st);
+                    countChildrenN.put(keyN5, chSet.size());
+                    List<String> keyN6 = Arrays.asList("Массаж", obrN, st);
+                    countChildrenN.put(keyN6, c);
+                    sKolN += chSet.size();
+                }
+                sObrN = massajReestr.size();
+                List<String> keyN7 = Arrays.asList("Массаж", kolN, vsegoN);
+                countChildrenN.put(keyN7, sKolN);
+                List<String> keyN8 = Arrays.asList("Массаж", obrN, vsegoN);
+                countChildrenN.put(keyN8, sObrN);
+
+                // Другие услуги
+                for (String usl : childrenUslSet) {
+                    sObrN = 0;
+                    sKolN = 0;
+                    for (String st : childrenStatusSet) {
+                        Set<Integer> chSet = new HashSet<>();
+                        Integer c = 0;
+                        for (Reestr r : uslReestr) {
+                            Set<String> stSet = r.getStatusSet();
+                            for (String s : stSet) {
+                                if (s.equals(st) && r.getUsl().equals(usl)) {
+                                    chSet.add(r.getId());
+                                    c++;
+                                }
+                            }
+                        }
+                        List<String> keyN5 = Arrays.asList(usl, kolN, st);
+                        countChildrenN.put(keyN5, chSet.size());
+                        List<String> keyN6 = Arrays.asList(usl, obrN, st);
+                        countChildrenN.put(keyN6, c);
+                        sObrN += c;
+                        sKolN += chSet.size();
+                    }
+                    List<String> keyN5 = Arrays.asList(usl, kolN, vsegoN);
+                    countChildrenN.put(keyN5, sKolN);
+                    List<String> keyN6 = Arrays.asList(usl, obrN, vsegoN);
+                    countChildrenN.put(keyN6, sObrN);
+                }
+                // по услугам и районам родители                
+                for (String usl : parentsUslSet) {
+                    sObrN = 0;
+                    sKolN = 0;
+                    for (String st : childrenStatusSet) {
+                        Set<Integer> parSet = new HashSet<>();
+                        Integer c = 0;
+                        for (Reestr r : consultReestr) {
+                            Set<String> stSet = r.getStatusSet();
+                            for (String s : stSet) {
+                                if (s.equals(st) && r.getUsl().equals(usl)) {
+                                    parSet.add(r.getId());
+                                    c++;
+                                }
+                            }
+                        }
+                        List<String> keyN5 = Arrays.asList(usl, kolN, st);
+                        countParentsN.put(keyN5, parSet.size());
+                        List<String> keyN6 = Arrays.asList(usl, obrN, st);
+                        countParentsN.put(keyN6, c);
+                        sObrN += c;
+                        sKolN += parSet.size();
+                    }
+                    List<String> keyN5 = Arrays.asList(usl, kolN, vsegoN);
+                    countParentsN.put(keyN5, sKolN);
+                    List<String> keyN6 = Arrays.asList(usl, obrN, vsegoN);
+                    countParentsN.put(keyN6, sObrN);
+                }
+
+                // статистика по районам
                 String vsego = "Всего";
                 String kol = "количество";
                 String obr = "обращения";
@@ -3447,7 +3670,9 @@ public class PrintServlet extends HttpServlet {
                 response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
                 try {
                     Xls.printRanniy(response.getOutputStream(), d1, d2, countChildren, countParents,
-                            pmpkReestr, massajReestr, uslReestr, consultReestr, regSet, childrenUslSet, parentsUslSet);
+                            countChildrenN, countParentsN,
+                            pmpkReestr, massajReestr, uslReestr, consultReestr, regSet, childrenUslSet,
+                            parentsUslSet, childrenStatusSet);
                 } catch (Exception ex) {
                     Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -3624,6 +3849,197 @@ public class PrintServlet extends HttpServlet {
                 String pmpkShname = centerNameFacade.findById(1).getPmpkShname();
                 try {
                     Xls.printReestrPMPKAgeOnDate(response.getOutputStream(), d1, d2, reestr, pmpkShname);
+                } catch (Exception ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+        } else if (type.equals("pmpkconsult_old")) { // реестр для консультаций на ПМПК
+            Date d1 = null;
+            Date d2 = null;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            if (date1 != null) {
+                try {
+                    d1 = dateFormat.parse(date1);
+                    d2 = dateFormat.parse(date2);
+                } catch (ParseException ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            if ((d1 != null) && (d2 != null)) {
+                List<Reestr> reestr = new ArrayList<>();                
+                SprUsl sprUsl = sprUslFacade.findById(1);   // ПМПК
+                List<Priyom> priyomList = priyomFacade.findPriyom(d1, d2, sprUsl, null);
+                Date testDate1 = new Date();
+                for (Priyom priyom : priyomList) {
+                    List<PriyomSotrud> prSotrudList = priyomSotrudFacade.findByPriyom(priyom);
+                    List<PriyomClient> prclList = priyomClientFacade.findByPriyom(priyom);
+                    for (PriyomClient pc : prclList) {
+                        Reestr r = new Reestr();
+                        r.setDate(priyom.getPriyomDate());
+                        String sotrs = "";
+                        for (PriyomSotrud prs : prSotrudList) {
+                            if (!sotrs.equals("")) {
+                                sotrs += ", ";
+                            }
+                            sotrs += prs.getSotruddolgnId().getSotrudId().getSotrudFIO();
+                        }
+                        r.setInfo(sotrs);
+                        Children child = childrenFacade.findById(pc.getClientId());
+                        r.setFam(child.getChildFam());
+                        r.setName(child.getChildName());
+                        r.setPatr(child.getChildPatr());
+                        r.setDr(child.getChildDr());
+                        List<Pmpk> pmpkList = pmpkFacade.findByPrcl(pc);
+                        Pmpk pmpk = null;
+                        if (pmpkList.size() > 0) {
+                            pmpk = pmpkList.get(0);
+                        }
+                        Reestr r2 = null;
+                        if (pmpk != null) {
+                            List<PmpkParent> parents = pmpkParentFacade.findByPmpk(pmpk);
+                            if (parents.size() > 0) {
+                                if (parents.get(0).getParentId() != null) {
+                                    r.setFamPar(parents.get(0).getParentId().getParentFam());
+                                    r.setNamePar(parents.get(0).getParentId().getParentName());
+                                    r.setPatrPar(parents.get(0).getParentId().getParentPatr());
+                                }
+                                if (parents.size() == 2) {
+                                    if (parents.get(1).getParentId() != null) {
+                                        r2 = new Reestr();
+                                        r2.setDate(r.getDate());
+                                        r2.setInfo(r.getInfo());
+                                        r2.setFam(r.getFam());
+                                        r2.setName(r.getName());
+                                        r2.setPatr(r.getPatr());
+                                        r2.setDr(r.getDr());
+                                        r2.setFamPar(parents.get(1).getParentId().getParentFam());
+                                        r2.setNamePar(parents.get(1).getParentId().getParentName());
+                                        r2.setPatrPar(parents.get(1).getParentId().getParentPatr());
+                                    }
+                                }
+                            }
+                        }
+                        reestr.add(r);
+                        if (r2 != null) {
+                            reestr.add(r2);
+                        }
+                    }
+                }
+                long length = new Date().getTime() - testDate1.getTime();
+                // подготовка для выгрузки в Excel
+                SimpleDateFormat curDateFormat = new SimpleDateFormat();
+                curDateFormat.applyPattern("ddMMyyyy");
+                long curTime = System.currentTimeMillis();
+                Date curDate = new Date(curTime);
+                String otchetDate = curDateFormat.format(curDate);
+                String fileName = otchetDate + "_reestr_PMPK_consult_" + date1 + "-" + date2 + ".xls";
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
+                String pmpkShname = centerNameFacade.findById(1).getPmpkShname();
+                try {
+                    Xls.printReestrPMPKForConsult(response.getOutputStream(), d1, d2, reestr, pmpkShname);
+                } catch (Exception ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            } else {
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }
+        } else if (type.equals("pmpkconsult")) { // реестр для консультаций на ПМПК
+            Date d1 = null;
+            Date d2 = null;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            if (date1 != null) {
+                try {
+                    d1 = dateFormat.parse(date1);
+                    d2 = dateFormat.parse(date2);
+                } catch (ParseException ex) {
+                    Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            if ((d1 != null) && (d2 != null)) {
+                List<Reestr> reestr = new ArrayList<>();                
+                List<ReestrPmpkParents> priyomList = priyomFacade.reestrPmpkParents(d1, d2);
+                Map <ReestrPmpkParents, List<ReestrPmpkParents>> priyomMap = priyomList.stream()
+                        .collect(groupingBy(
+                                obj -> new ReestrPmpkParents(obj.priyom, null, obj.child, obj.parent)
+                        ));
+                
+               /* for (Priyom priyom : priyomList) {
+                    List<PriyomSotrud> prSotrudList = priyomSotrudFacade.findByPriyom(priyom);
+                    List<PriyomClient> prclList = priyomClientFacade.findByPriyom(priyom);
+                    for (PriyomClient pc : prclList) {
+                        Reestr r = new Reestr();
+                        r.setDate(priyom.getPriyomDate());
+                        String sotrs = "";
+                        for (PriyomSotrud prs : prSotrudList) {
+                            if (!sotrs.equals("")) {
+                                sotrs += ", ";
+                            }
+                            sotrs += prs.getSotruddolgnId().getSotrudId().getSotrudFIO();
+                        }
+                        r.setInfo(sotrs);
+                        Children child = childrenFacade.findById(pc.getClientId());
+                        r.setFam(child.getChildFam());
+                        r.setName(child.getChildName());
+                        r.setPatr(child.getChildPatr());
+                        r.setDr(child.getChildDr());
+                        List<Pmpk> pmpkList = pmpkFacade.findByPrcl(pc);
+                        Pmpk pmpk = null;
+                        if (pmpkList.size() > 0) {
+                            pmpk = pmpkList.get(0);
+                        }
+                        Reestr r2 = null;
+                        if (pmpk != null) {
+                            List<PmpkParent> parents = pmpkParentFacade.findByPmpk(pmpk);
+                            if (parents.size() > 0) {
+                                if (parents.get(0).getParentId() != null) {
+                                    r.setFamPar(parents.get(0).getParentId().getParentFam());
+                                    r.setNamePar(parents.get(0).getParentId().getParentName());
+                                    r.setPatrPar(parents.get(0).getParentId().getParentPatr());
+                                }
+                                if (parents.size() == 2) {
+                                    if (parents.get(1).getParentId() != null) {
+                                        r2 = new Reestr();
+                                        r2.setDate(r.getDate());
+                                        r2.setInfo(r.getInfo());
+                                        r2.setFam(r.getFam());
+                                        r2.setName(r.getName());
+                                        r2.setPatr(r.getPatr());
+                                        r2.setDr(r.getDr());
+                                        r2.setFamPar(parents.get(1).getParentId().getParentFam());
+                                        r2.setNamePar(parents.get(1).getParentId().getParentName());
+                                        r2.setPatrPar(parents.get(1).getParentId().getParentPatr());
+                                    }
+                                }
+                            }
+                        }
+                        reestr.add(r);
+                        if (r2 != null) {
+                            reestr.add(r2);
+                        }
+                    }
+                }*/
+
+                // подготовка для выгрузки в Excel
+                SimpleDateFormat curDateFormat = new SimpleDateFormat();
+                curDateFormat.applyPattern("ddMMyyyy");
+                long curTime = System.currentTimeMillis();
+                Date curDate = new Date(curTime);
+                String otchetDate = curDateFormat.format(curDate);
+                String fileName = otchetDate + "_reestr_PMPK_consult_" + date1 + "-" + date2 + ".xls";
+                response.setContentType("application/vnd.ms-excel");
+                response.setHeader("Content-Disposition", "Attachment;filename= " + fileName);
+                String pmpkShname = centerNameFacade.findById(1).getPmpkShname();
+                try {
+                    Xls.printReestrPMPKForConsult(response.getOutputStream(), d1, d2, reestr, pmpkShname);
                 } catch (Exception ex) {
                     Logger.getLogger(PrintServlet.class.getName()).log(Level.SEVERE, null, ex);
                 }

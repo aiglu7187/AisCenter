@@ -7,6 +7,7 @@ package Reestr;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Set;
 
 /**
  *
@@ -27,6 +28,7 @@ public class Reestr {
     private String regPr;
     private String usl;
     private String info;
+    private Set<String> statusSet;
     
     public Reestr(){
         
@@ -142,6 +144,14 @@ public class Reestr {
     
     public void setId(Integer id){
         this.id = id;
+    }
+    
+    public Set<String> getStatusSet(){
+        return statusSet;
+    }
+    
+    public void setStatusSet(Set<String> statusSet){
+        this.statusSet = statusSet;
     }
     
     public String getFormat2Dr() {

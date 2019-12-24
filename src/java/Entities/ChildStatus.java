@@ -181,4 +181,8 @@ public class ChildStatus implements Serializable {
         return strD;
     }
 
+    // определить актуальность статуса на дату
+    public Boolean isActualOnDate(Date date){
+        return (date.after(this.getChildstatusDateN()))&&(date.before(this.getChildstatusDateK()));
+    }
 }

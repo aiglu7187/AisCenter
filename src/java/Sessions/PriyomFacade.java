@@ -15,6 +15,7 @@ import Entities.Parents;
 import Entities.Ped;
 import Entities.Pmpk;
 import Entities.Priyom;
+import Entities.Sotrud;
 import Entities.SotrudDolgn;
 import Entities.SprOsnusl;
 import Entities.SprRegion;
@@ -28,9 +29,11 @@ import Reestr.ReestrEnt;
 import Reestr.ReestrMonitPMPK;
 import Reestr.ReestrPMPK;
 import Reestr.ReestrPMPKFull;
+import Reestr.ReestrPmpkParents;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import static java.util.stream.Collectors.toList;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -2159,5 +2162,34 @@ public class PriyomFacade extends AbstractFacade<Priyom> {
             result.add(reestrEnt);
         }
         return result;
+    }
+    
+    public List<ReestrPmpkParents> reestrPmpkParents(Date date1, Date date2){         // реестр родителей детей, прошедших ПМПК
+        String qlString = "SELECT pr, s, c, par"
+                + " FROM Priyom pr "
+                + " JOIN PriyomClient pc ON pc.priyomId = pr "
+                + " JOIN Children c ON c.childId = pc.clientId " 
+                + " JOIN PriyomSotrud ps ON ps.priyomId = pr " 
+                + " JOIN Pmpk pk ON pk.prclId = pc " 
+                + " JOIN PmpkParent pkp ON pkp.pmpkId = pk " 
+                + " JOIN Parents par ON par = pkp.parentId " 
+                + " JOIN SotrudDolgn sd ON sd = ps.sotruddolgnId " 
+                + " JOIN Sotrud s ON s = sd.sotrudId "
+                + " WHERE pr.priyomDate >= :date1 " 
+                + " AND pr.priyomDate <= :date2 ";
+        Query query = em.createQuery(qlString, ReestrPmpkParents.class)
+                .setParameter("date1", date1)
+                .setParameter("date2", date2); 
+
+        return (List<ReestrPmpkParents>)query.getResultList()
+                .parallelStream()
+                .map(o -> new ReestrPmpkParents (
+                                                    (Priyom)   ((Object[])o)[0]
+                                                    ,(Sotrud)  ((Object[])o)[1]
+                                                    ,(Children)((Object[])o)[2]
+                                                    ,(Parents) ((Object[])o)[3]
+                                                )
+                    )
+                .collect(toList());
     }
 }
